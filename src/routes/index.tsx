@@ -65,48 +65,35 @@ function Landing() {
       </header>
 
       <section className="relative overflow-hidden bg-gradient-hero text-primary-foreground">
-        <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 py-16 md:grid-cols-2 md:px-8 md:py-24">
+        <div className="mx-auto grid max-w-7xl items-center gap-8 px-4 py-12 md:grid-cols-2 md:px-8 md:py-24">
           <div>
             <span className="inline-flex items-center gap-2 rounded-full border border-primary-foreground/25 bg-primary-foreground/10 px-3 py-1 text-xs font-medium">
               <Network className="h-3.5 w-3.5" /> Inter-Departmental Planning
             </span>
-            <h1 className="mt-5 text-4xl font-extrabold leading-tight tracking-tight md:text-5xl">
+            <h1 className="mt-4 text-3xl font-extrabold leading-tight tracking-tight sm:text-4xl md:text-5xl">
               AI-Powered Smart City Collaboration Platform
             </h1>
-            <p className="mt-5 max-w-xl text-base text-primary-foreground/80 md:text-lg">
+            <p className="mt-4 max-w-xl text-sm text-primary-foreground/80 sm:text-base md:text-lg">
               Connecting city departments through intelligent data sharing, predictive analytics,
               and coordinated urban planning.
             </p>
-            <div className="mt-8 flex flex-wrap gap-3">
+            <div className="mt-6 flex flex-wrap gap-3">
               <Button asChild variant="hero" size="lg">
-                <Link to="/login">
-                  Get Started <ArrowRight className="h-4 w-4" />
-                </Link>
+                <Link to="/login">Get Started <ArrowRight className="h-4 w-4" /></Link>
               </Button>
               <Button asChild variant="heroOutline" size="lg">
                 <Link to="/admin">View Live Demo</Link>
               </Button>
             </div>
-            <div className="mt-8 flex flex-wrap gap-x-8 gap-y-3 text-sm text-primary-foreground/80">
-              <span className="flex items-center gap-2">
-                <CheckCircle2 className="h-4 w-4" /> 7 City Zones
-              </span>
-              <span className="flex items-center gap-2">
-                <CheckCircle2 className="h-4 w-4" /> 5 Departments
-              </span>
-              <span className="flex items-center gap-2">
-                <CheckCircle2 className="h-4 w-4" /> Real-time AI Alerts
-              </span>
+            <div className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm text-primary-foreground/80">
+              <span className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4" /> 7 City Zones</span>
+              <span className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4" /> 5 Departments</span>
+              <span className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4" /> Real-time AI Alerts</span>
             </div>
           </div>
           <div className="relative">
-            <img
-              src={heroCity}
-              width={1280}
-              height={960}
-              alt="Illustration of a connected smart city with glowing data links between departments"
-              className="rounded-2xl border border-primary-foreground/15 shadow-elevated"
-            />
+            <img src={heroCity} width={1280} height={960} alt="Illustration of a connected smart city"
+              className="rounded-2xl border border-primary-foreground/15 shadow-elevated w-full" />
           </div>
         </div>
       </section>
@@ -119,7 +106,7 @@ function Landing() {
             planning.
           </p>
         </div>
-        <div className="mt-12 grid gap-6 md:grid-cols-3">
+        <div className="mt-10 grid gap-4 sm:grid-cols-2 md:grid-cols-3">
           {features.map((f) => (
             <div
               key={f.title}
@@ -136,7 +123,7 @@ function Landing() {
       </section>
 
       <section className="border-y bg-secondary/50">
-        <div className="mx-auto grid max-w-7xl grid-cols-2 gap-6 px-4 py-12 md:grid-cols-4 md:px-8">
+        <div className="mx-auto grid max-w-7xl grid-cols-2 gap-4 px-4 py-10 md:grid-cols-4 md:px-8">
           {[
             { v: "120", l: "Total Projects" },
             { v: "35", l: "Active Projects" },
