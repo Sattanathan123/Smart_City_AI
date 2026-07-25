@@ -1,14 +1,12 @@
 package com.smartcity.entity;
 
 import jakarta.persistence.*;
-import lombok.Data;
 import org.hibernate.annotations.CreationTimestamp;
 
 import java.time.LocalDateTime;
 
 @Entity
 @Table(name = "predictions")
-@Data
 public class Prediction {
 
     @Id
@@ -25,4 +23,52 @@ public class Prediction {
 
     @CreationTimestamp
     private LocalDateTime predictionTime;
+
+    public Long getId() {
+        return id;
+    }
+
+    public void setId(Long id) {
+        this.id = id;
+    }
+
+    public Project getProject() {
+        return project;
+    }
+
+    public void setProject(Project project) {
+        this.project = project;
+    }
+
+    public Double getConflictProbability() {
+        return conflictProbability;
+    }
+
+    public void setConflictProbability(Double conflictProbability) {
+        this.conflictProbability = conflictProbability;
+    }
+
+    public String getConflictPrediction() {
+        return conflictPrediction;
+    }
+
+    public void setConflictPrediction(String conflictPrediction) {
+        this.conflictPrediction = conflictPrediction;
+    }
+
+    public String getPriorityPrediction() {
+        return priorityPrediction;
+    }
+
+    public void setPriorityPrediction(String priorityPrediction) {
+        this.priorityPrediction = priorityPrediction;
+    }
+
+    public LocalDateTime getPredictionTime() {
+        return predictionTime;
+    }
+
+    public void setPredictionTime(LocalDateTime predictionTime) {
+        this.predictionTime = predictionTime;
+    }
 }

@@ -43,33 +43,28 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                // Public endpoints
+                // Public / Read-Only endpoints
                 .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/dashboard/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/analytics/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/alerts/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/complaints/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/projects/**").permitAll()
 
                 // Admin only
                 .requestMatchers("/api/admin/**").hasRole("ADMIN")
 
-                // Officer only
-                .requestMatchers("/api/officer/**").hasRole("DEPARTMENT_OFFICER")
-
-                // Projects — both roles, ownership enforced in service
-                .requestMatchers(HttpMethod.POST, "/api/projects").hasRole("DEPARTMENT_OFFICER")
-                .requestMatchers(HttpMethod.GET, "/api/projects/my-projects").hasRole("DEPARTMENT_OFFICER")
-                .requestMatchers(HttpMethod.GET, "/api/projects/**").hasAnyRole("ADMIN", "DEPARTMENT_OFFICER")
+                // Officer & Admin creation / modification endpoints
+                .requestMatchers(HttpMethod.POST, "/api/projects").hasAnyRole("ADMIN", "DEPARTMENT_OFFICER")
                 .requestMatchers(HttpMethod.PUT, "/api/projects/**").hasAnyRole("ADMIN", "DEPARTMENT_OFFICER")
                 .requestMatchers(HttpMethod.DELETE, "/api/projects/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.PATCH, "/api/projects/**").hasRole("ADMIN")
 
-                // Predict — officer only
-                .requestMatchers("/api/predict/**").hasRole("DEPARTMENT_OFFICER")
+                // Predict — officer & admin
+                .requestMatchers("/api/predict/**").hasAnyRole("ADMIN", "DEPARTMENT_OFFICER")
 
-                // Analytics & Dashboard — admin only
-                .requestMatchers("/api/analytics/**").hasRole("ADMIN")
-                .requestMatchers("/api/dashboard/**").hasAnyRole("ADMIN", "DEPARTMENT_OFFICER")
-
-                // Complaints & Alerts — authenticated
-                .requestMatchers("/api/complaints/**").authenticated()
-                .requestMatchers("/api/alerts/**").authenticated()
+                // Complaints submission — authenticated
+                .requestMatchers(HttpMethod.POST, "/api/complaints/**").authenticated()
 
                 .anyRequest().authenticated()
             )
@@ -82,7 +77,11 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration config = new CorsConfiguration();
-        config.setAllowedOrigins(List.of("http://localhost:5173", "http://localhost:3000"));
+        config.setAllowedOrigins(List.of(
+                "http://localhost:5173",
+                "http://localhost:3000",
+                "http://localhost:8080"
+        ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
         config.setAllowCredentials(true);

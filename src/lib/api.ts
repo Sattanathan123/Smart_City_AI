@@ -1,7 +1,14 @@
 const BASE = "http://localhost:8082/api";
 
 async function request<T>(path: string, options?: RequestInit): Promise<T> {
-  const user = (() => { try { return JSON.parse(sessionStorage.getItem("user") ?? "{}"); } catch { return {}; } })();
+  const user = (() => {
+    if (typeof window === "undefined" || typeof sessionStorage === "undefined") return {};
+    try {
+      return JSON.parse(sessionStorage.getItem("user") ?? "{}");
+    } catch {
+      return {};
+    }
+  })();
   const token = user?.token ?? "";
   const res = await fetch(`${BASE}${path}`, {
     headers: {
@@ -31,8 +38,14 @@ export interface AuthResponse {
 }
 
 export const authApi = {
-  register: (body: { name: string; email: string; password: string; phone?: string; department: string; role: string }) =>
-    request<AuthResponse>("/auth/register", { method: "POST", body: JSON.stringify(body) }),
+  register: (body: {
+    name: string;
+    email: string;
+    password: string;
+    phone?: string;
+    department: string;
+    role: string;
+  }) => request<AuthResponse>("/auth/register", { method: "POST", body: JSON.stringify(body) }),
 
   login: (body: { email: string; password: string }) =>
     request<AuthResponse>("/auth/login", { method: "POST", body: JSON.stringify(body) }),
@@ -68,6 +81,7 @@ export interface PredictionData {
 
 export interface ProjectData extends ProjectPayload {
   id: number;
+  status: string;
   createdAt: string;
   sanctionedBy: string | null;
   sanctionRemark: string | null;
@@ -82,12 +96,17 @@ export const projectsApi = {
     request<ProjectData>("/projects", { method: "POST", body: JSON.stringify(body) }),
   update: (id: number, body: ProjectPayload) =>
     request<ProjectData>(`/projects/${id}`, { method: "PUT", body: JSON.stringify(body) }),
-  delete: (id: number) =>
-    request<void>(`/projects/${id}`, { method: "DELETE" }),
+  delete: (id: number) => request<void>(`/projects/${id}`, { method: "DELETE" }),
   submitForApproval: (id: number) =>
-    request<ProjectData>(`/projects/${id}`, { method: "PUT", body: JSON.stringify({ status: "PENDING_APPROVAL" }) }),
+    request<ProjectData>(`/projects/${id}`, {
+      method: "PUT",
+      body: JSON.stringify({ status: "PENDING_APPROVAL" }),
+    }),
   sanction: (id: number, action: "APPROVE" | "REJECT", sanctionedBy: string, remark: string) =>
-    request<ProjectData>(`/projects/${id}/sanction`, { method: "PATCH", body: JSON.stringify({ action, sanctionedBy, remark }) }),
+    request<ProjectData>(`/projects/${id}/sanction`, {
+      method: "PATCH",
+      body: JSON.stringify({ action, sanctionedBy, remark }),
+    }),
 };
 
 // ── Predict ───────────────────────────────────────────────────────────────────
@@ -111,8 +130,14 @@ export interface ComplaintData {
 }
 
 export const complaintsApi = {
-  create: (body: { userId: number; userName: string; category: string; description: string; zone: string; imageUrl?: string }) =>
-    request<ComplaintData>("/complaints", { method: "POST", body: JSON.stringify(body) }),
+  create: (body: {
+    userId: number;
+    userName: string;
+    category: string;
+    description: string;
+    zone: string;
+    imageUrl?: string;
+  }) => request<ComplaintData>("/complaints", { method: "POST", body: JSON.stringify(body) }),
   getByUser: (userId: number) => request<ComplaintData[]>(`/complaints/user/${userId}`),
   getAll: () => request<ComplaintData[]>("/complaints"),
   getById: (id: number) => request<ComplaintData>(`/complaints/${id}`),
@@ -134,9 +159,22 @@ export const alertsApi = {
 };
 
 // ── Analytics ────────────────────────────────────────────────────────────────
-export interface MonthlyData { month: string; started: number; completed: number; }
-export interface DeptData { dept: string; total: number; completed: number; score: number; }
-export interface DistributionData { name: string; value: number; color?: string; }
+export interface MonthlyData {
+  month: string;
+  started: number;
+  completed: number;
+}
+export interface DeptData {
+  dept: string;
+  total: number;
+  completed: number;
+  score: number;
+}
+export interface DistributionData {
+  name: string;
+  value: number;
+  color?: string;
+}
 
 export const analyticsApi = {
   monthly: () => request<MonthlyData[]>("/analytics/monthly"),

@@ -79,21 +79,34 @@ function Landing() {
             </p>
             <div className="mt-6 flex flex-wrap gap-3">
               <Button asChild variant="hero" size="lg">
-                <Link to="/login">Get Started <ArrowRight className="h-4 w-4" /></Link>
+                <Link to="/login">
+                  Get Started <ArrowRight className="h-4 w-4" />
+                </Link>
               </Button>
               <Button asChild variant="heroOutline" size="lg">
                 <Link to="/admin">View Live Demo</Link>
               </Button>
             </div>
             <div className="mt-6 flex flex-wrap gap-x-6 gap-y-2 text-sm text-primary-foreground/80">
-              <span className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4" /> 7 City Zones</span>
-              <span className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4" /> 5 Departments</span>
-              <span className="flex items-center gap-2"><CheckCircle2 className="h-4 w-4" /> Real-time AI Alerts</span>
+              <span className="flex items-center gap-2">
+                <CheckCircle2 className="h-4 w-4" /> 7 City Zones
+              </span>
+              <span className="flex items-center gap-2">
+                <CheckCircle2 className="h-4 w-4" /> 5 Departments
+              </span>
+              <span className="flex items-center gap-2">
+                <CheckCircle2 className="h-4 w-4" /> Real-time AI Alerts
+              </span>
             </div>
           </div>
           <div className="relative">
-            <img src={heroCity} width={1280} height={960} alt="Illustration of a connected smart city"
-              className="rounded-2xl border border-primary-foreground/15 shadow-elevated w-full" />
+            <img
+              src={heroCity}
+              width={1280}
+              height={960}
+              alt="Illustration of a connected smart city"
+              className="rounded-2xl border border-primary-foreground/15 shadow-elevated w-full"
+            />
           </div>
         </div>
       </section>
@@ -140,9 +153,7 @@ function Landing() {
 
       <section className="mx-auto max-w-7xl px-4 py-16 text-center md:px-8">
         <BarChart3 className="mx-auto h-10 w-10 text-primary" />
-        <h2 className="mt-4 text-3xl font-bold text-foreground">
-          Ready to coordinate your city?
-        </h2>
+        <h2 className="mt-4 text-3xl font-bold text-foreground">Ready to coordinate your city?</h2>
         <p className="mx-auto mt-3 max-w-xl text-muted-foreground">
           Sign in as a Citizen, Department Officer, or Administrator to explore the prototype.
         </p>

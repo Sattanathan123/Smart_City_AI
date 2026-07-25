@@ -1,10 +1,7 @@
 package com.smartcity.dto;
 
-import lombok.Data;
-
 import java.util.List;
 
-@Data
 public class DashboardResponse {
     private long totalProjects;
     private long conflictProjects;
@@ -23,4 +20,17 @@ public class DashboardResponse {
         this.lowPriorityProjects = lowPriorityProjects;
         this.latestProjects = latestProjects;
     }
+
+    public long getTotalProjects() { return totalProjects; }
+    public void setTotalProjects(long totalProjects) { this.totalProjects = totalProjects; }
+    public long getConflictProjects() { return conflictProjects; }
+    public void setConflictProjects(long conflictProjects) { this.conflictProjects = conflictProjects; }
+    public long getHighPriorityProjects() { return highPriorityProjects; }
+    public void setHighPriorityProjects(long highPriorityProjects) { this.highPriorityProjects = highPriorityProjects; }
+    public long getMediumPriorityProjects() { return mediumPriorityProjects; }
+    public void setMediumPriorityProjects(long mediumPriorityProjects) { this.mediumPriorityProjects = mediumPriorityProjects; }
+    public long getLowPriorityProjects() { return lowPriorityProjects; }
+    public void setLowPriorityProjects(long lowPriorityProjects) { this.lowPriorityProjects = lowPriorityProjects; }
+    public List<ProjectResponse> getLatestProjects() { return latestProjects; }
+    public void setLatestProjects(List<ProjectResponse> latestProjects) { this.latestProjects = latestProjects; }
 }

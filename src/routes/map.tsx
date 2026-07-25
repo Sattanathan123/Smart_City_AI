@@ -9,7 +9,10 @@ export const Route = createFileRoute("/map")({
   head: () => ({
     meta: [
       { title: "Smart City Map View — SmartCity OS" },
-      { name: "description", content: "Interactive city map showing projects and citizen complaints by zone." },
+      {
+        name: "description",
+        content: "Interactive city map showing projects and citizen complaints by zone.",
+      },
     ],
   }),
   component: MapView,
@@ -48,7 +51,10 @@ function MapView() {
             </h2>
             <div className="flex flex-wrap gap-x-4 gap-y-1.5">
               {legend.map((l) => (
-                <span key={l.label} className="flex items-center gap-1.5 text-xs text-muted-foreground">
+                <span
+                  key={l.label}
+                  className="flex items-center gap-1.5 text-xs text-muted-foreground"
+                >
                   <span className={cn("h-2.5 w-2.5 rounded-full", l.cls)} /> {l.label}
                 </span>
               ))}
@@ -59,12 +65,33 @@ function MapView() {
             {/* faux map grid */}
             <svg className="absolute inset-0 h-full w-full text-border" aria-hidden>
               {Array.from({ length: 11 }).map((_, i) => (
-                <line key={`v${i}`} x1={`${i * 10}%`} y1="0" x2={`${i * 10}%`} y2="100%" stroke="currentColor" strokeWidth="1" />
+                <line
+                  key={`v${i}`}
+                  x1={`${i * 10}%`}
+                  y1="0"
+                  x2={`${i * 10}%`}
+                  y2="100%"
+                  stroke="currentColor"
+                  strokeWidth="1"
+                />
               ))}
               {Array.from({ length: 9 }).map((_, i) => (
-                <line key={`h${i}`} x1="0" y1={`${i * 12.5}%`} x2="100%" y2={`${i * 12.5}%`} stroke="currentColor" strokeWidth="1" />
+                <line
+                  key={`h${i}`}
+                  x1="0"
+                  y1={`${i * 12.5}%`}
+                  x2="100%"
+                  y2={`${i * 12.5}%`}
+                  stroke="currentColor"
+                  strokeWidth="1"
+                />
               ))}
-              <path d="M0 60 L100 60 M50 0 L50 100" stroke="var(--color-primary)" strokeOpacity="0.2" strokeWidth="6" />
+              <path
+                d="M0 60 L100 60 M50 0 L50 100"
+                stroke="var(--color-primary)"
+                strokeOpacity="0.2"
+                strokeWidth="6"
+              />
             </svg>
 
             {zones.map((z) => {
@@ -79,7 +106,12 @@ function MapView() {
                 >
                   <span className="relative flex flex-col items-center">
                     {active && (
-                      <span className={cn("absolute h-8 w-8 animate-ping rounded-full opacity-40", typeColor[z.type])} />
+                      <span
+                        className={cn(
+                          "absolute h-8 w-8 animate-ping rounded-full opacity-40",
+                          typeColor[z.type],
+                        )}
+                      />
                     )}
                     <span
                       className={cn(
@@ -111,7 +143,12 @@ function MapView() {
             <Metric label="Citizen Issues" value={String(selected.citizenIssues)} />
             <div className="flex items-center justify-between rounded-lg bg-secondary/60 px-3 py-3">
               <span className="text-sm text-muted-foreground">Conflict Probability</span>
-              <span className={cn("flex items-center gap-1 text-sm font-semibold", probColor[selected.conflictProbability])}>
+              <span
+                className={cn(
+                  "flex items-center gap-1 text-sm font-semibold",
+                  probColor[selected.conflictProbability],
+                )}
+              >
                 <AlertTriangle className="h-4 w-4" /> {selected.conflictProbability}
               </span>
             </div>

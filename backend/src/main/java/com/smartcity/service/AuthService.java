@@ -3,6 +3,7 @@ package com.smartcity.service;
 import com.smartcity.dto.AuthResponse;
 import com.smartcity.dto.LoginRequest;
 import com.smartcity.dto.RegisterRequest;
+import com.smartcity.entity.Role;
 import com.smartcity.entity.User;
 import com.smartcity.exception.BadRequestException;
 import com.smartcity.exception.ResourceNotFoundException;
@@ -34,7 +35,7 @@ public class AuthService {
         user.setPassword(passwordEncoder.encode(req.getPassword()));
         user.setDepartment(req.getDepartment());
         user.setPhone(req.getPhone());
-        user.setRole(req.getRole());
+        user.setRole(Role.fromValue(req.getRole()));
         User saved = userRepository.save(user);
         String token = jwtUtil.generateToken(saved, saved.getRole().name());
         return new AuthResponse(saved.getId(), saved.getName(), saved.getEmail(),

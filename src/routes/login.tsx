@@ -10,19 +10,41 @@ export const Route = createFileRoute("/login")({
   head: () => ({
     meta: [
       { title: "Login — SmartCity OS" },
-      { name: "description", content: "Sign in or register as a Citizen, Department Officer, or Administrator." },
+      {
+        name: "description",
+        content: "Sign in or register as a Citizen, Department Officer, or Administrator.",
+      },
     ],
   }),
   component: LoginPage,
 });
 
 const roles = [
-  { id: "citizen", label: "Citizen", desc: "Report & track civic issues", icon: User, to: "/citizen" },
-  { id: "officer", label: "Department Officer", desc: "Manage projects & resources", icon: Briefcase, to: "/officer" },
-  { id: "admin", label: "Administrator", desc: "City-wide analytics & AI", icon: ShieldCheck, to: "/admin" },
+  {
+    id: "citizen",
+    label: "Citizen",
+    desc: "Report & track civic issues",
+    icon: User,
+    to: "/citizen",
+  },
+  {
+    id: "officer",
+    label: "Department Officer",
+    desc: "Manage projects & resources",
+    icon: Briefcase,
+    to: "/officer",
+  },
+  {
+    id: "admin",
+    label: "Administrator",
+    desc: "City-wide analytics & AI",
+    icon: ShieldCheck,
+    to: "/admin",
+  },
 ] as const;
 
-const field = "mt-1 w-full rounded-lg border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring";
+const field =
+  "mt-1 w-full rounded-lg border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring";
 
 function LoginPage() {
   const [tab, setTab] = useState<"login" | "register">("login");
@@ -31,8 +53,8 @@ function LoginPage() {
   const navigate = useNavigate();
 
   // Login state
-  const [email, setEmail] = useState("officer@smartcity.gov");
-  const [password, setPassword] = useState("demo1234");
+  const [email, setEmail] = useState("");
+  const [password, setPassword] = useState("");
 
   // Register state
   const [regName, setRegName] = useState("");
@@ -99,7 +121,8 @@ function LoginPage() {
             Coordinated planning for a smarter city.
           </h2>
           <p className="mt-4 max-w-md text-primary-foreground/80">
-            Citizen civic data, department project data and AI analysis — unified in one intelligent platform.
+            Citizen civic data, department project data and AI analysis — unified in one intelligent
+            platform.
           </p>
         </div>
         <p className="text-sm text-primary-foreground/70">© 2026 SmartCity OS</p>
@@ -118,15 +141,23 @@ function LoginPage() {
           <div className="flex rounded-xl border bg-muted p-1 mb-6">
             <button
               onClick={() => setTab("login")}
-              className={cn("flex-1 rounded-lg py-2 text-sm font-medium transition-colors",
-                tab === "login" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground")}
+              className={cn(
+                "flex-1 rounded-lg py-2 text-sm font-medium transition-colors",
+                tab === "login"
+                  ? "bg-card text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground",
+              )}
             >
               Login
             </button>
             <button
               onClick={() => setTab("register")}
-              className={cn("flex-1 rounded-lg py-2 text-sm font-medium transition-colors",
-                tab === "register" ? "bg-card text-foreground shadow-sm" : "text-muted-foreground hover:text-foreground")}
+              className={cn(
+                "flex-1 rounded-lg py-2 text-sm font-medium transition-colors",
+                tab === "register"
+                  ? "bg-card text-foreground shadow-sm"
+                  : "text-muted-foreground hover:text-foreground",
+              )}
             >
               Register
             </button>
@@ -143,15 +174,22 @@ function LoginPage() {
                   type="button"
                   onClick={() => {
                     setRole(r);
-                    if (tab === "login") setEmail(`${r.id}@smartcity.gov`);
                   }}
                   className={cn(
                     "flex w-full items-center gap-4 rounded-xl border p-3 text-left transition-colors",
-                    active ? "border-primary bg-primary/5 ring-1 ring-primary" : "bg-card hover:bg-accent/40",
+                    active
+                      ? "border-primary bg-primary/5 ring-1 ring-primary"
+                      : "bg-card hover:bg-accent/40",
                   )}
                 >
-                  <div className={cn("grid h-9 w-9 shrink-0 place-items-center rounded-lg",
-                    active ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground")}>
+                  <div
+                    className={cn(
+                      "grid h-9 w-9 shrink-0 place-items-center rounded-lg",
+                      active
+                        ? "bg-primary text-primary-foreground"
+                        : "bg-muted text-muted-foreground",
+                    )}
+                  >
                     <r.icon className="h-4 w-4" />
                   </div>
                   <div className="min-w-0">
@@ -168,18 +206,36 @@ function LoginPage() {
             <div className="space-y-3">
               <div>
                 <label className="text-sm font-medium text-foreground">Email</label>
-                <input type="email" value={email} onChange={(e) => setEmail(e.target.value)} className={field} />
+                <input
+                  type="email"
+                  value={email}
+                  onChange={(e) => setEmail(e.target.value)}
+                  className={field}
+                />
               </div>
               <div>
                 <label className="text-sm font-medium text-foreground">Password</label>
-                <input type="password" value={password} onChange={(e) => setPassword(e.target.value)} className={field} />
+                <input
+                  type="password"
+                  value={password}
+                  onChange={(e) => setPassword(e.target.value)}
+                  className={field}
+                />
               </div>
               <Button className="mt-2 w-full" size="lg" onClick={handleLogin} disabled={loading}>
-                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Login as {role.label} <ArrowRight className="h-4 w-4" /></>}
+                {loading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <>
+                    Login as {role.label} <ArrowRight className="h-4 w-4" />
+                  </>
+                )}
               </Button>
               <p className="text-center text-xs text-muted-foreground">
                 No account?{" "}
-                <button onClick={() => setTab("register")} className="text-primary underline">Register here</button>
+                <button onClick={() => setTab("register")} className="text-primary underline">
+                  Register here
+                </button>
               </p>
             </div>
           )}
@@ -189,38 +245,84 @@ function LoginPage() {
             <div className="space-y-3">
               <div>
                 <label className="text-sm font-medium text-foreground">Full Name</label>
-                <input value={regName} onChange={(e) => setRegName(e.target.value)} placeholder="e.g. Arjun Kumar" className={field} />
+                <input
+                  value={regName}
+                  onChange={(e) => setRegName(e.target.value)}
+                  placeholder="e.g. Arjun Kumar"
+                  className={field}
+                />
               </div>
               <div>
                 <label className="text-sm font-medium text-foreground">Email</label>
-                <input type="email" value={regEmail} onChange={(e) => setRegEmail(e.target.value)} placeholder="e.g. arjun@smartcity.gov" className={field} />
+                <input
+                  type="email"
+                  value={regEmail}
+                  onChange={(e) => setRegEmail(e.target.value)}
+                  placeholder="e.g. arjun@smartcity.gov"
+                  className={field}
+                />
               </div>
               <div>
                 <label className="text-sm font-medium text-foreground">Password</label>
-                <input type="password" value={regPassword} onChange={(e) => setRegPassword(e.target.value)} placeholder="Min 6 characters" className={field} />
+                <input
+                  type="password"
+                  value={regPassword}
+                  onChange={(e) => setRegPassword(e.target.value)}
+                  placeholder="Min 6 characters"
+                  className={field}
+                />
               </div>
               {role.id === "citizen" && (
                 <div>
-                  <label className="text-sm font-medium text-foreground">Mobile Number <span className="text-muted-foreground">(optional)</span></label>
-                  <input type="tel" value={regPhone} onChange={(e) => setRegPhone(e.target.value)} placeholder="e.g. 9876543210" maxLength={10} className={field} />
+                  <label className="text-sm font-medium text-foreground">
+                    Mobile Number <span className="text-muted-foreground">(optional)</span>
+                  </label>
+                  <input
+                    type="tel"
+                    value={regPhone}
+                    onChange={(e) => setRegPhone(e.target.value)}
+                    placeholder="e.g. 9876543210"
+                    maxLength={10}
+                    className={field}
+                  />
                 </div>
               )}
               {(role.id === "officer" || role.id === "admin") && (
                 <div>
                   <label className="text-sm font-medium text-foreground">Department</label>
-                  <select value={regDepartment} onChange={(e) => setRegDepartment(e.target.value)} className={field}>
-                    {["Road", "Water", "Electricity", "Drainage", "Waste Management", "IT", "Admin"].map((d) => (
+                  <select
+                    value={regDepartment}
+                    onChange={(e) => setRegDepartment(e.target.value)}
+                    className={field}
+                  >
+                    {[
+                      "Road",
+                      "Water",
+                      "Electricity",
+                      "Drainage",
+                      "Waste Management",
+                      "IT",
+                      "Admin",
+                    ].map((d) => (
                       <option key={d}>{d}</option>
                     ))}
                   </select>
                 </div>
               )}
               <Button className="mt-2 w-full" size="lg" onClick={handleRegister} disabled={loading}>
-                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Register as {role.label} <ArrowRight className="h-4 w-4" /></>}
+                {loading ? (
+                  <Loader2 className="h-4 w-4 animate-spin" />
+                ) : (
+                  <>
+                    Register as {role.label} <ArrowRight className="h-4 w-4" />
+                  </>
+                )}
               </Button>
               <p className="text-center text-xs text-muted-foreground">
                 Already have an account?{" "}
-                <button onClick={() => setTab("login")} className="text-primary underline">Login here</button>
+                <button onClick={() => setTab("login")} className="text-primary underline">
+                  Login here
+                </button>
               </p>
             </div>
           )}

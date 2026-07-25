@@ -1,1 +1,1 @@
-"# Smart_City_AI" 
+"# Smart_City_AI\n\n## Run ML service separately\n\nStart the Python ML service in a separate terminal:\n\n`bash\ncd ml_service\npython app.py\n`\n\nThe service will be available at http://localhost:8000 and the backend is configured to call it through the existing ML client.\n"

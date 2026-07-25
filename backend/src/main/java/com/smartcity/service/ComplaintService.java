@@ -13,9 +13,11 @@ import java.util.List;
 public class ComplaintService {
 
     private final ComplaintRepository repo;
+    private final EmailService emailService;
 
-    public ComplaintService(ComplaintRepository repo) {
+    public ComplaintService(ComplaintRepository repo, EmailService emailService) {
         this.repo = repo;
+        this.emailService = emailService;
     }
 
     public ComplaintResponse create(ComplaintRequest req) {
@@ -28,7 +30,16 @@ public class ComplaintService {
         c.setImageUrl(req.getImageUrl());
         c.setStatus("SUBMITTED");
         c.setProgress(0);
-        return toResponse(repo.save(c));
+        Complaint saved = repo.save(c);
+
+        emailService.sendAlertNotification(
+            "vbsattanathan@gmail.com",
+            "New Citizen Complaint: " + saved.getCategory() + " (" + saved.getZone() + ")",
+            "Citizen Complaint Submitted by " + saved.getUserName(),
+            "Category: " + saved.getCategory() + "\nZone: " + saved.getZone() + "\nDescription: " + saved.getDescription()
+        );
+
+        return toResponse(saved);
     }
 
     public List<ComplaintResponse> getByUser(Long userId) {
@@ -49,7 +60,16 @@ public class ComplaintService {
                 .orElseThrow(() -> new ResourceNotFoundException("Complaint not found: " + id));
         c.setStatus(status);
         c.setProgress(progress);
-        return toResponse(repo.save(c));
+        Complaint saved = repo.save(c);
+
+        emailService.sendAlertNotification(
+            "vbsattanathan@gmail.com",
+            "Complaint Progress Update #" + saved.getId() + " - " + status,
+            "Complaint Status Changed to " + status + " (" + progress + "%)",
+            "Complaint #" + saved.getId() + " (" + saved.getCategory() + " in " + saved.getZone() + ") updated to " + status + " with " + progress + "% progress."
+        );
+
+        return toResponse(saved);
     }
 
     private ComplaintResponse toResponse(Complaint c) {

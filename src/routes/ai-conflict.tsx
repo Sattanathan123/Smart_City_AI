@@ -1,12 +1,6 @@
 import { createFileRoute } from "@tanstack/react-router";
 import { useState } from "react";
-import {
-  TriangleAlert,
-  BrainCircuit,
-  Loader2,
-  CheckCircle2,
-  ShieldCheck,
-} from "lucide-react";
+import { TriangleAlert, BrainCircuit, Loader2, CheckCircle2, ShieldCheck } from "lucide-react";
 import { DashboardShell } from "@/components/DashboardShell";
 import { Button } from "@/components/ui/button";
 const DEPARTMENTS = ["Road", "Water", "Electricity", "Drainage", "Waste Management"];
@@ -18,7 +12,10 @@ export const Route = createFileRoute("/ai-conflict")({
   head: () => ({
     meta: [
       { title: "AI Project Conflict Detection — SmartCity OS" },
-      { name: "description", content: "AI-powered analysis of overlapping projects, timelines, and resources." },
+      {
+        name: "description",
+        content: "AI-powered analysis of overlapping projects, timelines, and resources.",
+      },
     ],
   }),
   component: AIConflictPage,
@@ -61,7 +58,15 @@ function AIConflictPage() {
     try {
       const res = await predictApi.predict(form);
       setResult(res);
-      toast.success("AI prediction complete");
+      if (res.prediction?.conflictPrediction === "Conflict") {
+        toast.warning(
+          `AI Alert: Spatial/Resource conflict predicted for ${res.projectName}! Notification published.`
+        );
+      } else {
+        toast.success(
+          `AI Prediction Complete: Classified as ${res.prediction?.priorityPrediction ?? "Medium"} Priority.`
+        );
+      }
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : "Prediction failed");
     } finally {
@@ -74,7 +79,10 @@ function AIConflictPage() {
   const confidence = pred ? Math.round(pred.conflictProbability * 100) : null;
 
   return (
-    <DashboardShell title="AI Project Conflict Detection" subtitle="Automated cross-department analysis">
+    <DashboardShell
+      title="AI Project Conflict Detection"
+      subtitle="Automated cross-department analysis"
+    >
       <div className="mb-6 flex items-start gap-3 rounded-xl border border-primary/20 bg-primary/5 p-4">
         <div className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-primary text-primary-foreground">
           <BrainCircuit className="h-5 w-5" />
@@ -92,68 +100,148 @@ function AIConflictPage() {
           <form className="space-y-3" onSubmit={handlePredict}>
             <div>
               <label className="text-sm font-medium text-foreground">Project Name</label>
-              <input value={form.projectName} onChange={(e) => set("projectName", e.target.value)} placeholder="e.g. Water Pipeline Zone 5" className={field} />
+              <input
+                value={form.projectName}
+                onChange={(e) => set("projectName", e.target.value)}
+                placeholder="e.g. Water Pipeline Zone 5"
+                className={field}
+              />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="text-sm font-medium text-foreground">Department</label>
-                <select value={form.department} onChange={(e) => set("department", e.target.value)} className={field}>
-                  {DEPARTMENTS.map((d) => <option key={d}>{d}</option>)}
+                <select
+                  value={form.department}
+                  onChange={(e) => set("department", e.target.value)}
+                  className={field}
+                >
+                  {DEPARTMENTS.map((d) => (
+                    <option key={d}>{d}</option>
+                  ))}
                 </select>
               </div>
               <div>
                 <label className="text-sm font-medium text-foreground">Zone</label>
-                <select value={form.zone} onChange={(e) => set("zone", e.target.value)} className={field}>
-                  {["Zone 1", "Zone 2", "Zone 3", "Zone 4", "Zone 5", "Zone 6", "Zone 7"].map((z) => <option key={z}>{z}</option>)}
+                <select
+                  value={form.zone}
+                  onChange={(e) => set("zone", e.target.value)}
+                  className={field}
+                >
+                  {["Zone 1", "Zone 2", "Zone 3", "Zone 4", "Zone 5", "Zone 6", "Zone 7"].map(
+                    (z) => (
+                      <option key={z}>{z}</option>
+                    ),
+                  )}
                 </select>
               </div>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="text-sm font-medium text-foreground">Project Type</label>
-                <select value={form.projectType} onChange={(e) => set("projectType", e.target.value)} className={field}>
-                  {["Infrastructure", "Construction", "Maintenance", "Smart Infra"].map((t) => <option key={t}>{t}</option>)}
+                <select
+                  value={form.projectType}
+                  onChange={(e) => set("projectType", e.target.value)}
+                  className={field}
+                >
+                  {["Infrastructure", "Construction", "Maintenance", "Smart Infra"].map((t) => (
+                    <option key={t}>{t}</option>
+                  ))}
                 </select>
               </div>
               <div>
                 <label className="text-sm font-medium text-foreground">Budget (Lakhs)</label>
-                <input type="number" value={form.budgetLakhs} onChange={(e) => set("budgetLakhs", Number(e.target.value))} className={field} />
+                <input
+                  type="number"
+                  value={form.budgetLakhs}
+                  onChange={(e) => set("budgetLakhs", Number(e.target.value))}
+                  className={field}
+                />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="text-sm font-medium text-foreground">Duration (Days)</label>
-                <input type="number" value={form.durationDays} onChange={(e) => set("durationDays", Number(e.target.value))} className={field} />
+                <input
+                  type="number"
+                  value={form.durationDays}
+                  onChange={(e) => set("durationDays", Number(e.target.value))}
+                  className={field}
+                />
               </div>
               <div>
-                <label className="text-sm font-medium text-foreground">Traffic Density (1-10)</label>
-                <input type="number" min={1} max={10} value={form.trafficDensity} onChange={(e) => set("trafficDensity", Number(e.target.value))} className={field} />
+                <label className="text-sm font-medium text-foreground">
+                  Traffic Density (1-10)
+                </label>
+                <input
+                  type="number"
+                  min={1}
+                  max={10}
+                  value={form.trafficDensity}
+                  onChange={(e) => set("trafficDensity", Number(e.target.value))}
+                  className={field}
+                />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="text-sm font-medium text-foreground">Weather Risk (1-10)</label>
-                <input type="number" min={1} max={10} value={form.weatherRisk} onChange={(e) => set("weatherRisk", Number(e.target.value))} className={field} />
+                <input
+                  type="number"
+                  min={1}
+                  max={10}
+                  value={form.weatherRisk}
+                  onChange={(e) => set("weatherRisk", Number(e.target.value))}
+                  className={field}
+                />
               </div>
               <div>
                 <label className="text-sm font-medium text-foreground">Citizen Impact (1-10)</label>
-                <input type="number" min={1} max={10} value={form.citizenImpact} onChange={(e) => set("citizenImpact", Number(e.target.value))} className={field} />
+                <input
+                  type="number"
+                  min={1}
+                  max={10}
+                  value={form.citizenImpact}
+                  onChange={(e) => set("citizenImpact", Number(e.target.value))}
+                  className={field}
+                />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <label className="text-sm font-medium text-foreground">Resource Req. (1-10)</label>
-                <input type="number" min={1} max={10} value={form.resourceRequirement} onChange={(e) => set("resourceRequirement", Number(e.target.value))} className={field} />
+                <input
+                  type="number"
+                  min={1}
+                  max={10}
+                  value={form.resourceRequirement}
+                  onChange={(e) => set("resourceRequirement", Number(e.target.value))}
+                  className={field}
+                />
               </div>
               <div>
-                <label className="text-sm font-medium text-foreground">Contractor Avail. (1-10)</label>
-                <input type="number" min={1} max={10} value={form.contractorAvailability} onChange={(e) => set("contractorAvailability", Number(e.target.value))} className={field} />
+                <label className="text-sm font-medium text-foreground">
+                  Contractor Avail. (1-10)
+                </label>
+                <input
+                  type="number"
+                  min={1}
+                  max={10}
+                  value={form.contractorAvailability}
+                  onChange={(e) => set("contractorAvailability", Number(e.target.value))}
+                  className={field}
+                />
               </div>
             </div>
             <Button type="submit" className="w-full" disabled={loading}>
-              {loading
-                ? <><Loader2 className="h-4 w-4 animate-spin" /> Analyzing…</>
-                : <><BrainCircuit className="h-4 w-4" /> Run AI Prediction</>}
+              {loading ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin" /> Analyzing…
+                </>
+              ) : (
+                <>
+                  <BrainCircuit className="h-4 w-4" /> Run AI Prediction
+                </>
+              )}
             </Button>
           </form>
         </section>
@@ -176,12 +264,18 @@ function AIConflictPage() {
 
           {result && pred && (
             <div className="space-y-4">
-              <div className={`rounded-xl border p-4 ${isConflict ? "border-destructive/30 bg-destructive/5" : "border-success/30 bg-success/5"}`}>
+              <div
+                className={`rounded-xl border p-4 ${isConflict ? "border-destructive/30 bg-destructive/5" : "border-success/30 bg-success/5"}`}
+              >
                 <div className="flex items-center gap-2">
-                  {isConflict
-                    ? <TriangleAlert className="h-5 w-5 text-destructive" />
-                    : <ShieldCheck className="h-5 w-5 text-success" />}
-                  <span className={`font-semibold ${isConflict ? "text-destructive" : "text-success"}`}>
+                  {isConflict ? (
+                    <TriangleAlert className="h-5 w-5 text-destructive" />
+                  ) : (
+                    <ShieldCheck className="h-5 w-5 text-success" />
+                  )}
+                  <span
+                    className={`font-semibold ${isConflict ? "text-destructive" : "text-success"}`}
+                  >
                     {isConflict ? "Conflict Detected" : "No Conflict"}
                   </span>
                 </div>
@@ -194,16 +288,29 @@ function AIConflictPage() {
 
               <div className="flex items-center justify-between rounded-xl border bg-background p-4">
                 <div>
-                  <p className="text-xs text-muted-foreground uppercase tracking-wide">Conflict Probability</p>
+                  <p className="text-xs text-muted-foreground uppercase tracking-wide">
+                    Conflict Probability
+                  </p>
                   <p className="mt-1 text-3xl font-bold text-foreground">{confidence}%</p>
                 </div>
                 <div className="relative grid h-20 w-20 place-items-center">
                   <svg className="h-20 w-20 -rotate-90" viewBox="0 0 100 100">
-                    <circle cx="50" cy="50" r="42" fill="none" stroke="var(--color-muted)" strokeWidth="10" />
                     <circle
-                      cx="50" cy="50" r="42" fill="none"
+                      cx="50"
+                      cy="50"
+                      r="42"
+                      fill="none"
+                      stroke="var(--color-muted)"
+                      strokeWidth="10"
+                    />
+                    <circle
+                      cx="50"
+                      cy="50"
+                      r="42"
+                      fill="none"
                       stroke={isConflict ? "var(--color-destructive)" : "var(--color-chart-2)"}
-                      strokeWidth="10" strokeLinecap="round"
+                      strokeWidth="10"
+                      strokeLinecap="round"
                       strokeDasharray={`${2 * Math.PI * 42}`}
                       strokeDashoffset={`${2 * Math.PI * 42 * (1 - (pred.conflictProbability ?? 0))}`}
                     />
@@ -214,7 +321,9 @@ function AIConflictPage() {
 
               <div className="flex items-center justify-between rounded-xl border bg-background p-4">
                 <div>
-                  <p className="text-xs text-muted-foreground uppercase tracking-wide">Priority Level</p>
+                  <p className="text-xs text-muted-foreground uppercase tracking-wide">
+                    Priority Level
+                  </p>
                   <div className="mt-2">
                     <PriorityBadge priority={pred.priorityPrediction} />
                   </div>
@@ -223,9 +332,13 @@ function AIConflictPage() {
               </div>
 
               <div className="rounded-xl border bg-background p-4">
-                <p className="text-xs text-muted-foreground uppercase tracking-wide">Project Saved</p>
+                <p className="text-xs text-muted-foreground uppercase tracking-wide">
+                  Project Saved
+                </p>
                 <p className="mt-1 font-medium text-foreground">{result.projectName}</p>
-                <p className="text-xs text-muted-foreground">{result.department} · {result.zone} · ID #{result.id}</p>
+                <p className="text-xs text-muted-foreground">
+                  {result.department} · {result.zone} · ID #{result.id}
+                </p>
               </div>
             </div>
           )}

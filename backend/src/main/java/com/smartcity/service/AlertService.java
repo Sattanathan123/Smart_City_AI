@@ -12,9 +12,11 @@ import java.util.List;
 public class AlertService {
 
     private final AlertRepository repo;
+    private final EmailService emailService;
 
-    public AlertService(AlertRepository repo) {
+    public AlertService(AlertRepository repo, EmailService emailService) {
         this.repo = repo;
+        this.emailService = emailService;
     }
 
     public List<AlertResponse> getActive() {
@@ -23,7 +25,16 @@ public class AlertService {
 
     public AlertResponse create(Alert alert) {
         alert.setActive(true);
-        return toResponse(repo.save(alert));
+        Alert saved = repo.save(alert);
+
+        emailService.sendAlertNotification(
+            "vbsattanathan@gmail.com",
+            saved.getTitle(),
+            saved.getTitle(),
+            saved.getDescription()
+        );
+
+        return toResponse(saved);
     }
 
     public void dismiss(Long id) {
