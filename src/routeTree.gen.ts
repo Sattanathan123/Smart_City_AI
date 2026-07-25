@@ -10,11 +10,15 @@
 
 import { Route as rootRouteImport } from './routes/__root'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
+import { Route as ResourceOptimizationRouteImport } from './routes/resource-optimization'
 import { Route as ProjectsRouteImport } from './routes/projects'
 import { Route as OfficerRouteImport } from './routes/officer'
 import { Route as MapRouteImport } from './routes/map'
 import { Route as LoginRouteImport } from './routes/login'
+import { Route as GisMapRouteImport } from './routes/gis-map'
+import { Route as ConflictHeatmapRouteImport } from './routes/conflict-heatmap'
 import { Route as CitizenRouteImport } from './routes/citizen'
+import { Route as AuditLogsRouteImport } from './routes/audit-logs'
 import { Route as AiConflictRouteImport } from './routes/ai-conflict'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
@@ -22,6 +26,11 @@ import { Route as IndexRouteImport } from './routes/index'
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ResourceOptimizationRoute = ResourceOptimizationRouteImport.update({
+  id: '/resource-optimization',
+  path: '/resource-optimization',
   getParentRoute: () => rootRouteImport,
 } as any)
 const ProjectsRoute = ProjectsRouteImport.update({
@@ -44,9 +53,24 @@ const LoginRoute = LoginRouteImport.update({
   path: '/login',
   getParentRoute: () => rootRouteImport,
 } as any)
+const GisMapRoute = GisMapRouteImport.update({
+  id: '/gis-map',
+  path: '/gis-map',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const ConflictHeatmapRoute = ConflictHeatmapRouteImport.update({
+  id: '/conflict-heatmap',
+  path: '/conflict-heatmap',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const CitizenRoute = CitizenRouteImport.update({
   id: '/citizen',
   path: '/citizen',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const AuditLogsRoute = AuditLogsRouteImport.update({
+  id: '/audit-logs',
+  path: '/audit-logs',
   getParentRoute: () => rootRouteImport,
 } as any)
 const AiConflictRoute = AiConflictRouteImport.update({
@@ -69,22 +93,30 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/ai-conflict': typeof AiConflictRoute
+  '/audit-logs': typeof AuditLogsRoute
   '/citizen': typeof CitizenRoute
+  '/conflict-heatmap': typeof ConflictHeatmapRoute
+  '/gis-map': typeof GisMapRoute
   '/login': typeof LoginRoute
   '/map': typeof MapRoute
   '/officer': typeof OfficerRoute
   '/projects': typeof ProjectsRoute
+  '/resource-optimization': typeof ResourceOptimizationRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/ai-conflict': typeof AiConflictRoute
+  '/audit-logs': typeof AuditLogsRoute
   '/citizen': typeof CitizenRoute
+  '/conflict-heatmap': typeof ConflictHeatmapRoute
+  '/gis-map': typeof GisMapRoute
   '/login': typeof LoginRoute
   '/map': typeof MapRoute
   '/officer': typeof OfficerRoute
   '/projects': typeof ProjectsRoute
+  '/resource-optimization': typeof ResourceOptimizationRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
 }
 export interface FileRoutesById {
@@ -92,11 +124,15 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRoute
   '/ai-conflict': typeof AiConflictRoute
+  '/audit-logs': typeof AuditLogsRoute
   '/citizen': typeof CitizenRoute
+  '/conflict-heatmap': typeof ConflictHeatmapRoute
+  '/gis-map': typeof GisMapRoute
   '/login': typeof LoginRoute
   '/map': typeof MapRoute
   '/officer': typeof OfficerRoute
   '/projects': typeof ProjectsRoute
+  '/resource-optimization': typeof ResourceOptimizationRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
 }
 export interface FileRouteTypes {
@@ -105,33 +141,45 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/ai-conflict'
+    | '/audit-logs'
     | '/citizen'
+    | '/conflict-heatmap'
+    | '/gis-map'
     | '/login'
     | '/map'
     | '/officer'
     | '/projects'
+    | '/resource-optimization'
     | '/sitemap.xml'
   fileRoutesByTo: FileRoutesByTo
   to:
     | '/'
     | '/admin'
     | '/ai-conflict'
+    | '/audit-logs'
     | '/citizen'
+    | '/conflict-heatmap'
+    | '/gis-map'
     | '/login'
     | '/map'
     | '/officer'
     | '/projects'
+    | '/resource-optimization'
     | '/sitemap.xml'
   id:
     | '__root__'
     | '/'
     | '/admin'
     | '/ai-conflict'
+    | '/audit-logs'
     | '/citizen'
+    | '/conflict-heatmap'
+    | '/gis-map'
     | '/login'
     | '/map'
     | '/officer'
     | '/projects'
+    | '/resource-optimization'
     | '/sitemap.xml'
   fileRoutesById: FileRoutesById
 }
@@ -139,11 +187,15 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRoute
   AiConflictRoute: typeof AiConflictRoute
+  AuditLogsRoute: typeof AuditLogsRoute
   CitizenRoute: typeof CitizenRoute
+  ConflictHeatmapRoute: typeof ConflictHeatmapRoute
+  GisMapRoute: typeof GisMapRoute
   LoginRoute: typeof LoginRoute
   MapRoute: typeof MapRoute
   OfficerRoute: typeof OfficerRoute
   ProjectsRoute: typeof ProjectsRoute
+  ResourceOptimizationRoute: typeof ResourceOptimizationRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
 }
 
@@ -154,6 +206,13 @@ declare module '@tanstack/react-router' {
       path: '/sitemap.xml'
       fullPath: '/sitemap.xml'
       preLoaderRoute: typeof SitemapDotxmlRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/resource-optimization': {
+      id: '/resource-optimization'
+      path: '/resource-optimization'
+      fullPath: '/resource-optimization'
+      preLoaderRoute: typeof ResourceOptimizationRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/projects': {
@@ -184,11 +243,32 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof LoginRouteImport
       parentRoute: typeof rootRouteImport
     }
+    '/gis-map': {
+      id: '/gis-map'
+      path: '/gis-map'
+      fullPath: '/gis-map'
+      preLoaderRoute: typeof GisMapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/conflict-heatmap': {
+      id: '/conflict-heatmap'
+      path: '/conflict-heatmap'
+      fullPath: '/conflict-heatmap'
+      preLoaderRoute: typeof ConflictHeatmapRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/citizen': {
       id: '/citizen'
       path: '/citizen'
       fullPath: '/citizen'
       preLoaderRoute: typeof CitizenRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/audit-logs': {
+      id: '/audit-logs'
+      path: '/audit-logs'
+      fullPath: '/audit-logs'
+      preLoaderRoute: typeof AuditLogsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ai-conflict': {
@@ -219,11 +299,15 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRoute,
   AiConflictRoute: AiConflictRoute,
+  AuditLogsRoute: AuditLogsRoute,
   CitizenRoute: CitizenRoute,
+  ConflictHeatmapRoute: ConflictHeatmapRoute,
+  GisMapRoute: GisMapRoute,
   LoginRoute: LoginRoute,
   MapRoute: MapRoute,
   OfficerRoute: OfficerRoute,
   ProjectsRoute: ProjectsRoute,
+  ResourceOptimizationRoute: ResourceOptimizationRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
 }
 export const routeTree = rootRouteImport

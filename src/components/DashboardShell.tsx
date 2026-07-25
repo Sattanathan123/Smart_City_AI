@@ -5,10 +5,12 @@ import {
   TriangleAlert,
   Map,
   FileBarChart,
-  Building2,
   LogOut,
   Menu,
   X,
+  Flame,
+  Cpu,
+  ShieldCheck,
 } from "lucide-react";
 import { type ReactNode, useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
@@ -18,9 +20,12 @@ import { NotificationsPopover } from "@/components/NotificationsPopover";
 const navItems = [
   { title: "Dashboard", url: "/officer", icon: LayoutDashboard },
   { title: "Projects", url: "/projects", icon: FolderKanban },
-  { title: "AI Conflicts", url: "/ai-conflict", icon: TriangleAlert },
-  { title: "Map View", url: "/map", icon: Map },
-  { title: "Analytics", url: "/admin", icon: FileBarChart },
+  { title: "Predictive Conflicts", url: "/ai-conflict", icon: TriangleAlert },
+  { title: "GIS Map View", url: "/gis-map", icon: Map },
+  { title: "Spatial Heatmap", url: "/conflict-heatmap", icon: Flame },
+  { title: "Resource Engine", url: "/resource-optimization", icon: Cpu },
+  { title: "Analytics & Reports", url: "/admin", icon: FileBarChart },
+  { title: "Security Audit Logs", url: "/audit-logs", icon: ShieldCheck },
 ];
 
 export function DashboardShell({
@@ -65,12 +70,12 @@ export function DashboardShell({
       >
         <div className="flex h-16 items-center justify-between border-b border-sidebar-border px-5">
           <div className="flex items-center gap-2 min-w-0">
-            <div className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-sidebar-primary text-sidebar-primary-foreground">
-              <Building2 className="h-5 w-5" />
+            <div className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-cyan-500 text-slate-950 font-black">
+              UP
             </div>
             <div className="min-w-0">
-              <p className="truncate text-sm font-semibold">SmartCity OS</p>
-              <p className="truncate text-xs text-sidebar-foreground/60">Civic Intelligence</p>
+              <p className="truncate text-sm font-extrabold text-cyan-400">URBAN PULSE</p>
+              <p className="truncate text-[10px] text-sidebar-foreground/60">Urban Infrastructure System</p>
             </div>
           </div>
           <button
@@ -82,8 +87,8 @@ export function DashboardShell({
         </div>
 
         <nav className="flex-1 space-y-1 overflow-y-auto p-3">
-          <p className="px-3 pb-2 pt-3 text-xs font-medium uppercase tracking-wider text-sidebar-foreground/50">
-            Resources
+          <p className="px-3 pb-2 pt-3 text-[10px] font-bold uppercase tracking-wider text-sidebar-foreground/50">
+            System Modules
           </p>
           {navItems.map((item) => {
             const active = pathname === item.url;
@@ -93,9 +98,9 @@ export function DashboardShell({
                 to={item.url}
                 onClick={() => setOpen(false)}
                 className={cn(
-                  "flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium transition-colors",
+                  "flex items-center gap-3 rounded-lg px-3 py-2 text-xs font-medium transition-colors",
                   active
-                    ? "bg-sidebar-primary text-sidebar-primary-foreground"
+                    ? "bg-sidebar-primary text-sidebar-primary-foreground font-bold shadow-sm"
                     : "text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
                 )}
               >
@@ -122,7 +127,7 @@ export function DashboardShell({
           )}
           <Link
             to="/login"
-            className="flex items-center gap-3 rounded-lg px-3 py-2.5 text-sm font-medium text-sidebar-foreground/80 hover:bg-sidebar-accent"
+            className="flex items-center gap-3 rounded-lg px-3 py-2 text-xs font-medium text-sidebar-foreground/80 hover:bg-sidebar-accent"
           >
             <LogOut className="h-4 w-4" /> Sign out
           </Link>
@@ -148,7 +153,7 @@ export function DashboardShell({
             <Menu className="h-4 w-4" />
           </Button>
           <div className="min-w-0 flex-1">
-            <h1 className="truncate text-base font-semibold text-foreground sm:text-lg">{title}</h1>
+            <h1 className="truncate text-base font-bold text-foreground sm:text-lg">{title}</h1>
             {subtitle && (
               <p className="truncate text-xs text-muted-foreground sm:text-sm">{subtitle}</p>
             )}
@@ -189,9 +194,9 @@ export function StatCard({
 }) {
   const accentMap: Record<string, string> = {
     primary: "bg-primary/10 text-primary",
-    success: "bg-success/10 text-success",
-    warning: "bg-warning/15 text-warning",
-    destructive: "bg-destructive/10 text-destructive",
+    success: "bg-emerald-500/10 text-emerald-600",
+    warning: "bg-amber-500/15 text-amber-600",
+    destructive: "bg-red-500/10 text-red-600",
   };
   return (
     <div className="rounded-xl border bg-card p-4 shadow-card sm:p-5">

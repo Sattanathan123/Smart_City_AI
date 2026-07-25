@@ -1,6 +1,6 @@
 const BASE = "http://localhost:8082/api";
 
-async function request<T>(path: string, options?: RequestInit): Promise<T> {
+export async function fetchWithAuth<T>(path: string, options?: RequestInit): Promise<T> {
   const user = (() => {
     if (typeof window === "undefined" || typeof sessionStorage === "undefined") return {};
     try {
@@ -23,6 +23,10 @@ async function request<T>(path: string, options?: RequestInit): Promise<T> {
   }
   if (res.status === 204) return undefined as T;
   return res.json();
+}
+
+async function request<T>(path: string, options?: RequestInit): Promise<T> {
+  return fetchWithAuth<T>(path, options);
 }
 
 // ── Auth ──────────────────────────────────────────────────────────────────────
@@ -76,6 +80,8 @@ export interface PredictionData {
   conflictProbability: number;
   conflictPrediction: string;
   priorityPrediction: string;
+  explanations?: string[];
+  recommendations?: string[];
   predictionTime: string;
 }
 
@@ -87,6 +93,8 @@ export interface ProjectData extends ProjectPayload {
   sanctionRemark: string | null;
   prediction: PredictionData | null;
 }
+
+export type Project = ProjectData;
 
 export const projectsApi = {
   getAll: () => request<ProjectData[]>("/projects"),
@@ -108,6 +116,8 @@ export const projectsApi = {
       body: JSON.stringify({ action, sanctionedBy, remark }),
     }),
 };
+
+export const fetchProjects = () => projectsApi.getAll();
 
 // ── Predict ───────────────────────────────────────────────────────────────────
 export const predictApi = {

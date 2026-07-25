@@ -1,4 +1,5 @@
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\service\AuthService.java
+C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\service\AuditLogService.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\config\AppConfig.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\dto\AuthResponse.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\exception\BadRequestException.java
@@ -23,13 +24,16 @@ C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\s
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\util\ProjectMapper.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\dto\UserResponse.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\controller\AlertController.java
+C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\entity\AuditLog.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\repository\UserRepository.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\service\ComplaintService.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\service\AlertService.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\service\ProjectService.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\config\WebConfig.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\controller\DashboardController.java
+C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\controller\AuditLogController.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\repository\ProjectRepository.java
+C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\repository\AuditLogRepository.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\ml\MlServiceClient.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\entity\Complaint.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\entity\Role.java

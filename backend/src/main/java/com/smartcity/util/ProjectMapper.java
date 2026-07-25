@@ -6,6 +6,9 @@ import com.smartcity.dto.ProjectResponse;
 import com.smartcity.entity.Prediction;
 import com.smartcity.entity.Project;
 
+import java.util.ArrayList;
+import java.util.List;
+
 public class ProjectMapper {
 
     public static Project toEntity(ProjectRequest req) {
@@ -51,19 +54,60 @@ public class ProjectMapper {
         res.setSanctionedBy(p.getSanctionedBy());
         res.setSanctionRemark(p.getSanctionRemark());
         if (p.getPrediction() != null) {
-            res.setPrediction(toPredictionResponse(p.getPrediction()));
+            res.setPrediction(toPredictionResponse(p.getPrediction(), p));
         }
         return res;
     }
 
-    public static PredictionResponse toPredictionResponse(Prediction pred) {
+    public static PredictionResponse toPredictionResponse(Prediction pred, Project p) {
         PredictionResponse res = new PredictionResponse();
         res.setId(pred.getId());
-        res.setProjectId(pred.getProject().getId());
+        if (pred.getProject() != null) {
+            res.setProjectId(pred.getProject().getId());
+        }
         res.setConflictProbability(pred.getConflictProbability());
         res.setConflictPrediction(pred.getConflictPrediction());
         res.setPriorityPrediction(pred.getPriorityPrediction());
         res.setPredictionTime(pred.getPredictionTime());
+
+        // Generate Explainable AI (XAI) Reasons & Recommendations
+        List<String> explanations = new ArrayList<>();
+        List<String> recommendations = new ArrayList<>();
+
+        if ("Conflict".equalsIgnoreCase(pred.getConflictPrediction()) || (pred.getConflictProbability() != null && pred.getConflictProbability() >= 0.5)) {
+            explanations.add("Spatial Overlap in " + (p != null ? p.getZone() : "Sector Area"));
+            explanations.add("Timeline & Schedule Overlap during peak construction window");
+            explanations.add("High Utility & Infrastructure Dependency Index");
+            explanations.add("Inter-departmental resource bottleneck");
+
+            recommendations.add("Reschedule Project start timeline by 5-10 Days");
+            recommendations.add("Merge execution with existing Road/Utility trenching");
+            recommendations.add("Allocate alternate contractor workforce team");
+            recommendations.add("Notify & hold joint inter-departmental review");
+        } else {
+            explanations.add("Clear spatial corridor with zero overlapping utility works");
+            explanations.add("Independent resource allocation schedule");
+            explanations.add("Low environmental & weather risk footprint");
+
+            recommendations.add("Proceed with standard scheduling approval");
+            recommendations.add("Routine monitoring during active phase");
+        }
+
+        if ("High".equalsIgnoreCase(pred.getPriorityPrediction())) {
+            explanations.add("High Population Density zone");
+            explanations.add("High Citizen Impact Rating");
+            explanations.add("Critical Public Service infrastructure dependency");
+
+            recommendations.add("Fast-track administrative approval");
+            recommendations.add("Allocate priority workforce & heavy machinery");
+        }
+
+        res.setExplanations(explanations);
+        res.setRecommendations(recommendations);
         return res;
+    }
+
+    public static PredictionResponse toPredictionResponse(Prediction pred) {
+        return toPredictionResponse(pred, pred.getProject());
     }
 }

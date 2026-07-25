@@ -53,6 +53,30 @@ class MlServiceTests(unittest.TestCase):
         body = response.get_json()
         self.assertIn('priorityPrediction', body)
 
+    def test_recommendations_model(self):
+        response = self.client.post('/predict/recommendations', json={
+            'department': 'Road',
+            'zone': 'Zone 5',
+            'conflictProbability': 0.85,
+            'priorityPrediction': 'High',
+        })
+        self.assertEqual(response.status_code, 200)
+        body = response.get_json()
+        self.assertIn('explanations', body)
+        self.assertIn('recommendations', body)
+        self.assertTrue(len(body['recommendations']) > 0)
+
+    def test_resource_optimization_model(self):
+        response = self.client.post('/predict/resource-optimization', json={
+            'department': 'Water',
+            'zone': 'Zone 5',
+            'budgetLakhs': 50,
+        })
+        self.assertEqual(response.status_code, 200)
+        body = response.get_json()
+        self.assertIn('optimizationCards', body)
+        self.assertEqual(body['status'], 'OPTIMIZED')
+
 
 if __name__ == '__main__':
     unittest.main()

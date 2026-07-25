@@ -8,6 +8,8 @@ import {
   PieChart,
   Pie,
   Cell,
+  AreaChart,
+  Area,
   XAxis,
   YAxis,
   CartesianGrid,
@@ -22,11 +24,16 @@ import {
   CheckCircle2,
   XCircle,
   Clock,
+  Download,
+  Printer,
+  BarChart3,
+  PieChart as PieIcon,
+  Activity,
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { DashboardShell, StatCard } from "@/components/DashboardShell";
-import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import {
   dashboardApi,
   analyticsApi,
@@ -42,7 +49,7 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/admin")({
   head: () => ({
     meta: [
-      { title: "Admin Analytics — SmartCity OS" },
+      { title: "URBAN PULSE AI — Analytics Dashboard & Intelligence" },
       {
         name: "description",
         content: "City-wide analytics, department performance, and AI predictions.",
@@ -59,13 +66,7 @@ const tooltipStyle = {
   color: "var(--color-popover-foreground)",
 };
 
-const CHART_COLORS = [
-  "var(--color-chart-1)",
-  "var(--color-chart-2)",
-  "var(--color-chart-3)",
-  "var(--color-chart-4)",
-  "var(--color-chart-5)",
-];
+const CHART_COLORS = ["#3b82f6", "#10b981", "#f59e0b", "#ef4444", "#8b5cf6"];
 
 function AdminAnalytics() {
   const [data, setData] = useState<DashboardData | null>(null);
@@ -131,6 +132,29 @@ function AdminAnalytics() {
     }
   };
 
+  const handleExportPDF = () => {
+    window.print();
+  };
+
+  const handleExportExcel = () => {
+    const headers = "Category,Metric Value\n";
+    const rows = [
+      `Total Projects,${data?.totalProjects ?? 0}`,
+      `Conflict Projects,${data?.conflictProjects ?? 0}`,
+      `High Priority Projects,${data?.highPriorityProjects ?? 0}`,
+      `Low Priority Projects,${data?.lowPriorityProjects ?? 0}`,
+      `Exported By,${user.name || "Admin"}`,
+      `Export Date,${new Date().toLocaleString()}`,
+    ].join("\n");
+
+    const blob = new Blob([headers + rows], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `UrbanPulse_Analytics_Report_${new Date().toISOString().split("T")[0]}.csv`;
+    a.click();
+  };
+
   const priorityWithColors = priorityDist.map((d, i) => ({
     ...d,
     color: d.color ?? CHART_COLORS[i % CHART_COLORS.length],
@@ -142,20 +166,37 @@ function AdminAnalytics() {
   }));
 
   return (
-    <DashboardShell title="City Analytics" subtitle="Administrator · City-wide intelligence">
+    <DashboardShell title="URBAN PULSE AI — Analytics & Intelligence" subtitle="Module 1 & 7 · Executive Government Dashboard">
+      <div className="flex items-center justify-between border-b pb-4 mb-6">
+        <div>
+          <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
+            Module 1 — Aggregated Analytics & PDF/Excel Exporter
+          </Badge>
+          <h1 className="text-2xl font-bold tracking-tight text-foreground mt-1">Urban Pulse Infrastructure Overview</h1>
+        </div>
+        <div className="flex items-center gap-2">
+          <Button variant="outline" size="sm" onClick={handleExportExcel} className="gap-1.5 text-xs">
+            <Download className="h-4 w-4" /> Export Excel
+          </Button>
+          <Button size="sm" onClick={handleExportPDF} className="gap-1.5 text-xs">
+            <Printer className="h-4 w-4" /> Print / Export PDF
+          </Button>
+        </div>
+      </div>
+
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
           label="Total Projects"
           value={String(data?.totalProjects ?? "—")}
           icon={FolderKanban}
-          hint="All departments"
+          hint="All city departments"
         />
         <StatCard
           label="Conflict Projects"
           value={String(data?.conflictProjects ?? "—")}
           icon={TriangleAlert}
           accent="destructive"
-          hint="AI detected"
+          hint="AI detected overlap"
         />
         <StatCard
           label="High Priority"
@@ -176,10 +217,10 @@ function AdminAnalytics() {
       <div className="mt-6 grid gap-6 lg:grid-cols-2">
         {/* Pending Approvals Panel */}
         {pending.length > 0 && (
-          <div className="rounded-xl border-2 border-warning/40 bg-warning/5 p-5 shadow-card lg:col-span-2">
+          <div className="rounded-xl border-2 border-amber-500/40 bg-amber-500/5 p-5 shadow-card lg:col-span-2">
             <h2 className="flex items-center gap-2 font-semibold text-foreground">
-              <Clock className="h-5 w-5 text-warning" /> Pending Project Approvals
-              <span className="ml-1 rounded-full bg-warning/20 px-2 py-0.5 text-xs font-bold text-warning">
+              <Clock className="h-5 w-5 text-amber-500" /> Pending Project Approvals
+              <span className="ml-1 rounded-full bg-amber-500/20 px-2 py-0.5 text-xs font-bold text-amber-600">
                 {pending.length}
               </span>
             </h2>
@@ -217,7 +258,7 @@ function AdminAnalytics() {
                       <Button
                         size="sm"
                         onClick={() => handleSanction(p.id, "APPROVE")}
-                        className="gap-1.5 bg-success hover:bg-success/90 text-success-foreground"
+                        className="gap-1.5 bg-emerald-600 hover:bg-emerald-700 text-white"
                       >
                         <CheckCircle2 className="h-3.5 w-3.5" /> Approve
                       </Button>
@@ -236,186 +277,97 @@ function AdminAnalytics() {
             </div>
           </div>
         )}
-        {/* Monthly trend */}
+
+        {/* Area Chart: Monthly Infrastructure Activity */}
         <div className="rounded-xl border bg-card p-5 shadow-card">
-          <h2 className="font-semibold text-foreground">Project Completion Trend</h2>
+          <h2 className="font-semibold text-foreground flex items-center gap-2">
+            <Activity className="h-4 w-4 text-cyan-500" /> Area Chart — Infrastructure Execution Velocity
+          </h2>
           <div className="mt-4 h-56 sm:h-64">
-            {monthly.length === 0 ? (
-              <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
-                No data yet
-              </div>
-            ) : (
-              <ResponsiveContainer width="100%" height="100%">
-                <LineChart data={monthly}>
-                  <CartesianGrid
-                    strokeDasharray="3 3"
-                    stroke="var(--color-border)"
-                    vertical={false}
-                  />
-                  <XAxis
-                    dataKey="month"
-                    stroke="var(--color-muted-foreground)"
-                    fontSize={12}
-                    tickLine={false}
-                    axisLine={false}
-                  />
-                  <YAxis
-                    stroke="var(--color-muted-foreground)"
-                    fontSize={12}
-                    tickLine={false}
-                    axisLine={false}
-                  />
-                  <Tooltip contentStyle={tooltipStyle} />
-                  <Legend />
-                  <Line
-                    type="monotone"
-                    dataKey="completed"
-                    stroke="var(--color-chart-2)"
-                    strokeWidth={2.5}
-                    dot={false}
-                    name="Completed"
-                  />
-                  <Line
-                    type="monotone"
-                    dataKey="started"
-                    stroke="var(--color-chart-1)"
-                    strokeWidth={2.5}
-                    dot={false}
-                    name="Started"
-                  />
-                </LineChart>
-              </ResponsiveContainer>
-            )}
+            <ResponsiveContainer width="100%" height="100%">
+              <AreaChart data={monthly}>
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" vertical={false} />
+                <XAxis dataKey="month" stroke="var(--color-muted-foreground)" fontSize={12} tickLine={false} />
+                <YAxis stroke="var(--color-muted-foreground)" fontSize={12} tickLine={false} />
+                <Tooltip contentStyle={tooltipStyle} />
+                <Area type="monotone" dataKey="started" stroke="#3b82f6" fill="#3b82f6" fillOpacity={0.2} name="Started" />
+                <Area type="monotone" dataKey="completed" stroke="#10b981" fill="#10b981" fillOpacity={0.2} name="Completed" />
+              </AreaChart>
+            </ResponsiveContainer>
           </div>
         </div>
 
-        {/* Department performance */}
+        {/* Line Chart: Completion Trend */}
         <div className="rounded-xl border bg-card p-5 shadow-card">
-          <h2 className="font-semibold text-foreground">Department Performance</h2>
+          <h2 className="font-semibold text-foreground flex items-center gap-2">
+            <BarChart3 className="h-4 w-4 text-emerald-500" /> Line Chart — Project Completion Trend
+          </h2>
           <div className="mt-4 h-56 sm:h-64">
-            {depts.length === 0 ? (
-              <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
-                No data yet
-              </div>
-            ) : (
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={depts}>
-                  <CartesianGrid
-                    strokeDasharray="3 3"
-                    stroke="var(--color-border)"
-                    vertical={false}
-                  />
-                  <XAxis
-                    dataKey="dept"
-                    stroke="var(--color-muted-foreground)"
-                    fontSize={12}
-                    tickLine={false}
-                    axisLine={false}
-                  />
-                  <YAxis
-                    domain={[0, 100]}
-                    stroke="var(--color-muted-foreground)"
-                    fontSize={12}
-                    tickLine={false}
-                    axisLine={false}
-                  />
-                  <Tooltip cursor={{ fill: "var(--color-muted)" }} contentStyle={tooltipStyle} />
-                  <Bar
-                    dataKey="score"
-                    fill="var(--color-chart-1)"
-                    radius={[6, 6, 0, 0]}
-                    name="Completion %"
-                  />
-                </BarChart>
-              </ResponsiveContainer>
-            )}
+            <ResponsiveContainer width="100%" height="100%">
+              <LineChart data={monthly}>
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" vertical={false} />
+                <XAxis dataKey="month" stroke="var(--color-muted-foreground)" fontSize={12} tickLine={false} />
+                <YAxis stroke="var(--color-muted-foreground)" fontSize={12} tickLine={false} />
+                <Tooltip contentStyle={tooltipStyle} />
+                <Legend />
+                <Line type="monotone" dataKey="completed" stroke="#10b981" strokeWidth={2.5} name="Completed" />
+                <Line type="monotone" dataKey="started" stroke="#3b82f6" strokeWidth={2.5} name="Started" />
+              </LineChart>
+            </ResponsiveContainer>
           </div>
         </div>
 
-        {/* Priority distribution */}
+        {/* Bar Chart: Department Performance */}
         <div className="rounded-xl border bg-card p-5 shadow-card">
-          <h2 className="font-semibold text-foreground">Priority Distribution</h2>
+          <h2 className="font-semibold text-foreground flex items-center gap-2">
+            <BarChart3 className="h-4 w-4 text-indigo-500" /> Bar Chart — Department Completion Efficiency (%)
+          </h2>
+          <div className="mt-4 h-56 sm:h-64">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={depts}>
+                <CartesianGrid strokeDasharray="3 3" stroke="var(--color-border)" vertical={false} />
+                <XAxis dataKey="dept" stroke="var(--color-muted-foreground)" fontSize={12} tickLine={false} />
+                <YAxis domain={[0, 100]} stroke="var(--color-muted-foreground)" fontSize={12} tickLine={false} />
+                <Tooltip cursor={{ fill: "var(--color-muted)" }} contentStyle={tooltipStyle} />
+                <Bar dataKey="score" fill="#3b82f6" radius={[6, 6, 0, 0]} name="Completion %" />
+              </BarChart>
+            </ResponsiveContainer>
+          </div>
+        </div>
+
+        {/* Pie Chart: Priority Distribution */}
+        <div className="rounded-xl border bg-card p-5 shadow-card">
+          <h2 className="font-semibold text-foreground flex items-center gap-2">
+            <PieIcon className="h-4 w-4 text-amber-500" /> Pie Chart — AI Priority Share
+          </h2>
           <div className="mt-4 grid gap-4 sm:grid-cols-2">
             <div className="h-52 sm:h-56">
-              {priorityWithColors.length === 0 ? (
-                <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
-                  No predictions yet
-                </div>
-              ) : (
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={priorityWithColors}
-                      dataKey="value"
-                      nameKey="name"
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={50}
-                      outerRadius={80}
-                      paddingAngle={3}
-                    >
-                      {priorityWithColors.map((e, i) => (
-                        <Cell key={i} fill={e.color} />
-                      ))}
-                    </Pie>
-                    <Tooltip contentStyle={tooltipStyle} />
-                  </PieChart>
-                </ResponsiveContainer>
-              )}
+              <ResponsiveContainer width="100%" height="100%">
+                <PieChart>
+                  <Pie
+                    data={priorityWithColors}
+                    dataKey="value"
+                    nameKey="name"
+                    cx="50%"
+                    cy="50%"
+                    innerRadius={45}
+                    outerRadius={75}
+                    paddingAngle={3}
+                  >
+                    {priorityWithColors.map((e, i) => (
+                      <Cell key={i} fill={e.color} />
+                    ))}
+                  </Pie>
+                  <Tooltip contentStyle={tooltipStyle} />
+                </PieChart>
+              </ResponsiveContainer>
             </div>
-            <div className="flex flex-col justify-center gap-2">
+            <div className="flex flex-col justify-center gap-2 text-xs">
               {priorityWithColors.map((e, i) => (
                 <div key={i} className="flex items-center gap-3">
                   <span className="h-3 w-3 shrink-0 rounded-full" style={{ background: e.color }} />
-                  <span className="flex-1 text-sm text-foreground">{e.name}</span>
-                  <span className="text-sm font-semibold text-muted-foreground">
-                    {String(e.value)}
-                  </span>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-
-        {/* Status distribution */}
-        <div className="rounded-xl border bg-card p-5 shadow-card">
-          <h2 className="font-semibold text-foreground">Project Status Distribution</h2>
-          <div className="mt-4 grid gap-4 sm:grid-cols-2">
-            <div className="h-52 sm:h-56">
-              {statusWithColors.length === 0 ? (
-                <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
-                  No projects yet
-                </div>
-              ) : (
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={statusWithColors}
-                      dataKey="value"
-                      nameKey="name"
-                      cx="50%"
-                      cy="50%"
-                      innerRadius={50}
-                      outerRadius={80}
-                      paddingAngle={3}
-                    >
-                      {statusWithColors.map((e, i) => (
-                        <Cell key={i} fill={e.color} />
-                      ))}
-                    </Pie>
-                    <Tooltip contentStyle={tooltipStyle} />
-                  </PieChart>
-                </ResponsiveContainer>
-              )}
-            </div>
-            <div className="flex flex-col justify-center gap-2">
-              {statusWithColors.map((e, i) => (
-                <div key={i} className="flex items-center gap-3">
-                  <span className="h-3 w-3 shrink-0 rounded-full" style={{ background: e.color }} />
-                  <span className="flex-1 text-sm text-foreground">{e.name}</span>
-                  <span className="text-sm font-semibold text-muted-foreground">
-                    {String(e.value)}
-                  </span>
+                  <span className="flex-1 font-medium text-foreground">{e.name}</span>
+                  <span className="font-bold text-muted-foreground">{String(e.value)}</span>
                 </div>
               ))}
             </div>

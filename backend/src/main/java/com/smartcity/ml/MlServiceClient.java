@@ -2,11 +2,10 @@ package com.smartcity.ml;
 
 import com.smartcity.dto.ProjectRequest;
 import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Component;
-import org.springframework.web.client.ResourceAccessException;
 import org.springframework.web.client.RestTemplate;
-import org.springframework.web.server.ResponseStatusException;
+
+import java.util.*;
 
 @Component
 public class MlServiceClient {
@@ -42,6 +41,35 @@ public class MlServiceClient {
             // Fall back to heuristic priority engine if Python ML service is offline
         }
         return computeFallbackPriority(request);
+    }
+
+    public Map<String, Object> getRecommendations(ProjectRequest request, Double probability, String priority) {
+        try {
+            Map<String, Object> payload = new HashMap<>();
+            payload.put("department", request.getDepartment());
+            payload.put("zone", request.getZone());
+            payload.put("conflictProbability", probability);
+            payload.put("priorityPrediction", priority);
+            
+            Map<String, Object> res = restTemplate.postForObject(baseUrl + "/predict/recommendations", payload, Map.class);
+            if (res != null) {
+                return res;
+            }
+        } catch (Exception ignored) {}
+
+        Map<String, Object> fallback = new HashMap<>();
+        List<String> exp = new ArrayList<>();
+        List<String> rec = new ArrayList<>();
+        if (probability != null && probability >= 0.5) {
+            exp.add("Spatial & Timeline Overlap detected in " + request.getZone());
+            rec.add("Reschedule Project start by 5-10 Days");
+        } else {
+            exp.add("Clean spatial corridor in " + request.getZone());
+            rec.add("Proceed with standard approval");
+        }
+        fallback.put("explanations", exp);
+        fallback.put("recommendations", rec);
+        return fallback;
     }
 
     private ConflictResult computeFallbackConflict(ProjectRequest req) {
