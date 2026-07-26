@@ -7,46 +7,21 @@ import {
   BrainCircuit,
   ArrowRight,
   Network,
-  BarChart3,
   Map,
   Cpu,
-  ShieldCheck,
-  Globe,
   Lock,
   Zap,
   TrendingUp,
   FileText,
-  UserCheck,
-  Layers,
-  Sparkles,
   ChevronRight,
   Phone,
   Mail,
   MapPin,
-  Check,
   Activity,
-  Award,
-  Shield,
-  Clock,
-  Search,
   Bell,
   Megaphone,
   CheckCircle2,
-  Eye,
-  FileSpreadsheet,
-  ArrowDown,
-  RotateCcw,
-  User,
-  HardHat,
-  Landmark,
-  FileCheck2,
-  AlertTriangle,
-  Send,
-  XCircle,
-  Play,
-  CheckSquare,
-  MessageSquare,
-  LockKeyhole,
+  Search,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -87,7 +62,7 @@ const STATS = [
   { value: "35%", label: "Faster Execution", desc: "Inter-Agency Optimization", icon: Zap },
 ];
 
-// Citizen Services Tiles
+// Citizen & Public Services Tiles
 const CITIZEN_SERVICES = [
   { title: "Submit Grievance", desc: "Register road damage, water leaks, or street light issues directly to municipal departments.", icon: Megaphone, link: "/login" },
   { title: "Track Complaint", desc: "Track real-time resolution status using your unique Tracking Identifier.", icon: Search, link: "/login" },
@@ -95,16 +70,6 @@ const CITIZEN_SERVICES = [
   { title: "Infrastructure Proposals", desc: "Submit civic infrastructure improvement proposals for officer review.", icon: Building2, link: "/login" },
   { title: "Emergency Helpline Portal", desc: "Access 24/7 municipal emergency helpline numbers for water burst or power outages.", icon: Phone, link: "/login" },
   { title: "Download Reports", desc: "Access official public infrastructure audit reports and monthly performance summaries.", icon: FileText, link: "/login" },
-];
-
-// AI Intelligence Cards
-const AI_MODULES = [
-  { title: "Spatial Conflict Analysis", desc: "Analyzes geographic coordinates, excavation depths, and date overlaps to prevent duplicate road digging.", icon: ShieldAlert },
-  { title: "Project Priority Assessment", desc: "Scores project urgency using traffic density, weather risk, and critical asset proximity metrics.", icon: TrendingUp },
-  { title: "Risk Factor Analysis", desc: "Transparent breakdown of key urban risk factors driving project classifications.", icon: BrainCircuit },
-  { title: "Mitigation Protocols", desc: "Generates actionable trench-sharing protocols and schedule adjustments across municipal divisions.", icon: Sparkles },
-  { title: "Resource Optimization", desc: "Optimizes allocation schedules to share heavy equipment and avoid machinery idle time.", icon: Cpu },
-  { title: "Municipal GIS Mapping", desc: "Geospatial visualization of municipal zones, active worksites, and conflict density heatmaps.", icon: Map },
 ];
 
 // Sample Official Government Project Table Data
@@ -186,10 +151,8 @@ export function UniqueLandingPage() {
           {/* Navigation Links */}
           <nav className="hidden lg:flex items-center gap-7 text-xs font-bold text-slate-700">
             <a href="#home" className="hover:text-[#1E3A8A] transition-colors">Home</a>
-            <a href="#about" className="hover:text-[#1E3A8A] transition-colors">About</a>
-            <a href="#workflow" className="hover:text-[#1E3A8A] transition-colors">Project Lifecycle</a>
             <a href="#services" className="hover:text-[#1E3A8A] transition-colors">Services</a>
-            <a href="#ai-platform" className="hover:text-[#1E3A8A] transition-colors">AI Decision Support</a>
+            <a href="#directory" className="hover:text-[#1E3A8A] transition-colors">Public Directory</a>
             <a href="#contact" className="hover:text-[#1E3A8A] transition-colors">Contact</a>
           </nav>
 
@@ -294,258 +257,8 @@ export function UniqueLandingPage() {
         </div>
       </section>
 
-      {/* 5. EXACT GOVERNMENT SMART CITY DIGITAL GOVERNANCE WORKFLOW */}
-      <section id="workflow" className="py-16 bg-[#FFFFFF] border-b border-[#E2E8F0]">
-        <div className="mx-auto max-w-7xl px-4 md:px-8 space-y-10">
-          {/* Header */}
-          <div className="text-center max-w-3xl mx-auto space-y-2">
-            <Badge variant="outline" className="bg-[#1E3A8A]/10 text-[#1E3A8A] border-[#1E3A8A]/30 font-extrabold text-xs">
-              GOVERNMENT SMART CITY DIGITAL GOVERNANCE PLATFORM
-            </Badge>
-            <h2 className="text-2xl font-black text-[#0F172A] sm:text-3xl">
-              End-to-End Operational Workflow Architecture
-            </h2>
-            <p className="text-slate-600 text-xs sm:text-sm font-semibold">
-              Standardized flow connecting Citizens, Department Officers, AI Decision Support, and Municipal Administrators.
-            </p>
-          </div>
-
-          {/* Workflow Sequence Container */}
-          <div className="space-y-8 max-w-5xl mx-auto">
-            {/* MODULE 1: CITIZEN INITIATION */}
-            <div className="rounded-xl border border-[#3B82F6]/30 bg-[#F8FAFC] overflow-hidden shadow-sm">
-              <div className="bg-[#3B82F6] text-white px-5 py-3 flex items-center justify-between">
-                <span className="font-black text-xs uppercase tracking-wider flex items-center gap-2">
-                  <User className="h-4 w-4" /> 1. Citizen Initiation Module
-                </span>
-                <Badge className="bg-white/20 text-white font-mono text-[10px]">CITIZEN PORTAL</Badge>
-              </div>
-
-              <div className="p-5 grid grid-cols-1 md:grid-cols-3 gap-4 text-xs font-semibold text-[#0F172A]">
-                <div className="p-3 rounded border border-[#E2E8F0] bg-[#FFFFFF] space-y-1">
-                  <span className="text-[10px] text-slate-400 font-bold block">STEP 1.1</span>
-                  <h4 className="font-extrabold text-xs text-[#1E3A8A]">Citizen Action</h4>
-                  <p className="text-slate-600 text-[11px]">Submit Complaint / Infrastructure Request / Public Suggestion</p>
-                </div>
-
-                <div className="p-3 rounded border border-[#E2E8F0] bg-[#FFFFFF] space-y-1">
-                  <span className="text-[10px] text-slate-400 font-bold block">STEP 1.2</span>
-                  <h4 className="font-extrabold text-xs text-[#1E3A8A]">Citizen Request Portal</h4>
-                  <p className="text-slate-600 text-[11px]">Grievance intake & automated ID tracking assignment.</p>
-                </div>
-
-                <div className="p-3 rounded border border-[#E2E8F0] bg-[#FFFFFF] space-y-1">
-                  <span className="text-[10px] text-slate-400 font-bold block">STEP 1.3</span>
-                  <h4 className="font-extrabold text-xs text-[#1E3A8A]">Department Assignment</h4>
-                  <p className="text-slate-600 text-[11px]">Request assigned to relevant Municipal Department.</p>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex justify-center">
-              <ArrowDown className="h-6 w-6 text-[#1E3A8A]" />
-            </div>
-
-            {/* MODULE 2: DEPARTMENT OFFICER MODULE */}
-            <div className="rounded-xl border border-[#1E3A8A]/30 bg-[#F8FAFC] overflow-hidden shadow-sm">
-              <div className="bg-[#1E3A8A] text-white px-5 py-3 flex items-center justify-between">
-                <span className="font-black text-xs uppercase tracking-wider flex items-center gap-2">
-                  <HardHat className="h-4 w-4" /> 2. Department Officer Module
-                </span>
-                <Badge className="bg-white/20 text-white font-mono text-[10px]">OFFICER WORKSPACE</Badge>
-              </div>
-
-              <div className="p-5 space-y-4 text-xs font-semibold">
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
-                  <div className="p-3 rounded border border-[#E2E8F0] bg-[#FFFFFF]">
-                    <span className="text-[10px] text-slate-400 block">STEP 2.1</span>
-                    <span className="font-bold text-[#0F172A]">Receive Assigned Request</span>
-                  </div>
-                  <div className="p-3 rounded border border-[#E2E8F0] bg-[#FFFFFF]">
-                    <span className="text-[10px] text-slate-400 block">STEP 2.2</span>
-                    <span className="font-bold text-[#0F172A]">Field Inspection</span>
-                  </div>
-                  <div className="p-3 rounded border border-[#E2E8F0] bg-[#FFFFFF]">
-                    <span className="text-[10px] text-slate-400 block">STEP 2.3</span>
-                    <span className="font-bold text-[#0F172A]">Feasibility Analysis</span>
-                  </div>
-                  <div className="p-3 rounded border border-[#E2E8F0] bg-[#FFFFFF]">
-                    <span className="text-[10px] text-slate-400 block">STEP 2.4</span>
-                    <span className="font-bold text-[#0F172A]">Create Project Proposal</span>
-                  </div>
-                </div>
-
-                {/* AI Decision Support Inner Box */}
-                <div className="p-4 rounded-lg border border-[#3B82F6]/30 bg-[#3B82F6]/5 space-y-2">
-                  <div className="flex items-center gap-2 text-[#1E3A8A] font-extrabold text-xs">
-                    <BrainCircuit className="h-4 w-4 text-[#3B82F6]" /> AI Decision Support Analysis
-                  </div>
-                  <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 text-[11px] text-slate-700 font-medium">
-                    <div className="p-2 rounded bg-white border border-[#E2E8F0]">• Conflict Analysis</div>
-                    <div className="p-2 rounded bg-white border border-[#E2E8F0]">• Priority Assessment</div>
-                    <div className="p-2 rounded bg-white border border-[#E2E8F0]">• Resource Analysis</div>
-                    <div className="p-2 rounded bg-white border border-[#E2E8F0]">• Recommendation</div>
-                  </div>
-                </div>
-
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                  <div className="p-3 rounded border border-[#E2E8F0] bg-[#FFFFFF]">
-                    <span className="text-[10px] text-slate-400 block">STEP 2.5</span>
-                    <span className="font-bold text-[#0F172A]">Review AI Suggestions</span>
-                  </div>
-                  <div className="p-3 rounded border border-[#E2E8F0] bg-[#FFFFFF] flex items-center justify-between">
-                    <div>
-                      <span className="text-[10px] text-slate-400 block">STEP 2.6</span>
-                      <span className="font-extrabold text-[#1E3A8A]">Submit Project for Approval</span>
-                    </div>
-                    <Send className="h-4 w-4 text-[#3B82F6]" />
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex justify-center">
-              <ArrowDown className="h-6 w-6 text-[#1E3A8A]" />
-            </div>
-
-            {/* MODULE 3: ADMIN MODULE */}
-            <div className="rounded-xl border border-[#0F172A]/30 bg-[#F8FAFC] overflow-hidden shadow-sm">
-              <div className="bg-[#0F172A] text-white px-5 py-3 flex items-center justify-between">
-                <span className="font-black text-xs uppercase tracking-wider flex items-center gap-2">
-                  <Landmark className="h-4 w-4" /> 3. Admin Module (Executive Command)
-                </span>
-                <Badge className="bg-white/20 text-white font-mono text-[10px]">COMMAND CENTER</Badge>
-              </div>
-
-              <div className="p-5 space-y-4 text-xs font-semibold">
-                <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3">
-                  <div className="p-3 rounded border border-[#E2E8F0] bg-[#FFFFFF]">
-                    <span className="text-[10px] text-slate-400 block">STEP 3.1</span>
-                    <span className="font-bold text-[#0F172A]">Receive Project Proposal</span>
-                  </div>
-                  <div className="p-3 rounded border border-[#E2E8F0] bg-[#FFFFFF]">
-                    <span className="text-[10px] text-slate-400 block">STEP 3.2</span>
-                    <span className="font-bold text-[#0F172A]">Administrative Review</span>
-                  </div>
-                  <div className="p-3 rounded border border-[#E2E8F0] bg-[#FFFFFF]">
-                    <span className="text-[10px] text-slate-400 block">STEP 3.3</span>
-                    <span className="font-bold text-[#0F172A]">Budget Verification</span>
-                  </div>
-                  <div className="p-3 rounded border border-[#E2E8F0] bg-[#FFFFFF]">
-                    <span className="text-[10px] text-slate-400 block">STEP 3.4</span>
-                    <span className="font-bold text-[#0F172A]">Department Coordination Check</span>
-                  </div>
-                </div>
-
-                {/* Approve Decision Branching */}
-                <div className="p-4 rounded-lg border border-[#0F172A]/20 bg-[#FFFFFF] space-y-3">
-                  <div className="text-center font-extrabold text-xs text-[#0F172A] flex items-center justify-center gap-2">
-                    <ShieldCheck className="h-4 w-4 text-[#1E3A8A]" /> Executive Sanction Approval Decision?
-                  </div>
-
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    {/* YES BRANCH */}
-                    <div className="p-4 rounded-lg border border-[#16A34A]/30 bg-[#16A34A]/10 space-y-2">
-                      <div className="flex items-center justify-between font-black text-xs text-[#16A34A]">
-                        <span>DECISION: YES (SANCTIONED)</span>
-                        <CheckCircle2 className="h-4 w-4 text-[#16A34A]" />
-                      </div>
-                      <div className="space-y-1 text-[11px] text-slate-700 font-medium">
-                        <p>1. Generate Sanction Order</p>
-                        <p>2. Budget Allocation</p>
-                        <p>3. Resource Allocation</p>
-                        <p>4. Notify Department</p>
-                      </div>
-                    </div>
-
-                    {/* NO BRANCH */}
-                    <div className="p-4 rounded-lg border border-[#DC2626]/30 bg-[#DC2626]/10 space-y-2">
-                      <div className="flex items-center justify-between font-black text-xs text-[#DC2626]">
-                        <span>DECISION: NO (REJECTED)</span>
-                        <RotateCcw className="h-4 w-4 text-[#DC2626]" />
-                      </div>
-                      <div className="space-y-1 text-[11px] text-slate-700 font-medium">
-                        <p>1. Return with Remarks</p>
-                        <p>2. Notify Department Officer</p>
-                        <p>3. Resubmit Modified Proposal</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex justify-center">
-              <ArrowDown className="h-6 w-6 text-[#1E3A8A]" />
-            </div>
-
-            {/* MODULE 4: DEPARTMENT EXECUTION */}
-            <div className="rounded-xl border border-[#16A34A]/30 bg-[#F8FAFC] overflow-hidden shadow-sm">
-              <div className="bg-[#16A34A] text-white px-5 py-3 flex items-center justify-between">
-                <span className="font-black text-xs uppercase tracking-wider flex items-center gap-2">
-                  <Play className="h-4 w-4" /> 4. Department Execution Module
-                </span>
-                <Badge className="bg-white/20 text-white font-mono text-[10px]">GROUND WORK</Badge>
-              </div>
-
-              <div className="p-5 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-xs font-semibold">
-                <div className="p-3 rounded border border-[#E2E8F0] bg-[#FFFFFF]">
-                  <span className="text-[10px] text-slate-400 block">STEP 4.1</span>
-                  <span className="font-bold text-[#0F172A]">Project Started</span>
-                </div>
-                <div className="p-3 rounded border border-[#E2E8F0] bg-[#FFFFFF]">
-                  <span className="text-[10px] text-slate-400 block">STEP 4.2</span>
-                  <span className="font-bold text-[#0F172A]">Progress Updates</span>
-                </div>
-                <div className="p-3 rounded border border-[#E2E8F0] bg-[#FFFFFF]">
-                  <span className="text-[10px] text-slate-400 block">STEP 4.3</span>
-                  <span className="font-bold text-[#0F172A]">Completion Report</span>
-                </div>
-                <div className="p-3 rounded border border-[#E2E8F0] bg-[#FFFFFF]">
-                  <span className="text-[10px] text-slate-400 block">STEP 4.4</span>
-                  <span className="font-bold text-[#0F172A]">Admin Verification</span>
-                </div>
-              </div>
-            </div>
-
-            <div className="flex justify-center">
-              <ArrowDown className="h-6 w-6 text-[#1E3A8A]" />
-            </div>
-
-            {/* MODULE 5: CITIZEN CLOSURE */}
-            <div className="rounded-xl border border-[#0B132B]/30 bg-[#F8FAFC] overflow-hidden shadow-sm">
-              <div className="bg-[#0B132B] text-white px-5 py-3 flex items-center justify-between">
-                <span className="font-black text-xs uppercase tracking-wider flex items-center gap-2">
-                  <CheckSquare className="h-4 w-4" /> 5. Citizen Resolution & Closure Module
-                </span>
-                <Badge className="bg-white/20 text-white font-mono text-[10px]">PUBLIC DISPATCH</Badge>
-              </div>
-
-              <div className="p-5 grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-3 text-xs font-semibold">
-                <div className="p-3 rounded border border-[#E2E8F0] bg-[#FFFFFF]">
-                  <span className="text-[10px] text-slate-400 block">STEP 5.1</span>
-                  <span className="font-bold text-[#0F172A]">Receive Project Status</span>
-                </div>
-                <div className="p-3 rounded border border-[#E2E8F0] bg-[#FFFFFF]">
-                  <span className="text-[10px] text-slate-400 block">STEP 5.2</span>
-                  <span className="font-bold text-[#0F172A]">Track Progress</span>
-                </div>
-                <div className="p-3 rounded border border-[#E2E8F0] bg-[#FFFFFF]">
-                  <span className="text-[10px] text-slate-400 block">STEP 5.3</span>
-                  <span className="font-bold text-[#0F172A]">Give Feedback</span>
-                </div>
-                <div className="p-3 rounded border border-[#16A34A]/30 bg-[#16A34A]/10">
-                  <span className="text-[10px] text-[#16A34A] font-extrabold block">STEP 5.4</span>
-                  <span className="font-black text-[#16A34A]">Project Closed</span>
-                </div>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 6. KEY STATISTICS */}
-      <section className="py-14 bg-[#F8FAFC] border-b border-[#E2E8F0]">
+      {/* 5. OPERATIONAL IMPACT METRICS */}
+      <section className="py-14 bg-[#FFFFFF] border-b border-[#E2E8F0]">
         <div className="mx-auto max-w-7xl px-4 md:px-8">
           <div className="text-center max-w-2xl mx-auto mb-10 space-y-1">
             <Badge variant="outline" className="bg-[#1E3A8A]/10 text-[#1E3A8A] border-[#1E3A8A]/20 font-bold text-xs">
@@ -561,9 +274,9 @@ export function UniqueLandingPage() {
             {STATS.map((s) => (
               <div
                 key={s.label}
-                className="rounded-lg border border-[#E2E8F0] bg-[#FFFFFF] p-4 text-center shadow-sm hover:border-[#1E3A8A] transition-all"
+                className="rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] p-4 text-center shadow-sm hover:border-[#1E3A8A] transition-all"
               >
-                <div className="grid h-9 w-9 place-items-center rounded bg-[#F8FAFC] border border-[#E2E8F0] mx-auto text-[#1E3A8A] mb-2">
+                <div className="grid h-9 w-9 place-items-center rounded bg-[#FFFFFF] border border-[#E2E8F0] mx-auto text-[#1E3A8A] mb-2">
                   <s.icon className="h-4 w-4" />
                 </div>
                 <p className="text-2xl font-black text-[#0F172A]">{s.value}</p>
@@ -575,8 +288,8 @@ export function UniqueLandingPage() {
         </div>
       </section>
 
-      {/* 7. SERVICES (All requiring Login) */}
-      <section id="services" className="py-16 bg-[#FFFFFF] border-b border-[#E2E8F0]">
+      {/* 6. SERVICES OVERVIEW */}
+      <section id="services" className="py-16 bg-[#F8FAFC] border-b border-[#E2E8F0]">
         <div className="mx-auto max-w-7xl px-4 md:px-8 space-y-10">
           <div className="text-center max-w-3xl mx-auto space-y-2">
             <Badge variant="outline" className="bg-[#3B82F6]/15 text-[#3B82F6] border-[#3B82F6]/40 font-bold text-xs">
@@ -592,7 +305,7 @@ export function UniqueLandingPage() {
             {CITIZEN_SERVICES.map((cs) => (
               <div
                 key={cs.title}
-                className="rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] p-5 shadow-sm hover:shadow-md hover:border-[#1E3A8A] transition-all flex flex-col justify-between space-y-3"
+                className="rounded-lg border border-[#E2E8F0] bg-[#FFFFFF] p-5 shadow-sm hover:shadow-md hover:border-[#1E3A8A] transition-all flex flex-col justify-between space-y-3"
               >
                 <div className="space-y-2">
                   <div className="grid h-10 w-10 place-items-center rounded bg-[#1E3A8A] text-white">
@@ -613,46 +326,8 @@ export function UniqueLandingPage() {
         </div>
       </section>
 
-      {/* 8. AI INTELLIGENCE SECTION */}
-      <section id="ai-platform" className="py-16 bg-[#F8FAFC] border-b border-[#E2E8F0]">
-        <div className="mx-auto max-w-7xl px-4 md:px-8 space-y-10">
-          <div className="text-center max-w-3xl mx-auto space-y-2">
-            <Badge variant="outline" className="bg-[#16A34A]/15 text-[#16A34A] border-[#16A34A]/30 font-bold text-xs">
-              Predictive Decision Support
-            </Badge>
-            <h2 className="text-2xl font-black text-[#0F172A]">AI Decision Support</h2>
-            <p className="text-slate-600 text-xs font-semibold">
-              Intelligent decision support providing objective conflict analysis and priority classification.
-            </p>
-          </div>
-
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {AI_MODULES.map((ai) => (
-              <div
-                key={ai.title}
-                className="rounded-lg border border-[#E2E8F0] bg-[#FFFFFF] p-5 shadow-sm hover:border-[#1E3A8A] transition-all flex flex-col justify-between space-y-3"
-              >
-                <div className="space-y-2">
-                  <div className="grid h-10 w-10 place-items-center rounded bg-[#1E3A8A] text-white">
-                    <ai.icon className="h-5 w-5" />
-                  </div>
-                  <h3 className="text-sm font-extrabold text-[#0F172A]">{ai.title}</h3>
-                  <p className="text-xs text-slate-600 font-medium leading-relaxed">{ai.desc}</p>
-                </div>
-
-                <div className="pt-3 border-t border-[#E2E8F0]">
-                  <Link to="/login" className="inline-flex items-center gap-1.5 text-xs font-bold text-[#1E3A8A] hover:text-[#3B82F6]">
-                    <Lock className="h-3 w-3" /> Login to View Module <ChevronRight className="h-3.5 w-3.5" />
-                  </Link>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 9. LATEST PROJECTS TABLE */}
-      <section className="py-16 bg-[#FFFFFF] border-b border-[#E2E8F0]">
+      {/* 7. LATEST PROJECTS DIRECTORY TABLE */}
+      <section id="directory" className="py-16 bg-[#FFFFFF] border-b border-[#E2E8F0]">
         <div className="mx-auto max-w-7xl px-4 md:px-8 space-y-8">
           <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
             <div>
@@ -703,14 +378,14 @@ export function UniqueLandingPage() {
         </div>
       </section>
 
-      {/* 10. CALL TO ACTION */}
-      <section className="bg-[#0F172A] text-[#FFFFFF] py-16">
+      {/* 8. CALL TO ACTION */}
+      <section className="bg-[#0F172A] text-white py-16">
         <div className="mx-auto max-w-4xl px-4 md:px-8 text-center space-y-6">
-          <Badge variant="outline" className="bg-[#FFFFFF]/10 text-[#FFFFFF] border-[#FFFFFF]/20 font-bold text-xs">
+          <Badge variant="outline" className="bg-white/10 text-white border-white/20 font-bold text-xs">
             Municipal System Clearance Required
           </Badge>
 
-          <h2 className="text-3xl font-black text-[#FFFFFF] sm:text-4xl">
+          <h2 className="text-3xl font-black text-white sm:text-4xl">
             Building Smarter Cities Through Artificial Intelligence
           </h2>
 
@@ -719,7 +394,7 @@ export function UniqueLandingPage() {
           </p>
 
           <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
-            <Button asChild size="lg" className="bg-[#3B82F6] hover:bg-[#3B82F6]/90 text-[#FFFFFF] font-extrabold text-xs sm:text-sm px-8 shadow-md gap-2">
+            <Button asChild size="lg" className="bg-[#3B82F6] hover:bg-[#3B82F6]/90 text-white font-extrabold text-xs sm:text-sm px-8 shadow-md gap-2">
               <Link to="/login">
                 Proceed to Login Page <ArrowRight className="h-4 w-4" />
               </Link>
@@ -728,17 +403,17 @@ export function UniqueLandingPage() {
         </div>
       </section>
 
-      {/* 11. FOOTER */}
+      {/* 9. FOOTER */}
       <footer id="contact" className="bg-[#0B132B] text-slate-300 py-12 border-t border-slate-800 text-xs">
         <div className="mx-auto max-w-7xl px-4 md:px-8 space-y-10">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
             <div className="space-y-3 md:col-span-1">
               <div className="flex items-center gap-3">
-                <div className="grid h-10 w-10 place-items-center rounded bg-[#1E3A8A] text-[#FFFFFF] font-black text-base border border-slate-700">
+                <div className="grid h-10 w-10 place-items-center rounded bg-[#1E3A8A] text-white font-black text-base border border-slate-700">
                   UP
                 </div>
                 <div>
-                  <span className="font-extrabold text-sm text-[#FFFFFF] block">URBAN PULSE</span>
+                  <span className="font-extrabold text-sm text-white block">URBAN PULSE</span>
                   <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Command Center OS</span>
                 </div>
               </div>
@@ -748,18 +423,17 @@ export function UniqueLandingPage() {
             </div>
 
             <div className="space-y-2">
-              <h4 className="font-extrabold text-xs text-[#FFFFFF] uppercase tracking-wider">Quick Navigation</h4>
+              <h4 className="font-extrabold text-xs text-white uppercase tracking-wider">Quick Navigation</h4>
               <ul className="space-y-1.5 text-slate-300 font-medium">
                 <li><a href="#home" className="hover:text-white transition">Home</a></li>
-                <li><a href="#about" className="hover:text-white transition">About System</a></li>
-                <li><a href="#workflow" className="hover:text-white transition">Project Lifecycle</a></li>
                 <li><a href="#services" className="hover:text-white transition">Services</a></li>
+                <li><a href="#directory" className="hover:text-white transition">Public Directory</a></li>
                 <li><Link to="/login" className="hover:text-white transition">Official Login</Link></li>
               </ul>
             </div>
 
             <div className="space-y-2">
-              <h4 className="font-extrabold text-xs text-[#FFFFFF] uppercase tracking-wider">Municipal Divisions</h4>
+              <h4 className="font-extrabold text-xs text-white uppercase tracking-wider">Municipal Divisions</h4>
               <ul className="space-y-1.5 text-slate-300 font-medium">
                 <li>Road Infrastructure Division</li>
                 <li>Water Supply & Sewerage Board</li>
@@ -770,7 +444,7 @@ export function UniqueLandingPage() {
             </div>
 
             <div className="space-y-2">
-              <h4 className="font-extrabold text-xs text-[#FFFFFF] uppercase tracking-wider">Command Center Contact</h4>
+              <h4 className="font-extrabold text-xs text-white uppercase tracking-wider">Command Center Contact</h4>
               <div className="space-y-1.5 text-slate-300 font-medium">
                 <p className="flex items-center gap-2">
                   <MapPin className="h-4 w-4 text-[#3B82F6]" /> Municipal Command HQ, Sector 4
