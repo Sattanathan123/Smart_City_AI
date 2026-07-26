@@ -94,7 +94,7 @@ def main():
     # 1. Health
     test_ml_endpoint("/health", method="GET")
 
-    # 2. Conflict Model (XGBoost)
+    # 2. Conflict Model
     test_ml_endpoint("/predict/conflict", {
         "department": "Road",
         "projectType": "Infrastructure",
@@ -107,7 +107,7 @@ def main():
         "resourceRequirement": 8
     })
 
-    # 3. Priority Model (Random Forest)
+    # 3. Priority Model
     test_ml_endpoint("/predict/priority", {
         "department": "Road",
         "projectType": "Infrastructure",
