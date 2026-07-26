@@ -2,15 +2,11 @@ import { createFileRoute, Link } from "@tanstack/react-router";
 import { useState, useEffect, useCallback } from "react";
 import {
   Building2,
-  MapPin,
-  Upload,
   Send,
   CheckCircle2,
   Clock,
   Megaphone,
-  ArrowLeft,
   Bell,
-  FileText,
   Search,
   AlertTriangle,
   Droplets,
@@ -18,24 +14,20 @@ import {
   Trash2,
   Construction,
   Waves,
-  ChevronRight,
-  TrendingUp,
   User,
-  Calendar,
   BadgeCheck,
   Info,
-  X,
   Loader2,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
-import { complaintsApi, alertsApi, dashboardApi, ComplaintData, AlertData } from "@/lib/api";
+import { complaintsApi, alertsApi, ComplaintData, AlertData } from "@/lib/api";
 import { toast } from "sonner";
 
 export const Route = createFileRoute("/citizen")({
   head: () => ({
     meta: [
-      { title: "Citizen Dashboard — SmartCity OS" },
+      { title: "Citizen Portal — URBAN PULSE Platform" },
       {
         name: "description",
         content: "Report civic issues, track complaints, and view city alerts.",
@@ -54,20 +46,12 @@ const CATEGORIES = [
 ];
 const ZONES = ["Zone 1", "Zone 2", "Zone 3", "Zone 4", "Zone 5", "Zone 6", "Zone 7"];
 
-const categoryIcons: Record<string, React.ElementType> = {
-  "Road Damage": Construction,
-  "Water Leakage": Droplets,
-  "Street Light Failure": Zap,
-  "Garbage Issue": Trash2,
-  "Drainage Problem": Waves,
-};
-
 const statusColor: Record<string, string> = {
-  SUBMITTED: "text-blue-500 bg-blue-500/10",
-  UNDER_REVIEW: "text-warning bg-warning/10",
-  ASSIGNED: "text-purple-500 bg-purple-500/10",
-  IN_PROGRESS: "text-orange-500 bg-orange-500/10",
-  RESOLVED: "text-success bg-success/10",
+  SUBMITTED: "text-[#3B82F6] bg-[#3B82F6]/10 font-bold border border-[#3B82F6]/30",
+  UNDER_REVIEW: "text-[#F59E0B] bg-[#F59E0B]/10 font-bold border border-[#F59E0B]/30",
+  ASSIGNED: "text-purple-600 bg-purple-100 font-bold border border-purple-300",
+  IN_PROGRESS: "text-amber-600 bg-amber-100 font-bold border border-amber-300",
+  RESOLVED: "text-[#16A34A] bg-[#16A34A]/10 font-bold border border-[#16A34A]/30",
 };
 
 const statusLabel: Record<string, string> = {
@@ -78,689 +62,350 @@ const statusLabel: Record<string, string> = {
   RESOLVED: "Resolved",
 };
 
-const alertStyle: Record<string, { bg: string; icon: React.ElementType; color: string }> = {
-  warning: { bg: "border-warning/30 bg-warning/5", icon: AlertTriangle, color: "text-warning" },
-  info: { bg: "border-blue-400/30 bg-blue-400/5", icon: Info, color: "text-blue-500" },
-  success: { bg: "border-success/30 bg-success/5", icon: BadgeCheck, color: "text-success" },
-};
-
-const progressSteps = [
-  { label: "Submitted", threshold: 0 },
-  { label: "Under Review", threshold: 20 },
-  { label: "Assigned to Department", threshold: 40 },
-  { label: "Work In Progress", threshold: 70 },
-  { label: "Resolved", threshold: 100 },
-];
-
 type Tab = "report" | "myreports" | "track" | "alerts";
 
 function CitizenDashboard() {
-  const [user, setUser] = useState<{ id?: number; name?: string; email?: string; role?: string }>(
-    {},
-  );
+  const [user, setUser] = useState<{ id?: number; name?: string; email?: string; role?: string }>({});
+  const [activeTab, setActiveTab] = useState<Tab>("report");
 
-  useEffect(() => {
-    if (typeof window !== "undefined" && typeof sessionStorage !== "undefined") {
-      try {
-        setUser(JSON.parse(sessionStorage.getItem("user") ?? "{}"));
-      } catch {}
-    }
-  }, []);
-
-  const [tab, setTab] = useState<Tab>("report");
-
-  // Report form
+  // Form State
   const [category, setCategory] = useState(CATEGORIES[0]);
-  const [description, setDescription] = useState("");
   const [zone, setZone] = useState(ZONES[0]);
-  const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
-  const [image, setImage] = useState<File | null>(null);
-  const [preview, setPreview] = useState<string | null>(null);
+  const [description, setDescription] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [submittedId, setSubmittedId] = useState<number | null>(null);
 
-  // My reports
-  const [myReports, setMyReports] = useState<ComplaintData[]>([]);
-  const [reportsLoading, setReportsLoading] = useState(false);
-
-  // Track
-  const [trackId, setTrackId] = useState("");
-  const [tracked, setTracked] = useState<ComplaintData | null>(null);
-  const [allComplaints, setAllComplaints] = useState<ComplaintData[]>([]);
-  const [trackLoading, setTrackLoading] = useState(false);
-
-  // Alerts
+  // Data State
+  const [complaints, setComplaints] = useState<ComplaintData[]>([]);
   const [alerts, setAlerts] = useState<AlertData[]>([]);
-  const [alertsLoading, setAlertsLoading] = useState(false);
+  const [searchTrackingId, setSearchTrackingId] = useState("");
+  const [trackedComplaint, setTrackedComplaint] = useState<ComplaintData | null>(null);
+  const [trackError, setTrackError] = useState(false);
 
-  // Dashboard stats
-  const [stats, setStats] = useState({
-    totalProjects: 0,
-    conflictProjects: 0,
-    lowPriorityProjects: 0,
-  });
-
-  const loadMyReports = useCallback(async () => {
-    if (!user.id) return;
-    setReportsLoading(true);
+  useEffect(() => {
     try {
-      const data = await complaintsApi.getByUser(user.id);
-      setMyReports(data);
-    } catch {
-      toast.error("Failed to load reports");
-    } finally {
-      setReportsLoading(false);
-    }
-  }, [user.id]);
-
-  const loadAllComplaints = useCallback(async () => {
-    try {
-      setAllComplaints(await complaintsApi.getAll());
-    } catch {
-      /* silent */
-    }
+      const savedUser = JSON.parse(sessionStorage.getItem("user") ?? "{}");
+      setUser(savedUser);
+    } catch {}
   }, []);
 
-  const loadAlerts = useCallback(async () => {
-    setAlertsLoading(true);
-    try {
-      setAlerts(await alertsApi.getActive());
-    } catch {
-      /* silent */
-    } finally {
-      setAlertsLoading(false);
-    }
+  const loadComplaints = useCallback(() => {
+    complaintsApi
+      .getAll()
+      .then(setComplaints)
+      .catch(() => {});
   }, []);
 
-  const loadStats = useCallback(async () => {
-    try {
-      const d = await dashboardApi.get();
-      setStats(d);
-    } catch {
-      /* silent */
-    }
+  const loadAlerts = useCallback(() => {
+    alertsApi
+      .getActive()
+      .then(setAlerts)
+      .catch(() => {});
   }, []);
 
   useEffect(() => {
-    loadMyReports();
+    loadComplaints();
     loadAlerts();
-    loadStats();
-    loadAllComplaints();
-  }, []);
-
-  const handleImage = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (!file) return;
-    setImage(file);
-    setPreview(URL.createObjectURL(file));
-  };
+  }, [loadComplaints, loadAlerts]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!user.id) {
-      toast.error("Please login first");
+    if (!description.trim()) {
+      toast.error("Please fill in issue description");
       return;
     }
     setSubmitting(true);
     try {
-      const res = await complaintsApi.create({
-        userId: user.id,
-        userName: user.name ?? "Anonymous",
+      const created = await complaintsApi.create({
+        userId: user.id ?? 1,
+        userName: user.name ?? "Citizen User",
         category,
         description,
         zone,
       });
-      toast.success("Report submitted!", { description: `Tracking ID: #${res.id}` });
+      setSubmittedId(created.id);
+      toast.success("Complaint submitted successfully!");
       setDescription("");
-      setImage(null);
-      setPreview(null);
-      loadMyReports();
-    } catch (err: unknown) {
-      toast.error(err instanceof Error ? err.message : "Submission failed");
+      loadComplaints();
+    } catch {
+      toast.error("Failed to submit complaint");
     } finally {
       setSubmitting(false);
     }
   };
 
-  const handleTrack = async () => {
-    const numId = parseInt(trackId.replace(/\D/g, ""));
-    if (!numId) {
-      toast.error("Enter a valid complaint ID");
+  const handleTrackSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    setTrackError(false);
+    const id = parseInt(searchTrackingId.replace("#", "").trim(), 10);
+    if (isNaN(id)) {
+      setTrackError(true);
+      setTrackedComplaint(null);
       return;
     }
-    setTrackLoading(true);
-    try {
-      const data = await complaintsApi.getById(numId);
-      setTracked(data);
-    } catch {
-      toast.error("No complaint found with that ID");
-    } finally {
-      setTrackLoading(false);
+    const found = complaints.find((c) => c.id === id);
+    if (found) {
+      setTrackedComplaint(found);
+    } else {
+      setTrackError(true);
+      setTrackedComplaint(null);
     }
   };
 
-  const handleDismiss = async (id: number) => {
-    try {
-      await alertsApi.dismiss(id);
-      setAlerts((prev) => prev.filter((a) => a.id !== id));
-    } catch {
-      toast.error("Failed to dismiss alert");
-    }
-  };
-
-  const resolvedCount = myReports.filter((r) => r.status === "RESOLVED").length;
-
-  const tabs: { id: Tab; label: string; icon: React.ElementType; badge?: number }[] = [
-    { id: "report", label: "Report Issue", icon: Megaphone },
-    { id: "myreports", label: "My Reports", icon: FileText, badge: myReports.length || undefined },
-    { id: "track", label: "Track", icon: Search },
-    { id: "alerts", label: "Alerts", icon: Bell, badge: alerts.length || undefined },
-  ];
+  const fieldClass =
+    "mt-1 w-full rounded-md border border-[#E2E8F0] bg-[#FFFFFF] px-3 py-2 text-xs font-semibold text-[#0F172A] outline-none focus:border-[#1E3A8A] focus:ring-1 focus:ring-[#1E3A8A]";
 
   return (
-    <div className="min-h-screen bg-background">
-      <header className="sticky top-0 z-20 border-b bg-card/80 backdrop-blur">
-        <div className="mx-auto flex h-16 max-w-5xl items-center justify-between px-4 md:px-8">
-          <Link to="/" className="flex items-center gap-2.5">
-            <div className="grid h-9 w-9 place-items-center rounded-lg bg-primary text-primary-foreground">
-              <Building2 className="h-5 w-5" />
-            </div>
-            <span className="font-semibold text-foreground">SmartCity OS</span>
-          </Link>
+    <div className="min-h-screen bg-[#F8FAFC] text-[#0F172A]">
+      {/* Navbar Header */}
+      <header className="sticky top-0 z-30 border-b border-[#E2E8F0] bg-[#1E3A8A] text-white shadow-md">
+        <div className="mx-auto flex h-16 max-w-6xl items-center justify-between px-4 md:px-6">
           <div className="flex items-center gap-3">
-            <div className="hidden items-center gap-2 sm:flex">
-              <div className="grid h-8 w-8 place-items-center rounded-full bg-primary/10 text-primary">
-                <User className="h-4 w-4" />
+            <Link to="/" className="flex items-center gap-2">
+              <div className="grid h-9 w-9 place-items-center rounded-lg bg-[#3B82F6] text-white font-black">
+                UP
               </div>
-              <span className="text-sm font-medium text-foreground">{user.name ?? "Citizen"}</span>
+              <span className="font-extrabold text-sm text-white tracking-wide">URBAN PULSE</span>
+            </Link>
+            <span className="hidden sm:inline text-xs text-blue-200 border-l border-blue-800 pl-3">
+              Citizen Civic Services Portal
+            </span>
+          </div>
+
+          <div className="flex items-center gap-3">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => setActiveTab("alerts")}
+              className="relative text-blue-100 hover:bg-blue-800 hover:text-white"
+            >
+              <Bell className="h-4 w-4" />
+              {alerts.length > 0 && (
+                <span className="absolute -top-1 -right-1 grid h-4 w-4 place-items-center rounded-full bg-[#DC2626] text-[9px] font-black text-white">
+                  {alerts.length}
+                </span>
+              )}
+            </Button>
+
+            <div className="flex items-center gap-2 text-xs">
+              <User className="h-4 w-4 text-blue-300" />
+              <span className="font-bold">{user.name ?? "Citizen"}</span>
             </div>
-            <Button asChild variant="outline" size="sm">
-              <Link to="/login">
-                <ArrowLeft className="h-4 w-4" /> Sign out
-              </Link>
+            <Button asChild size="sm" variant="outline" className="text-xs font-bold border-blue-400 text-white bg-transparent hover:bg-blue-800">
+              <Link to="/login">Sign Out</Link>
             </Button>
           </div>
         </div>
       </header>
 
-      <main className="mx-auto max-w-5xl px-4 py-8 md:px-8">
-        {/* Hero */}
-        <div className="mb-8 rounded-2xl bg-gradient-hero p-6 text-primary-foreground">
-          <h1 className="text-2xl font-bold">Welcome, {user.name ?? "Citizen"} 👋</h1>
-          <p className="mt-1 text-sm text-primary-foreground/80">
-            Report issues, track your complaints, and stay updated with city alerts.
-          </p>
-          <div className="mt-4 flex flex-wrap gap-4">
-            {[
-              { label: "My Reports", value: myReports.length, icon: FileText },
-              { label: "Resolved", value: resolvedCount, icon: CheckCircle2 },
-              { label: "Active Alerts", value: alerts.length, icon: Bell },
-            ].map(({ label, value, icon: Icon }) => (
-              <div
-                key={label}
-                className="flex items-center gap-2 rounded-xl bg-primary-foreground/10 px-4 py-2"
-              >
-                <Icon className="h-4 w-4" />
-                <span className="text-sm font-medium">
-                  {value} {label}
-                </span>
-              </div>
-            ))}
-          </div>
-        </div>
-
-        {/* Tabs */}
-        <div className="mb-6 flex gap-1 rounded-xl border bg-muted p-1">
-          {tabs.map((t) => (
+      {/* Main Content Body */}
+      <main className="mx-auto max-w-6xl px-4 py-6 md:px-6 space-y-6">
+        {/* Navigation Tabs */}
+        <div className="flex rounded-md border border-[#E2E8F0] bg-[#FFFFFF] p-1 shadow-sm overflow-x-auto">
+          {[
+            { id: "report", label: "Report Civic Issue", icon: Megaphone },
+            { id: "myreports", label: `My Complaints (${complaints.length})`, icon: Clock },
+            { id: "track", label: "Track Status", icon: Search },
+            { id: "alerts", label: `City Advisory Alerts (${alerts.length})`, icon: Bell },
+          ].map((t) => (
             <button
               key={t.id}
-              onClick={() => setTab(t.id)}
+              onClick={() => setActiveTab(t.id as Tab)}
               className={cn(
-                "relative flex flex-1 items-center justify-center gap-1.5 rounded-lg py-2 text-xs font-medium transition-colors sm:text-sm",
-                tab === t.id
-                  ? "bg-card text-foreground shadow-sm"
-                  : "text-muted-foreground hover:text-foreground",
+                "flex items-center gap-2 rounded-md px-4 py-2 text-xs font-bold whitespace-nowrap transition-all flex-1 justify-center",
+                activeTab === t.id
+                  ? "bg-[#1E3A8A] text-white shadow-sm"
+                  : "text-slate-600 hover:bg-[#F8FAFC] hover:text-[#0F172A]"
               )}
             >
               <t.icon className="h-4 w-4" />
-              <span className="hidden sm:inline">{t.label}</span>
-              {t.badge ? (
-                <span className="absolute right-1 top-1 flex h-4 w-4 items-center justify-center rounded-full bg-primary text-[10px] text-primary-foreground">
-                  {t.badge}
-                </span>
-              ) : null}
+              {t.label}
             </button>
           ))}
         </div>
 
-        {/* ── Report Issue ── */}
-        {tab === "report" && (
-          <div className="rounded-2xl border bg-card p-6 shadow-card">
-            <h2 className="flex items-center gap-2 text-lg font-semibold">
-              <Megaphone className="h-5 w-5 text-primary" /> Report a Civic Issue
-            </h2>
-            <form className="mt-5 space-y-4" onSubmit={handleSubmit}>
-              <div>
-                <label className="text-sm font-medium">Issue Category</label>
-                <div className="mt-2 grid grid-cols-2 gap-2 sm:grid-cols-3">
-                  {CATEGORIES.map((c) => {
-                    const Icon = categoryIcons[c] ?? Megaphone;
-                    return (
-                      <button
-                        key={c}
-                        type="button"
-                        onClick={() => setCategory(c)}
-                        className={cn(
-                          "flex items-center gap-2 rounded-xl border p-3 text-left text-sm transition-colors",
-                          category === c
-                            ? "border-primary bg-primary/5 text-primary ring-1 ring-primary"
-                            : "bg-background hover:bg-accent/40",
-                        )}
-                      >
-                        <Icon className="h-4 w-4 shrink-0" /> {c}
-                      </button>
-                    );
-                  })}
-                </div>
+        {/* TAB 1: Report Issue */}
+        {activeTab === "report" && (
+          <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+            <div className="lg:col-span-2 rounded-lg border border-[#E2E8F0] bg-[#FFFFFF] p-6 shadow-sm space-y-4">
+              <div className="border-b border-[#E2E8F0] pb-3">
+                <h2 className="text-lg font-black text-[#0F172A]">Submit Civic Infrastructure Complaint</h2>
+                <p className="text-xs text-slate-600 font-medium mt-0.5">
+                  Report road damage, water leaks, or drainage issues directly to municipal departments.
+                </p>
               </div>
-              <div>
-                <label className="text-sm font-medium">Description</label>
-                <textarea
-                  rows={3}
-                  value={description}
-                  onChange={(e) => setDescription(e.target.value)}
-                  placeholder="Describe the issue in detail…"
-                  className="mt-1 w-full resize-none rounded-lg border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
-                />
-              </div>
-              <div className="grid gap-4 sm:grid-cols-2">
-                <div>
-                  <label className="text-sm font-medium">Upload Image</label>
-                  <label className="mt-1 flex cursor-pointer flex-col items-center justify-center gap-2 rounded-lg border border-dashed bg-background px-3 py-3 text-sm text-muted-foreground hover:bg-accent/40">
-                    {preview ? (
-                      <img
-                        src={preview}
-                        alt="preview"
-                        className="h-20 w-full rounded object-cover"
-                      />
-                    ) : (
-                      <>
-                        <Upload className="h-4 w-4" /> Choose file
-                      </>
-                    )}
-                    <input type="file" accept="image/*" className="hidden" onChange={handleImage} />
-                  </label>
-                  {image && (
-                    <p className="mt-1 truncate text-xs text-muted-foreground">{image.name}</p>
-                  )}
+
+              {submittedId ? (
+                <div className="p-6 text-center space-y-3 bg-[#16A34A]/5 border border-[#16A34A]/30 rounded-lg">
+                  <CheckCircle2 className="h-10 w-10 text-[#16A34A] mx-auto" />
+                  <h3 className="text-base font-bold text-[#0F172A]">Complaint Submitted Successfully</h3>
+                  <p className="text-xs text-slate-600 font-medium">
+                    Tracking Identifier: <span className="font-extrabold text-[#1E3A8A]">#{submittedId}</span>
+                  </p>
+                  <Button
+                    size="sm"
+                    onClick={() => setSubmittedId(null)}
+                    className="bg-[#1E3A8A] hover:bg-[#1E3A8A]/90 text-white font-bold text-xs"
+                  >
+                    Submit Another Report
+                  </Button>
                 </div>
-                <div className="space-y-2">
-                  <div>
-                    <label className="text-sm font-medium">Zone</label>
-                    <div className="mt-1 flex items-center gap-2 rounded-lg border bg-background px-3 py-2 text-sm">
-                      <MapPin className="h-4 w-4 text-primary" />
-                      <select
-                        value={zone}
-                        onChange={(e) => setZone(e.target.value)}
-                        className="w-full bg-transparent outline-none"
-                      >
+              ) : (
+                <form onSubmit={handleSubmit} className="space-y-4">
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-xs font-bold text-[#0F172A]">Issue Category *</label>
+                      <select value={category} onChange={(e) => setCategory(e.target.value)} className={fieldClass}>
+                        {CATEGORIES.map((c) => (
+                          <option key={c} value={c} className="bg-white text-[#0F172A]">{c}</option>
+                        ))}
+                      </select>
+                    </div>
+
+                    <div>
+                      <label className="text-xs font-bold text-[#0F172A]">Municipal Zone *</label>
+                      <select value={zone} onChange={(e) => setZone(e.target.value)} className={fieldClass}>
                         {ZONES.map((z) => (
-                          <option key={z}>{z}</option>
+                          <option key={z} value={z} className="bg-white text-[#0F172A]">{z}</option>
                         ))}
                       </select>
                     </div>
                   </div>
-                  <div className="flex items-center gap-2 rounded-lg border bg-background px-3 py-2 text-sm">
-                    <Calendar className="h-4 w-4 text-primary" />
-                    <input
-                      type="date"
-                      value={date}
-                      onChange={(e) => setDate(e.target.value)}
-                      className="w-full bg-transparent outline-none text-sm"
+
+                  <div>
+                    <label className="text-xs font-bold text-[#0F172A]">Description of Issue & Location *</label>
+                    <textarea
+                      rows={4}
+                      value={description}
+                      onChange={(e) => setDescription(e.target.value)}
+                      placeholder="Describe the issue details, pothole depth, or nearby landmarks..."
+                      className={fieldClass}
+                      required
                     />
                   </div>
-                </div>
-              </div>
-              <Button type="submit" className="w-full" disabled={submitting}>
-                {submitting ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <>
-                    <Send className="h-4 w-4" /> Submit Report
-                  </>
-                )}
-              </Button>
-            </form>
-          </div>
-        )}
 
-        {/* ── My Reports ── */}
-        {tab === "myreports" && (
-          <div className="space-y-4">
-            <div className="rounded-2xl border bg-card p-6 shadow-card">
-              <h2 className="flex items-center gap-2 text-lg font-semibold">
-                <FileText className="h-5 w-5 text-primary" /> My Submitted Reports
-              </h2>
-              {reportsLoading ? (
-                <div className="mt-8 flex justify-center">
-                  <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-                </div>
-              ) : myReports.length === 0 ? (
-                <div className="mt-8 text-center text-sm text-muted-foreground">
-                  No reports submitted yet.
-                </div>
-              ) : (
-                <div className="mt-5 space-y-4">
-                  {myReports.map((r) => {
-                    const Icon = categoryIcons[r.category] ?? Megaphone;
-                    return (
-                      <div key={r.id} className="rounded-xl border bg-background p-4">
-                        <div className="flex items-start justify-between gap-3">
-                          <div className="flex items-center gap-3">
-                            <div className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-primary/10 text-primary">
-                              <Icon className="h-5 w-5" />
-                            </div>
-                            <div>
-                              <p className="font-medium text-foreground">{r.category}</p>
-                              <p className="flex items-center gap-1 text-xs text-muted-foreground">
-                                <MapPin className="h-3 w-3" /> {r.zone} ·{" "}
-                                {new Date(r.createdAt).toLocaleDateString()}
-                              </p>
-                            </div>
-                          </div>
-                          <span
-                            className={cn(
-                              "shrink-0 rounded-full px-2.5 py-1 text-xs font-medium",
-                              statusColor[r.status] ?? "bg-muted text-muted-foreground",
-                            )}
-                          >
-                            {statusLabel[r.status] ?? r.status}
-                          </span>
-                        </div>
-                        <div className="mt-3">
-                          <div className="flex items-center justify-between text-xs text-muted-foreground mb-1">
-                            <span>Progress</span>
-                            <span>{r.progress}%</span>
-                          </div>
-                          <div className="h-2 w-full rounded-full bg-muted">
-                            <div
-                              className={cn(
-                                "h-2 rounded-full transition-all",
-                                r.progress === 100 ? "bg-success" : "bg-primary",
-                              )}
-                              style={{ width: `${r.progress}%` }}
-                            />
-                          </div>
-                        </div>
-                        <p className="mt-2 text-xs text-muted-foreground">
-                          Report ID:{" "}
-                          <span className="font-mono font-medium text-foreground">#{r.id}</span>
-                        </p>
-                        {r.description && (
-                          <p className="mt-1 text-xs text-muted-foreground">{r.description}</p>
-                        )}
-                      </div>
-                    );
-                  })}
-                </div>
+                  <Button
+                    type="submit"
+                    disabled={submitting}
+                    className="w-full bg-[#1E3A8A] hover:bg-[#1E3A8A]/90 text-white font-extrabold text-xs h-10 shadow-sm gap-2"
+                  >
+                    {submitting ? <Loader2 className="h-4 w-4 animate-spin" /> : <Send className="h-4 w-4" />}
+                    Submit Complaint Entry
+                  </Button>
+                </form>
               )}
             </div>
 
-            {/* Resolved summary */}
-            {resolvedCount > 0 && (
-              <div className="rounded-2xl border bg-card p-5">
-                <h2 className="flex items-center gap-2 text-base font-semibold">
-                  <CheckCircle2 className="h-5 w-5 text-success" /> Resolved Reports
-                </h2>
-                <div className="mt-4 grid gap-3 sm:grid-cols-3">
-                  {myReports
-                    .filter((r) => r.status === "RESOLVED")
-                    .map((r) => (
-                      <div
-                        key={r.id}
-                        className="rounded-xl border border-success/30 bg-success/5 p-4"
-                      >
-                        <div className="flex items-center gap-2 text-success text-xs font-semibold uppercase tracking-wide">
-                          <CheckCircle2 className="h-4 w-4" /> Resolved
-                        </div>
-                        <p className="mt-2 font-medium text-foreground">{r.category}</p>
-                        <p className="mt-0.5 text-xs text-muted-foreground">
-                          {r.zone} · {new Date(r.createdAt).toLocaleDateString()}
-                        </p>
-                      </div>
-                    ))}
+            {/* Quick Helpline Info */}
+            <div className="space-y-4">
+              <div className="rounded-lg border border-[#E2E8F0] bg-[#FFFFFF] p-5 shadow-sm space-y-3">
+                <h3 className="font-bold text-sm text-[#0F172A] flex items-center gap-2">
+                  <Building2 className="h-4 w-4 text-[#1E3A8A]" /> Municipal Helplines
+                </h3>
+                <div className="space-y-2 text-xs font-medium">
+                  <div className="p-2.5 rounded border border-[#E2E8F0] bg-[#F8FAFC]">
+                    <span className="text-slate-500 font-bold block">ROAD & DRAINAGE CONTROL</span>
+                    <span className="font-mono text-[#0F172A] font-bold">1800-425-7001</span>
+                  </div>
+                  <div className="p-2.5 rounded border border-[#E2E8F0] bg-[#F8FAFC]">
+                    <span className="text-slate-500 font-bold block">WATER SUPPLY LEAKAGE</span>
+                    <span className="font-mono text-[#0F172A] font-bold">1800-425-7002</span>
+                  </div>
                 </div>
               </div>
-            )}
+            </div>
           </div>
         )}
 
-        {/* ── Track ── */}
-        {tab === "track" && (
-          <div className="rounded-2xl border bg-card p-6 shadow-card">
-            <h2 className="flex items-center gap-2 text-lg font-semibold">
-              <Search className="h-5 w-5 text-primary" /> Track Your Report
-            </h2>
-            <p className="mt-1 text-sm text-muted-foreground">
-              Enter your complaint ID to get real-time status.
-            </p>
-            <div className="mt-5 flex gap-2">
-              <input
-                value={trackId}
-                onChange={(e) => setTrackId(e.target.value)}
-                placeholder="e.g. 1 or #1"
-                className="flex-1 rounded-lg border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring"
-              />
-              <Button onClick={handleTrack} disabled={trackLoading}>
-                {trackLoading ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <>
-                    <Search className="h-4 w-4" /> Track
-                  </>
-                )}
-              </Button>
-            </div>
-
-            {tracked && (
-              <div className="mt-6 rounded-xl border bg-background p-5">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-3">
-                    {(() => {
-                      const Icon = categoryIcons[tracked.category] ?? Megaphone;
-                      return (
-                        <div className="grid h-10 w-10 place-items-center rounded-lg bg-primary/10 text-primary">
-                          <Icon className="h-5 w-5" />
-                        </div>
-                      );
-                    })()}
-                    <div>
-                      <p className="font-semibold text-foreground">{tracked.category}</p>
-                      <p className="text-xs text-muted-foreground">
-                        {tracked.zone} · {new Date(tracked.createdAt).toLocaleDateString()}
-                      </p>
-                    </div>
-                  </div>
-                  <span
-                    className={cn(
-                      "rounded-full px-3 py-1 text-xs font-medium",
-                      statusColor[tracked.status] ?? "bg-muted text-muted-foreground",
-                    )}
-                  >
-                    {statusLabel[tracked.status] ?? tracked.status}
-                  </span>
-                </div>
-                <div className="mt-4">
-                  <div className="flex justify-between text-xs text-muted-foreground mb-1">
-                    <span>Resolution Progress</span>
-                    <span>{tracked.progress}%</span>
-                  </div>
-                  <div className="h-2.5 w-full rounded-full bg-muted">
-                    <div
-                      className={cn(
-                        "h-2.5 rounded-full",
-                        tracked.progress === 100 ? "bg-success" : "bg-primary",
-                      )}
-                      style={{ width: `${tracked.progress}%` }}
-                    />
-                  </div>
-                </div>
-                <div className="mt-4 space-y-2">
-                  {progressSteps.map((step) => {
-                    const done = tracked.progress >= step.threshold;
-                    return (
-                      <div key={step.label} className="flex items-center gap-3">
-                        <div
-                          className={cn(
-                            "h-5 w-5 shrink-0 rounded-full flex items-center justify-center",
-                            done
-                              ? "bg-primary text-primary-foreground"
-                              : "bg-muted text-muted-foreground",
-                          )}
-                        >
-                          {done ? (
-                            <CheckCircle2 className="h-3 w-3" />
-                          ) : (
-                            <Clock className="h-3 w-3" />
-                          )}
-                        </div>
-                        <span
-                          className={cn(
-                            "text-sm",
-                            done ? "text-foreground font-medium" : "text-muted-foreground",
-                          )}
-                        >
-                          {step.label}
-                        </span>
-                      </div>
-                    );
-                  })}
-                </div>
-                {tracked.description && (
-                  <p className="mt-3 text-sm text-muted-foreground border-t pt-3">
-                    {tracked.description}
-                  </p>
-                )}
-              </div>
-            )}
-
-            {/* All complaints */}
-            {allComplaints.length > 0 && (
-              <div className="mt-6">
-                <p className="mb-3 text-sm font-medium text-foreground">All Complaints</p>
-                <div className="space-y-2">
-                  {allComplaints.map((c) => (
-                    <button
-                      key={c.id}
-                      onClick={() => {
-                        setTrackId(String(c.id));
-                        setTracked(c);
-                      }}
-                      className="flex w-full items-center justify-between rounded-xl border bg-background p-3 text-left hover:bg-accent/40 transition-colors"
-                    >
-                      <div>
-                        <p className="text-sm font-medium text-foreground">{c.category}</p>
-                        <p className="text-xs text-muted-foreground">
-                          #{c.id} · {c.zone} · {new Date(c.createdAt).toLocaleDateString()}
-                        </p>
-                      </div>
-                      <div className="flex items-center gap-2">
-                        <span
-                          className={cn(
-                            "rounded-full px-2 py-0.5 text-xs font-medium",
-                            statusColor[c.status] ?? "bg-muted text-muted-foreground",
-                          )}
-                        >
+        {/* TAB 2: My Complaints */}
+        {activeTab === "myreports" && (
+          <div className="rounded-lg border border-[#E2E8F0] bg-[#FFFFFF] p-6 shadow-sm space-y-4">
+            <h2 className="text-base font-black text-[#0F172A]">Registered Complaints History</h2>
+            <div className="overflow-x-auto">
+              <table className="w-full text-xs text-left text-[#0F172A]">
+                <thead className="bg-[#F8FAFC] uppercase text-[10px] text-slate-500 font-bold border-b border-[#E2E8F0]">
+                  <tr>
+                    <th className="px-4 py-3">Tracking ID</th>
+                    <th className="px-4 py-3">Category & Zone</th>
+                    <th className="px-4 py-3">Description</th>
+                    <th className="px-4 py-3">Status</th>
+                    <th className="px-4 py-3">Submitted Date</th>
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-[#E2E8F0]">
+                  {complaints.map((c) => (
+                    <tr key={c.id} className="hover:bg-[#F8FAFC] transition">
+                      <td className="px-4 py-3 font-mono font-bold text-[#1E3A8A]">#{c.id}</td>
+                      <td className="px-4 py-3 font-bold">{c.category} ({c.zone})</td>
+                      <td className="px-4 py-3 font-medium text-slate-600 max-w-xs truncate">{c.description}</td>
+                      <td className="px-4 py-3">
+                        <span className={cn("px-2.5 py-1 rounded text-[10px]", statusColor[c.status] ?? "bg-slate-100 text-slate-700 font-bold")}>
                           {statusLabel[c.status] ?? c.status}
                         </span>
-                        <ChevronRight className="h-4 w-4 text-muted-foreground" />
-                      </div>
-                    </button>
+                      </td>
+                      <td className="px-4 py-3 font-mono text-slate-500">{new Date(c.createdAt).toLocaleDateString()}</td>
+                    </tr>
                   ))}
+                </tbody>
+              </table>
+            </div>
+          </div>
+        )}
+
+        {/* TAB 3: Track Status */}
+        {activeTab === "track" && (
+          <div className="max-w-2xl mx-auto rounded-lg border border-[#E2E8F0] bg-[#FFFFFF] p-6 shadow-sm space-y-4">
+            <h2 className="text-base font-black text-[#0F172A]">Track Complaint Status</h2>
+            <form onSubmit={handleTrackSearch} className="flex gap-2">
+              <input
+                value={searchTrackingId}
+                onChange={(e) => setSearchTrackingId(e.target.value)}
+                placeholder="Enter Complaint Tracking # (e.g. 1)"
+                className={fieldClass}
+              />
+              <Button type="submit" className="bg-[#1E3A8A] hover:bg-[#1E3A8A]/90 text-white font-bold text-xs px-6">
+                Search
+              </Button>
+            </form>
+
+            {trackedComplaint && (
+              <div className="p-4 rounded border border-[#E2E8F0] bg-[#F8FAFC] space-y-3">
+                <div className="flex items-center justify-between border-b border-[#E2E8F0] pb-2">
+                  <span className="font-extrabold text-sm text-[#1E3A8A]">Complaint #{trackedComplaint.id}</span>
+                  <span className={cn("px-2.5 py-1 rounded text-[10px]", statusColor[trackedComplaint.status])}>
+                    {statusLabel[trackedComplaint.status] ?? trackedComplaint.status}
+                  </span>
                 </div>
+                <div className="text-xs space-y-1 font-medium text-[#0F172A]">
+                  <p><b>Category:</b> {trackedComplaint.category}</p>
+                  <p><b>Zone:</b> {trackedComplaint.zone}</p>
+                  <p><b>Description:</b> {trackedComplaint.description}</p>
+                </div>
+              </div>
+            )}
+
+            {trackError && (
+              <div className="p-4 rounded border border-[#DC2626]/30 bg-[#DC2626]/10 text-[#DC2626] font-bold text-xs text-center">
+                No complaint entry found with that tracking identifier.
               </div>
             )}
           </div>
         )}
 
-        {/* ── Alerts ── */}
-        {tab === "alerts" && (
-          <div className="space-y-4">
-            <div className="flex items-center justify-between">
-              <h2 className="flex items-center gap-2 text-lg font-semibold">
-                <Bell className="h-5 w-5 text-primary" /> City Alerts & Notifications
-              </h2>
-              {alerts.length > 0 && (
-                <button
-                  onClick={async () => {
-                    await Promise.all(alerts.map((a) => alertsApi.dismiss(a.id)));
-                    setAlerts([]);
-                  }}
-                  className="text-xs text-muted-foreground hover:text-foreground underline"
-                >
-                  Dismiss all
-                </button>
-              )}
-            </div>
-
-            {alertsLoading ? (
-              <div className="flex justify-center py-10">
-                <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-              </div>
-            ) : alerts.length === 0 ? (
-              <div className="rounded-2xl border bg-card p-10 text-center text-muted-foreground">
-                <Bell className="mx-auto mb-3 h-8 w-8 opacity-30" />
-                <p className="text-sm">No active alerts. You're all caught up!</p>
-              </div>
-            ) : (
-              alerts.map((a) => {
-                const style = alertStyle[a.type] ?? alertStyle.info;
-                const Icon = style.icon;
-                return (
-                  <div key={a.id} className={cn("relative rounded-2xl border p-5", style.bg)}>
-                    <button
-                      onClick={() => handleDismiss(a.id)}
-                      className="absolute right-3 top-3 text-muted-foreground hover:text-foreground"
-                    >
-                      <X className="h-4 w-4" />
-                    </button>
-                    <div className="flex items-start gap-3 pr-6">
-                      <div className={cn("mt-0.5 shrink-0", style.color)}>
-                        <Icon className="h-5 w-5" />
-                      </div>
-                      <div>
-                        <p className="font-semibold text-foreground">{a.title}</p>
-                        <p className="mt-1 text-sm text-muted-foreground">{a.description}</p>
-                        <p className="mt-2 flex items-center gap-1 text-xs text-muted-foreground">
-                          <Clock className="h-3 w-3" /> {new Date(a.createdAt).toLocaleString()}
-                        </p>
-                      </div>
-                    </div>
+        {/* TAB 4: Alerts */}
+        {activeTab === "alerts" && (
+          <div className="rounded-lg border border-[#E2E8F0] bg-[#FFFFFF] p-6 shadow-sm space-y-4">
+            <h2 className="text-base font-black text-[#0F172A]">Active City Advisory Alerts</h2>
+            <div className="space-y-3">
+              {alerts.map((a) => (
+                <div key={a.id} className="p-4 rounded border border-[#3B82F6]/30 bg-[#3B82F6]/10 text-xs font-medium space-y-1">
+                  <div className="flex items-center justify-between">
+                    <span className="font-bold text-[#1E3A8A] text-sm">{a.title}</span>
+                    <span className="font-mono text-slate-500 text-[10px]">{a.type}</span>
                   </div>
-                );
-              })
-            )}
-
-            {/* Live stats from dashboard */}
-            <div className="rounded-2xl border bg-card p-5">
-              <p className="mb-3 text-sm font-semibold text-foreground flex items-center gap-2">
-                <TrendingUp className="h-4 w-4 text-primary" /> City Activity Summary
-              </p>
-              <div className="grid grid-cols-3 gap-3 text-center">
-                {[
-                  { label: "Active Projects", value: stats.totalProjects, color: "text-primary" },
-                  {
-                    label: "Conflict Projects",
-                    value: stats.conflictProjects,
-                    color: "text-destructive",
-                  },
-                  { label: "My Reports", value: myReports.length, color: "text-warning" },
-                ].map(({ label, value, color }) => (
-                  <div key={label} className="rounded-xl bg-muted/50 p-3">
-                    <p className={cn("text-2xl font-bold", color)}>{value}</p>
-                    <p className="mt-0.5 text-xs text-muted-foreground">{label}</p>
-                  </div>
-                ))}
-              </div>
+                  <p className="text-slate-700">{a.description}</p>
+                </div>
+              ))}
             </div>
           </div>
         )}

@@ -18,25 +18,40 @@ public class AuthService {
     private final UserRepository userRepository;
     private final PasswordEncoder passwordEncoder;
     private final JwtUtil jwtUtil;
+    private final EmailService emailService;
 
-    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil) {
+    public AuthService(UserRepository userRepository, PasswordEncoder passwordEncoder, JwtUtil jwtUtil, EmailService emailService) {
         this.userRepository = userRepository;
         this.passwordEncoder = passwordEncoder;
         this.jwtUtil = jwtUtil;
+        this.emailService = emailService;
     }
 
     public AuthResponse register(RegisterRequest req) {
         if (userRepository.existsByEmail(req.getEmail())) {
             throw new BadRequestException("Email already registered: " + req.getEmail());
         }
+
+        Role targetRole = Role.fromValue(req.getRole());
+
+        if ((targetRole == Role.DEPARTMENT_OFFICER || targetRole == Role.ADMIN) &&
+            (req.getEmployeeId() == null || req.getEmployeeId().trim().isEmpty())) {
+            throw new BadRequestException("Employee ID (Emp ID) / Admin Clearance Code is required for " + targetRole.name() + " registration.");
+        }
+
         User user = new User();
         user.setName(req.getName());
         user.setEmail(req.getEmail());
         user.setPassword(passwordEncoder.encode(req.getPassword()));
         user.setDepartment(req.getDepartment());
+        user.setEmployeeId(req.getEmployeeId());
         user.setPhone(req.getPhone());
-        user.setRole(Role.fromValue(req.getRole()));
+        user.setRole(targetRole);
         User saved = userRepository.save(user);
+
+        // Send Welcome SMTP Email to the newly registered user
+        emailService.sendWelcomeEmail(saved.getEmail(), saved.getName(), saved.getRole().name(), saved.getEmployeeId());
+
         String token = jwtUtil.generateToken(saved, saved.getRole().name());
         return new AuthResponse(saved.getId(), saved.getName(), saved.getEmail(),
                 saved.getPhone(), saved.getDepartment(), saved.getRole().name(), token, "Registration successful");

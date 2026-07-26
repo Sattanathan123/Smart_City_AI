@@ -11,10 +11,17 @@ import {
   Flame,
   Cpu,
   ShieldCheck,
+  Search,
+  UserCheck,
+  Building2,
+  ChevronLeft,
+  ChevronRight,
+  MessageSquareWarning,
 } from "lucide-react";
 import { type ReactNode, useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import { NotificationsPopover } from "@/components/NotificationsPopover";
 
 const navItems = [
@@ -26,6 +33,7 @@ const navItems = [
   { title: "Resource Engine", url: "/resource-optimization", icon: Cpu },
   { title: "Analytics & Reports", url: "/admin", icon: FileBarChart },
   { title: "Security Audit Logs", url: "/audit-logs", icon: ShieldCheck },
+  { title: "Citizen Complaints", url: "/citizen", icon: MessageSquareWarning },
 ];
 
 export function DashboardShell({
@@ -38,7 +46,8 @@ export function DashboardShell({
   children: ReactNode;
 }) {
   const pathname = useRouterState({ select: (s) => s.location.pathname });
-  const [open, setOpen] = useState(false);
+  const [mobileOpen, setMobileOpen] = useState(false);
+  const [collapsed, setCollapsed] = useState(false);
   const [user, setUser] = useState<{ name?: string; department?: string; role?: string }>({});
 
   useEffect(() => {
@@ -60,66 +69,81 @@ export function DashboardShell({
     : "U";
 
   return (
-    <div className="flex min-h-screen w-full bg-background">
+    <div className="flex h-screen w-full bg-[#FFFFFF] overflow-hidden">
       {/* Sidebar */}
       <aside
         className={cn(
-          "fixed inset-y-0 left-0 z-40 flex w-64 shrink-0 flex-col bg-sidebar text-sidebar-foreground transition-transform duration-200 md:static md:translate-x-0",
-          open ? "translate-x-0" : "-translate-x-full",
+          "fixed inset-y-0 left-0 z-40 flex flex-col bg-[#0F172A] text-slate-300 transition-all duration-300 md:static border-r border-slate-800",
+          collapsed ? "w-16" : "w-64",
+          mobileOpen ? "translate-x-0 w-64" : "-translate-x-full md:translate-x-0"
         )}
       >
-        <div className="flex h-16 items-center justify-between border-b border-sidebar-border px-5">
-          <div className="flex items-center gap-2 min-w-0">
-            <div className="grid h-9 w-9 shrink-0 place-items-center rounded-lg bg-cyan-500 text-slate-950 font-black">
+        {/* Sidebar Header */}
+        <div className="flex h-16 items-center justify-between px-4 border-b border-slate-800 bg-[#0B132B]">
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="grid h-9 w-9 shrink-0 place-items-center rounded-md bg-[#3B82F6] text-white font-black text-sm shadow-sm">
               UP
             </div>
-            <div className="min-w-0">
-              <p className="truncate text-sm font-extrabold text-cyan-400">URBAN PULSE</p>
-              <p className="truncate text-[10px] text-sidebar-foreground/60">Urban Infrastructure System</p>
-            </div>
+            {!collapsed && (
+              <div className="min-w-0">
+                <p className="truncate text-xs font-black tracking-wider text-white uppercase">URBAN PULSE</p>
+                <p className="truncate text-[10px] text-slate-400 font-medium">Command Center OS</p>
+              </div>
+            )}
           </div>
           <button
-            onClick={() => setOpen(false)}
-            className="md:hidden text-sidebar-foreground/60 hover:text-sidebar-foreground"
+            onClick={() => setCollapsed(!collapsed)}
+            className="hidden md:flex text-slate-400 hover:text-white p-1 rounded hover:bg-slate-800"
+          >
+            {collapsed ? <ChevronRight className="h-4 w-4" /> : <ChevronLeft className="h-4 w-4" />}
+          </button>
+          <button
+            onClick={() => setMobileOpen(false)}
+            className="md:hidden text-slate-400 hover:text-white"
           >
             <X className="h-5 w-5" />
           </button>
         </div>
 
-        <nav className="flex-1 space-y-1 overflow-y-auto p-3">
-          <p className="px-3 pb-2 pt-3 text-[10px] font-bold uppercase tracking-wider text-sidebar-foreground/50">
-            System Modules
-          </p>
+        {/* Sidebar Nav */}
+        <nav className="flex-1 space-y-1 overflow-y-auto p-2">
+          {!collapsed && (
+            <p className="px-3 pb-2 pt-3 text-[10px] font-bold uppercase tracking-wider text-slate-400">
+              System Modules
+            </p>
+          )}
           {navItems.map((item) => {
             const active = pathname === item.url;
             return (
               <Link
                 key={item.url}
                 to={item.url}
-                onClick={() => setOpen(false)}
+                onClick={() => setMobileOpen(false)}
                 className={cn(
-                  "flex items-center gap-3 rounded-lg px-3 py-2 text-xs font-medium transition-colors",
+                  "flex items-center gap-3 rounded-md px-3 py-2 text-xs font-semibold transition-all duration-150",
                   active
-                    ? "bg-sidebar-primary text-sidebar-primary-foreground font-bold shadow-sm"
-                    : "text-sidebar-foreground/80 hover:bg-sidebar-accent hover:text-sidebar-accent-foreground",
+                    ? "bg-[#3B82F6] text-white shadow-sm"
+                    : "text-slate-300 hover:bg-slate-800 hover:text-white"
                 )}
+                title={collapsed ? item.title : undefined}
               >
                 <item.icon className="h-4 w-4 shrink-0" />
-                {item.title}
+                {!collapsed && <span>{item.title}</span>}
               </Link>
             );
           })}
         </nav>
 
-        <div className="border-t border-sidebar-border p-3">
-          {user.name && (
-            <div className="mb-2 flex items-center gap-2 rounded-lg px-3 py-2">
-              <div className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-sidebar-primary text-xs font-bold text-sidebar-primary-foreground">
+        {/* Sidebar User Footer */}
+        <div className="border-t border-slate-800 p-2 bg-[#0B132B]">
+          {!collapsed && user.name && (
+            <div className="mb-2 flex items-center gap-2 rounded.md px-2 py-1.5 bg-slate-900">
+              <div className="grid h-7 w-7 shrink-0 place-items-center rounded-full bg-[#1E3A8A] text-xs font-bold text-white border border-slate-700">
                 {initials}
               </div>
               <div className="min-w-0">
-                <p className="truncate text-sm font-medium">{user.name}</p>
-                <p className="truncate text-xs text-sidebar-foreground/60 capitalize">
+                <p className="truncate text-xs font-bold text-slate-100">{user.name}</p>
+                <p className="truncate text-[10px] text-slate-400 capitalize">
                   {user.role ?? "Officer"}
                 </p>
               </div>
@@ -127,53 +151,78 @@ export function DashboardShell({
           )}
           <Link
             to="/login"
-            className="flex items-center gap-3 rounded-lg px-3 py-2 text-xs font-medium text-sidebar-foreground/80 hover:bg-sidebar-accent"
+            className="flex items-center gap-3 rounded-md px-3 py-2 text-xs font-medium text-slate-400 hover:bg-slate-800 hover:text-white"
           >
-            <LogOut className="h-4 w-4" /> Sign out
+            <LogOut className="h-4 w-4" />
+            {!collapsed && <span>Sign out</span>}
           </Link>
         </div>
       </aside>
 
-      {/* Overlay */}
-      {open && (
+      {/* Overlay for Mobile */}
+      {mobileOpen && (
         <div
-          className="fixed inset-0 z-30 bg-foreground/30 md:hidden"
-          onClick={() => setOpen(false)}
+          className="fixed inset-0 z-30 bg-black/50 md:hidden"
+          onClick={() => setMobileOpen(false)}
         />
       )}
 
+      {/* Main Content Area */}
       <div className="flex min-w-0 flex-1 flex-col overflow-hidden">
-        <header className="sticky top-0 z-20 flex h-16 items-center gap-3 border-b bg-card/80 px-4 backdrop-blur md:px-6">
+        {/* Top Command Center Header (#1E3A8A Dark Blue) */}
+        <header className="sticky top-0 z-20 flex h-16 items-center gap-4 bg-[#1E3A8A] text-white px-4 md:px-6 shadow-md border-b border-blue-900">
           <Button
-            variant="outline"
+            variant="ghost"
             size="icon"
-            className="shrink-0 md:hidden"
-            onClick={() => setOpen(true)}
+            className="shrink-0 md:hidden text-white hover:bg-blue-800"
+            onClick={() => setMobileOpen(true)}
           >
-            <Menu className="h-4 w-4" />
+            <Menu className="h-5 w-5" />
           </Button>
+
+          {/* Title & Subtitle */}
           <div className="min-w-0 flex-1">
-            <h1 className="truncate text-base font-bold text-foreground sm:text-lg">{title}</h1>
+            <h1 className="truncate text-sm md:text-base font-bold text-white tracking-wide">
+              {title}
+            </h1>
             {subtitle && (
-              <p className="truncate text-xs text-muted-foreground sm:text-sm">{subtitle}</p>
+              <p className="truncate text-[11px] text-blue-200 font-medium">{subtitle}</p>
             )}
           </div>
-          <NotificationsPopover />
-          <div className="hidden items-center gap-2 sm:flex">
-            <div className="text-right">
-              <p className="text-sm font-medium leading-tight text-foreground">
-                {user.name ?? "Officer"}
-              </p>
-              <p className="text-xs text-muted-foreground capitalize">
-                {user.department ?? user.role ?? "Dept."}
-              </p>
-            </div>
-            <div className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-primary text-xs font-bold text-primary-foreground">
-              {initials}
+
+          {/* Quick Command Search Bar */}
+          <div className="hidden lg:flex items-center relative w-64">
+            <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-blue-300" />
+            <Input
+              placeholder="Search projects, zones, IDs..."
+              className="h-8 pl-8 text-xs bg-blue-950/60 border-blue-800 text-white placeholder:text-blue-300 focus-visible:ring-1 focus-visible:ring-blue-400"
+            />
+          </div>
+
+          {/* Notifications & Profile Pill */}
+          <div className="flex items-center gap-3">
+            <NotificationsPopover />
+
+            <div className="hidden sm:flex items-center gap-2 pl-2 border-l border-blue-800">
+              <div className="text-right">
+                <p className="text-xs font-bold text-white leading-none">
+                  {user.name ?? "Municipal Officer"}
+                </p>
+                <p className="text-[10px] text-blue-200 capitalize mt-0.5">
+                  {user.department ?? user.role ?? "Department Admin"}
+                </p>
+              </div>
+              <div className="grid h-8 w-8 shrink-0 place-items-center rounded-full bg-[#3B82F6] text-xs font-extrabold text-white border border-blue-400 shadow-sm">
+                {initials}
+              </div>
             </div>
           </div>
         </header>
-        <main className="flex-1 overflow-auto p-4 md:p-6 lg:p-8">{children}</main>
+
+        {/* Main Body Canvas */}
+        <main className="flex-1 overflow-auto bg-[#FFFFFF] p-4 md:p-6 lg:p-8 space-y-6">
+          {children}
+        </main>
       </div>
     </div>
   );
@@ -193,27 +242,23 @@ export function StatCard({
   hint?: string;
 }) {
   const accentMap: Record<string, string> = {
-    primary: "bg-primary/10 text-primary",
-    success: "bg-emerald-500/10 text-emerald-600",
-    warning: "bg-amber-500/15 text-amber-600",
-    destructive: "bg-red-500/10 text-red-600",
+    primary: "bg-[#1E3A8A] text-white",
+    success: "bg-[#16A34A] text-white",
+    warning: "bg-[#F59E0B] text-white",
+    destructive: "bg-[#DC2626] text-white",
   };
+
   return (
-    <div className="rounded-xl border bg-card p-4 shadow-card sm:p-5">
-      <div className="flex items-start justify-between gap-2">
+    <div className="rounded-lg border border-[#E5E7EB] bg-[#F8FAFC] p-4 shadow-sm transition hover:shadow-md">
+      <div className="flex items-start justify-between gap-3">
         <div className="min-w-0">
-          <p className="text-xs font-medium text-muted-foreground sm:text-sm">{label}</p>
-          <p className="mt-1 text-2xl font-bold tracking-tight text-foreground sm:mt-2 sm:text-3xl">
+          <p className="text-xs font-semibold text-slate-500 uppercase tracking-wider">{label}</p>
+          <p className="mt-1 text-2xl font-black tracking-tight text-[#111827] sm:text-3xl">
             {value}
           </p>
-          {hint && <p className="mt-1 text-xs text-muted-foreground">{hint}</p>}
+          {hint && <p className="mt-1 text-[11px] text-slate-500 font-medium">{hint}</p>}
         </div>
-        <div
-          className={cn(
-            "grid h-10 w-10 shrink-0 place-items-center rounded-lg sm:h-11 sm:w-11",
-            accentMap[accent],
-          )}
-        >
+        <div className={cn("grid h-10 w-10 shrink-0 place-items-center rounded-md shadow-sm", accentMap[accent])}>
           <Icon className="h-5 w-5" />
         </div>
       </div>

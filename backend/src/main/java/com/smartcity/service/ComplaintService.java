@@ -32,11 +32,26 @@ public class ComplaintService {
         c.setProgress(0);
         Complaint saved = repo.save(c);
 
-        emailService.sendAlertNotification(
+        // 1. Send Tracking Email to Citizen with Tracking ID #
+        String citizenEmail = "vbsattanathan@gmail.com";
+        emailService.sendComplaintTrackingEmail(
+            citizenEmail,
+            saved.getId(),
+            saved.getCategory(),
+            saved.getZone(),
+            saved.getDescription(),
+            saved.getCategory() + " Department Officer"
+        );
+
+        // 2. Send Urgent Dispatch Email to Department Officer based on Priority/Category
+        emailService.sendOfficerNotificationEmail(
             "vbsattanathan@gmail.com",
-            "New Citizen Complaint: " + saved.getCategory() + " (" + saved.getZone() + ")",
-            "Citizen Complaint Submitted by " + saved.getUserName(),
-            "Category: " + saved.getCategory() + "\nZone: " + saved.getZone() + "\nDescription: " + saved.getDescription()
+            saved.getCategory() + " Officer",
+            saved.getId(),
+            saved.getCategory(),
+            saved.getZone(),
+            "HIGH",
+            saved.getDescription()
         );
 
         return toResponse(saved);

@@ -46,6 +46,7 @@ export const authApi = {
     name: string;
     email: string;
     password: string;
+    employeeId?: string;
     phone?: string;
     department: string;
     role: string;

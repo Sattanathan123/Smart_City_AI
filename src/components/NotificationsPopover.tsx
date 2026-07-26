@@ -28,7 +28,6 @@ export function NotificationsPopover() {
     return () => clearInterval(interval);
   }, []);
 
-  // Close popover when clicking outside
   useEffect(() => {
     function handleClickOutside(event: MouseEvent) {
       if (popoverRef.current && !popoverRef.current.contains(event.target as Node)) {
@@ -69,9 +68,9 @@ export function NotificationsPopover() {
   return (
     <div className="relative shrink-0" ref={popoverRef}>
       <Button
-        variant="outline"
+        variant="ghost"
         size="icon"
-        className="relative shrink-0 hover:bg-accent transition-colors"
+        className="relative shrink-0 text-white hover:bg-blue-800"
         onClick={() => {
           setOpen((prev) => !prev);
           if (!open) fetchAlerts();
@@ -80,21 +79,21 @@ export function NotificationsPopover() {
       >
         <Bell className="h-4 w-4" />
         {activeCount > 0 && (
-          <span className="absolute -top-1 -right-1 flex h-5 w-5 items-center justify-center rounded-full bg-destructive text-[10px] font-bold text-destructive-foreground animate-pulse shadow-sm">
+          <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-[#DC2626] text-[9px] font-bold text-white shadow-sm">
             {activeCount > 9 ? "9+" : activeCount}
           </span>
         )}
       </Button>
 
       {open && (
-        <div className="absolute right-0 mt-2 w-80 sm:w-96 rounded-xl border bg-popover p-0 shadow-xl z-50 animate-in fade-in-50 zoom-in-95">
+        <div className="absolute right-0 mt-2 w-80 sm:w-96 rounded-lg border border-[#E2E8F0] bg-[#FFFFFF] text-[#0F172A] p-0 shadow-2xl z-50">
           {/* Header */}
-          <div className="flex items-center justify-between border-b px-4 py-3 bg-muted/30 rounded-t-xl">
+          <div className="flex items-center justify-between border-b border-[#E2E8F0] px-4 py-3 bg-[#F8FAFC] rounded-t-lg">
             <div className="flex items-center gap-2">
-              <Sparkles className="h-4 w-4 text-primary" />
-              <h3 className="text-sm font-semibold text-popover-foreground">System Alerts & Notifications</h3>
+              <Sparkles className="h-4 w-4 text-[#1E3A8A]" />
+              <h3 className="text-xs font-bold text-[#0F172A]">System Notifications</h3>
               {activeCount > 0 && (
-                <span className="rounded-full bg-primary/15 px-2 py-0.5 text-xs font-semibold text-primary">
+                <span className="rounded-full bg-[#1E3A8A]/10 px-2 py-0.5 text-[10px] font-bold text-[#1E3A8A]">
                   {activeCount}
                 </span>
               )}
@@ -105,7 +104,7 @@ export function NotificationsPopover() {
                   variant="ghost"
                   size="sm"
                   onClick={handleDismissAll}
-                  className="h-7 text-xs text-muted-foreground hover:text-destructive px-2"
+                  className="h-6 text-[10px] text-slate-500 hover:text-[#DC2626] px-2 font-bold"
                 >
                   Clear all
                 </Button>
@@ -113,25 +112,25 @@ export function NotificationsPopover() {
               <Button
                 variant="ghost"
                 size="icon"
-                className="h-7 w-7 text-muted-foreground hover:text-foreground"
+                className="h-6 w-6 text-slate-500 hover:text-[#0F172A]"
                 onClick={() => setOpen(false)}
               >
-                <X className="h-4 w-4" />
+                <X className="h-3.5 w-3.5" />
               </Button>
             </div>
           </div>
 
           {/* List */}
-          <div className="max-h-80 overflow-y-auto p-2 space-y-2 divide-y divide-border/40">
+          <div className="max-h-80 overflow-y-auto p-2 space-y-1 divide-y divide-[#E2E8F0]">
             {loading && alerts.length === 0 ? (
-              <div className="py-8 text-center text-xs text-muted-foreground">
+              <div className="py-8 text-center text-xs text-slate-500 font-medium">
                 Loading notifications...
               </div>
             ) : alerts.length === 0 ? (
-              <div className="py-8 text-center text-xs text-muted-foreground flex flex-col items-center gap-2">
-                <CheckCircle2 className="h-8 w-8 text-success/50" />
-                <p className="font-medium text-foreground">All clear!</p>
-                <p>No active conflict or priority alerts right now.</p>
+              <div className="py-8 text-center text-xs text-slate-500 font-medium flex flex-col items-center gap-2">
+                <CheckCircle2 className="h-8 w-8 text-[#16A34A]" />
+                <p className="font-bold text-[#0F172A]">All System Checks Operational</p>
+                <p className="text-[11px]">No active conflict alerts flagged.</p>
               </div>
             ) : (
               alerts.map((alert) => {
@@ -141,15 +140,15 @@ export function NotificationsPopover() {
                 return (
                   <div
                     key={alert.id}
-                    className="group relative flex items-start gap-3 rounded-lg p-3 pt-3 transition-colors hover:bg-accent/50"
+                    className="group relative flex items-start gap-3 rounded-md p-3 pt-3 hover:bg-[#F8FAFC] transition-colors"
                   >
                     <div
-                      className={`grid h-8 w-8 shrink-0 place-items-center rounded-lg ${
+                      className={`grid h-7 w-7 shrink-0 place-items-center rounded ${
                         isWarning
-                          ? "bg-destructive/15 text-destructive"
+                          ? "bg-[#DC2626]/10 text-[#DC2626]"
                           : isSuccess
-                          ? "bg-success/15 text-success"
-                          : "bg-primary/15 text-primary"
+                          ? "bg-[#16A34A]/10 text-[#16A34A]"
+                          : "bg-[#1E3A8A]/10 text-[#1E3A8A]"
                       }`}
                     >
                       {isWarning ? (
@@ -161,16 +160,16 @@ export function NotificationsPopover() {
                       )}
                     </div>
                     <div className="flex-1 min-w-0 pr-6">
-                      <p className="text-xs font-semibold text-popover-foreground leading-snug">
+                      <p className="text-xs font-bold text-[#0F172A] leading-snug">
                         {alert.title}
                       </p>
-                      <p className="mt-1 text-xs text-muted-foreground line-clamp-2 leading-relaxed">
+                      <p className="mt-1 text-[11px] text-slate-600 font-medium line-clamp-2 leading-relaxed">
                         {alert.description}
                       </p>
                     </div>
                     <button
                       onClick={(e) => handleDismiss(alert.id, e)}
-                      className="absolute top-3 right-3 text-muted-foreground/60 opacity-0 group-hover:opacity-100 hover:text-destructive transition-opacity"
+                      className="absolute top-3 right-3 text-slate-400 opacity-0 group-hover:opacity-100 hover:text-[#DC2626] transition-opacity"
                       title="Dismiss alert"
                     >
                       <Trash2 className="h-3.5 w-3.5" />

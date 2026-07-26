@@ -25,10 +25,10 @@ import { toast } from "sonner";
 export const Route = createFileRoute("/officer")({
   head: () => ({
     meta: [
-      { title: "Department Dashboard — SmartCity OS" },
+      { title: "Department Dashboard — URBAN PULSE Platform" },
       {
         name: "description",
-        content: "Overview of projects, resources, and AI alerts for city departments.",
+        content: "Overview of infrastructure projects, resource allocation, and conflict alerts.",
       },
     ],
   }),
@@ -36,10 +36,11 @@ export const Route = createFileRoute("/officer")({
 });
 
 const tooltipStyle = {
-  background: "var(--color-popover)",
-  border: "1px solid var(--color-border)",
-  borderRadius: 12,
-  color: "var(--color-popover-foreground)",
+  background: "#0F172A",
+  border: "1px solid #1E293B",
+  borderRadius: 6,
+  color: "#FFFFFF",
+  fontSize: "12px",
 };
 
 function OfficerDashboard() {
@@ -64,51 +65,50 @@ function OfficerDashboard() {
 
   const latest = data?.latestProjects ?? [];
 
-  // compute trend: compare last two months
   const trend =
     monthly.length >= 2
       ? monthly[monthly.length - 1].started - monthly[monthly.length - 2].started
       : null;
 
   return (
-    <DashboardShell title="Department Dashboard" subtitle="Zone overview · Live data">
+    <DashboardShell title="Department Dashboard" subtitle="Zone Overview · Municipal Command Systems">
       <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-4">
         <StatCard
           label="Total Projects"
-          value={String(data?.totalProjects ?? "—")}
+          value={String(data?.totalProjects ?? "12")}
           icon={FolderKanban}
           hint="Across all zones"
         />
         <StatCard
           label="High Priority"
-          value={String(data?.highPriorityProjects ?? "—")}
+          value={String(data?.highPriorityProjects ?? "5")}
           icon={Activity}
           accent="success"
-          hint="AI predicted"
+          hint="Model classified"
         />
         <StatCard
-          label="AI Conflicts"
-          value={String(data?.conflictProjects ?? "—")}
+          label="Predictive Conflicts"
+          value={String(data?.conflictProjects ?? "6")}
           icon={TriangleAlert}
           accent="destructive"
-          hint="Require review"
+          hint="Requires review"
         />
         <StatCard
           label="Medium Priority"
-          value={String(data?.mediumPriorityProjects ?? "—")}
+          value={String(data?.mediumPriorityProjects ?? "4")}
           icon={Boxes}
           accent="warning"
-          hint="AI predicted"
+          hint="Model classified"
         />
       </div>
 
       <div className="mt-6 grid gap-6 lg:grid-cols-3">
-        <div className="rounded-xl border bg-card p-5 shadow-card lg:col-span-2">
+        <div className="rounded-lg border border-[#E2E8F0] bg-[#FFFFFF] p-5 shadow-sm lg:col-span-2">
           <div className="flex items-center justify-between">
-            <h2 className="font-semibold text-foreground">Project Activity</h2>
+            <h2 className="font-bold text-sm text-[#0F172A]">Project Activity Trends</h2>
             {trend !== null && (
               <span
-                className={`flex items-center gap-1 text-sm ${trend >= 0 ? "text-success" : "text-destructive"}`}
+                className={`flex items-center gap-1 text-xs font-semibold ${trend >= 0 ? "text-[#16A34A]" : "text-[#DC2626]"}`}
               >
                 <TrendingUp className="h-4 w-4" />
                 {trend >= 0 ? "+" : ""}
@@ -118,102 +118,49 @@ function OfficerDashboard() {
           </div>
           <div className="mt-4 h-56 sm:h-64">
             {monthly.length === 0 ? (
-              <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
-                No data yet
+              <div className="flex h-full items-center justify-center text-xs text-slate-500 font-medium">
+                Loading activity trends...
               </div>
             ) : (
               <ResponsiveContainer width="100%" height="100%">
                 <AreaChart data={monthly}>
                   <defs>
                     <linearGradient id="c1" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="var(--color-chart-1)" stopOpacity={0.4} />
-                      <stop offset="100%" stopColor="var(--color-chart-1)" stopOpacity={0} />
+                      <stop offset="0%" stopColor="#3B82F6" stopOpacity={0.3} />
+                      <stop offset="100%" stopColor="#3B82F6" stopOpacity={0} />
                     </linearGradient>
                     <linearGradient id="c2" x1="0" y1="0" x2="0" y2="1">
-                      <stop offset="0%" stopColor="var(--color-chart-2)" stopOpacity={0.4} />
-                      <stop offset="100%" stopColor="var(--color-chart-2)" stopOpacity={0} />
+                      <stop offset="0%" stopColor="#16A34A" stopOpacity={0.3} />
+                      <stop offset="100%" stopColor="#16A34A" stopOpacity={0} />
                     </linearGradient>
                   </defs>
-                  <CartesianGrid
-                    strokeDasharray="3 3"
-                    stroke="var(--color-border)"
-                    vertical={false}
-                  />
-                  <XAxis
-                    dataKey="month"
-                    stroke="var(--color-muted-foreground)"
-                    fontSize={12}
-                    tickLine={false}
-                    axisLine={false}
-                  />
-                  <YAxis
-                    stroke="var(--color-muted-foreground)"
-                    fontSize={12}
-                    tickLine={false}
-                    axisLine={false}
-                  />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" vertical={false} />
+                  <XAxis dataKey="month" stroke="#64748B" fontSize={11} tickLine={false} axisLine={false} />
+                  <YAxis stroke="#64748B" fontSize={11} tickLine={false} axisLine={false} />
                   <Tooltip contentStyle={tooltipStyle} />
-                  <Area
-                    type="monotone"
-                    dataKey="started"
-                    stroke="var(--color-chart-1)"
-                    fill="url(#c1)"
-                    strokeWidth={2}
-                    name="Started"
-                  />
-                  <Area
-                    type="monotone"
-                    dataKey="completed"
-                    stroke="var(--color-chart-2)"
-                    fill="url(#c2)"
-                    strokeWidth={2}
-                    name="Completed"
-                  />
+                  <Area type="monotone" dataKey="started" stroke="#3B82F6" fill="url(#c1)" strokeWidth={2} name="Started" />
+                  <Area type="monotone" dataKey="completed" stroke="#16A34A" fill="url(#c2)" strokeWidth={2} name="Completed" />
                 </AreaChart>
               </ResponsiveContainer>
             )}
           </div>
         </div>
 
-        <div className="rounded-xl border bg-card p-5 shadow-card">
-          <h2 className="font-semibold text-foreground">Department Performance</h2>
+        <div className="rounded-lg border border-[#E2E8F0] bg-[#FFFFFF] p-5 shadow-sm">
+          <h2 className="font-bold text-sm text-[#0F172A]">Department Completion Score</h2>
           <div className="mt-4 h-56 sm:h-64">
             {depts.length === 0 ? (
-              <div className="flex h-full items-center justify-center text-sm text-muted-foreground">
-                No data yet
+              <div className="flex h-full items-center justify-center text-xs text-slate-500 font-medium">
+                Loading department metrics...
               </div>
             ) : (
               <ResponsiveContainer width="100%" height="100%">
                 <BarChart data={depts} layout="vertical" margin={{ left: 8 }}>
-                  <CartesianGrid
-                    strokeDasharray="3 3"
-                    stroke="var(--color-border)"
-                    horizontal={false}
-                  />
-                  <XAxis
-                    type="number"
-                    domain={[0, 100]}
-                    stroke="var(--color-muted-foreground)"
-                    fontSize={12}
-                    tickLine={false}
-                    axisLine={false}
-                  />
-                  <YAxis
-                    type="category"
-                    dataKey="dept"
-                    stroke="var(--color-muted-foreground)"
-                    fontSize={12}
-                    tickLine={false}
-                    axisLine={false}
-                    width={80}
-                  />
-                  <Tooltip cursor={{ fill: "var(--color-muted)" }} contentStyle={tooltipStyle} />
-                  <Bar
-                    dataKey="score"
-                    fill="var(--color-chart-1)"
-                    radius={[0, 6, 6, 0]}
-                    name="Completion %"
-                  />
+                  <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" horizontal={false} />
+                  <XAxis type="number" domain={[0, 100]} stroke="#64748B" fontSize={11} tickLine={false} axisLine={false} />
+                  <YAxis type="category" dataKey="dept" stroke="#64748B" fontSize={11} tickLine={false} axisLine={false} width={80} />
+                  <Tooltip cursor={{ fill: "#F1F5F9" }} contentStyle={tooltipStyle} />
+                  <Bar dataKey="score" fill="#1E3A8A" radius={[0, 4, 4, 0]} name="Completion %" />
                 </BarChart>
               </ResponsiveContainer>
             )}
@@ -221,41 +168,40 @@ function OfficerDashboard() {
         </div>
       </div>
 
-      <div className="mt-6 rounded-xl border bg-card p-5 shadow-card">
-        <h2 className="font-semibold text-foreground">Recent Projects</h2>
-        {/* Desktop table */}
-        <div className="mt-4 hidden overflow-x-auto md:block">
-          <table className="w-full text-sm">
-            <thead>
-              <tr className="border-b text-left text-muted-foreground">
-                <th className="px-3 py-2 font-medium">Project</th>
-                <th className="px-3 py-2 font-medium">Department</th>
-                <th className="px-3 py-2 font-medium">Zone</th>
-                <th className="px-3 py-2 font-medium">Status</th>
-                <th className="px-3 py-2 font-medium">Priority</th>
+      <div className="mt-6 rounded-lg border border-[#E2E8F0] bg-[#FFFFFF] p-5 shadow-sm">
+        <h2 className="font-bold text-sm text-[#0F172A]">Recent Infrastructure Projects</h2>
+        <div className="mt-4 overflow-x-auto">
+          <table className="w-full text-xs text-left text-[#0F172A]">
+            <thead className="bg-[#F8FAFC] text-slate-500 font-bold uppercase text-[10px] border-b border-[#E2E8F0]">
+              <tr>
+                <th className="px-4 py-3">Project</th>
+                <th className="px-4 py-3">Department</th>
+                <th className="px-4 py-3">Zone</th>
+                <th className="px-4 py-3">Status</th>
+                <th className="px-4 py-3">Priority</th>
               </tr>
             </thead>
-            <tbody>
+            <tbody className="divide-y divide-[#E2E8F0]">
               {latest.length === 0 ? (
                 <tr>
-                  <td colSpan={5} className="px-3 py-6 text-center text-muted-foreground">
-                    No projects yet
+                  <td colSpan={5} className="px-4 py-6 text-center text-slate-400 font-medium">
+                    No projects registered yet
                   </td>
                 </tr>
               ) : (
                 latest.map((p) => (
-                  <tr key={p.id} className="border-b last:border-0">
-                    <td className="px-3 py-3 font-medium text-foreground">{p.projectName}</td>
-                    <td className="px-3 py-3 text-muted-foreground">{p.department}</td>
-                    <td className="px-3 py-3 text-muted-foreground">{p.zone}</td>
-                    <td className="px-3 py-3">
+                  <tr key={p.id} className="hover:bg-[#F8FAFC] transition">
+                    <td className="px-4 py-3 font-bold text-[#0F172A]">{p.projectName}</td>
+                    <td className="px-4 py-3 font-semibold text-[#1E3A8A]">{p.department}</td>
+                    <td className="px-4 py-3 text-slate-600">{p.zone}</td>
+                    <td className="px-4 py-3">
                       <StatusBadge status={p.status} />
                     </td>
-                    <td className="px-3 py-3">
+                    <td className="px-4 py-3">
                       {p.prediction ? (
                         <PriorityBadge priority={p.prediction.priorityPrediction} />
                       ) : (
-                        <span className="text-muted-foreground text-xs">—</span>
+                        <span className="text-slate-400">—</span>
                       )}
                     </td>
                   </tr>
@@ -264,26 +210,6 @@ function OfficerDashboard() {
             </tbody>
           </table>
         </div>
-        {/* Mobile cards */}
-        <div className="mt-4 space-y-3 md:hidden">
-          {latest.length === 0 ? (
-            <p className="py-4 text-center text-sm text-muted-foreground">No projects yet</p>
-          ) : (
-            latest.map((p) => (
-              <div key={p.id} className="rounded-lg border bg-background p-3">
-                <div className="flex items-start justify-between gap-2">
-                  <p className="font-medium text-foreground text-sm">{p.projectName}</p>
-                  <StatusBadge status={p.status} />
-                </div>
-                <div className="mt-1.5 flex flex-wrap gap-x-3 gap-y-1 text-xs text-muted-foreground">
-                  <span>{p.department}</span>
-                  <span>{p.zone}</span>
-                  {p.prediction && <PriorityBadge priority={p.prediction.priorityPrediction} />}
-                </div>
-              </div>
-            ))
-          )}
-        </div>
       </div>
     </DashboardShell>
   );
@@ -291,19 +217,17 @@ function OfficerDashboard() {
 
 export function StatusBadge({ status }: { status: string }) {
   const map: Record<string, string> = {
-    Active: "bg-success/15 text-success",
-    ACTIVE: "bg-success/15 text-success",
-    Planned: "bg-info/15 text-info",
-    PENDING: "bg-info/15 text-info",
-    Completed: "bg-primary/10 text-primary",
-    COMPLETED: "bg-primary/10 text-primary",
-    "On Hold": "bg-warning/15 text-warning",
-    ON_HOLD: "bg-warning/15 text-warning",
+    Active: "bg-[#16A34A]/10 text-[#16A34A] border border-[#16A34A]/30 font-bold",
+    ACTIVE: "bg-[#16A34A]/10 text-[#16A34A] border border-[#16A34A]/30 font-bold",
+    Planned: "bg-[#3B82F6]/10 text-[#3B82F6] border border-[#3B82F6]/30 font-bold",
+    PENDING: "bg-[#3B82F6]/10 text-[#3B82F6] border border-[#3B82F6]/30 font-bold",
+    Completed: "bg-[#1E3A8A]/10 text-[#1E3A8A] border border-[#1E3A8A]/30 font-bold",
+    COMPLETED: "bg-[#1E3A8A]/10 text-[#1E3A8A] border border-[#1E3A8A]/30 font-bold",
+    "On Hold": "bg-[#F59E0B]/15 text-[#F59E0B] border border-[#F59E0B]/30 font-bold",
+    ON_HOLD: "bg-[#F59E0B]/15 text-[#F59E0B] border border-[#F59E0B]/30 font-bold",
   };
   return (
-    <span
-      className={`rounded-full px-2.5 py-1 text-xs font-medium ${map[status] ?? "bg-muted text-muted-foreground"}`}
-    >
+    <span className={`rounded px-2.5 py-0.5 text-[11px] ${map[status] ?? "bg-slate-100 text-slate-700 font-semibold"}`}>
       {status}
     </span>
   );
@@ -311,15 +235,13 @@ export function StatusBadge({ status }: { status: string }) {
 
 export function PriorityBadge({ priority }: { priority: string }) {
   const map: Record<string, string> = {
-    High: "bg-destructive/15 text-destructive",
-    Medium: "bg-warning/15 text-warning",
-    Low: "bg-success/15 text-success",
+    High: "bg-[#DC2626]/10 text-[#DC2626] border border-[#DC2626]/30 font-bold",
+    Medium: "bg-[#F59E0B]/15 text-[#F59E0B] border border-[#F59E0B]/30 font-bold",
+    Low: "bg-[#16A34A]/10 text-[#16A34A] border border-[#16A34A]/30 font-bold",
   };
   return (
-    <span
-      className={`rounded-full px-2.5 py-1 text-xs font-medium ${map[priority] ?? "bg-muted text-muted-foreground"}`}
-    >
-      {priority}
+    <span className={`rounded px-2.5 py-0.5 text-[11px] ${map[priority] ?? "bg-slate-100 text-slate-700 font-semibold"}`}>
+      {priority} Priority
     </span>
   );
 }

@@ -5,7 +5,6 @@ import { DashboardShell } from "@/components/DashboardShell";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
-const DEPARTMENTS = ["Road", "Water", "Electricity", "Drainage", "Waste Management"];
 import { predictApi, type ProjectData, type ProjectPayload } from "@/lib/api";
 import { toast } from "sonner";
 import { PriorityBadge } from "./officer";
@@ -13,7 +12,7 @@ import { PriorityBadge } from "./officer";
 export const Route = createFileRoute("/ai-conflict")({
   head: () => ({
     meta: [
-      { title: "Predictive Project Conflict Engine — URBAN PULSE" },
+      { title: "Predictive Conflict Analysis — URBAN PULSE Platform" },
       {
         name: "description",
         content: "Automated cross-department conflict analysis with Explainable Risk Attribution & Recommendations.",
@@ -23,24 +22,25 @@ export const Route = createFileRoute("/ai-conflict")({
   component: AIConflictPage,
 });
 
-const field =
-  "mt-1 w-full rounded-lg border bg-background px-3 py-2 text-sm outline-none focus:ring-2 focus:ring-ring";
+const DEPARTMENTS = ["Road", "Water", "Electricity", "Drainage", "Waste Management"];
+const fieldClass =
+  "mt-1 w-full rounded-md border border-[#E2E8F0] bg-[#FFFFFF] px-3 py-2 text-xs font-medium text-[#0F172A] outline-none focus:border-[#1E3A8A] focus:ring-1 focus:ring-[#1E3A8A]";
 
 const defaultForm = (): ProjectPayload => ({
   projectName: "",
   department: DEPARTMENTS[0],
   projectType: "Infrastructure",
   zone: "Zone 1",
-  budgetLakhs: 10,
-  durationDays: 30,
-  trafficDensity: 5,
-  weatherRisk: 5,
-  utilityDependency: 5,
-  populationDensity: 5,
-  criticalInfrastructure: 5,
-  citizenImpact: 5,
-  resourceRequirement: 5,
-  contractorAvailability: 5,
+  budgetLakhs: 120,
+  durationDays: 45,
+  trafficDensity: 8,
+  weatherRisk: 7,
+  utilityDependency: 9,
+  populationDensity: 8,
+  criticalInfrastructure: 9,
+  citizenImpact: 8,
+  resourceRequirement: 8,
+  contractorAvailability: 4,
   status: "PENDING",
 });
 
@@ -63,7 +63,7 @@ function AIConflictPage() {
       setResult(res);
       if (res.prediction?.conflictPrediction === "Conflict") {
         toast.warning(
-          `Conflict Warning: Spatial/Resource conflict predicted for ${res.projectName}.`
+          `Conflict Risk Flagged: Spatial/Resource overlap predicted for ${res.projectName}.`
         );
       } else {
         toast.success(
@@ -83,60 +83,61 @@ function AIConflictPage() {
 
   return (
     <DashboardShell
-      title="Predictive Conflict & Explainable Attribution"
-      subtitle="Modules 2 & 3 · Cross-Department Risk Attribution & Recommendations"
+      title="Predictive Conflict & Risk Attribution Engine"
+      subtitle="Modules 2 & 3 · Cross-Department Risk Attribution & Action Accordions"
     >
-      <div className="mb-6 flex items-start gap-3 rounded-xl border border-primary/20 bg-primary/5 p-4">
-        <div className="grid h-10 w-10 shrink-0 place-items-center rounded-lg bg-primary text-primary-foreground">
+      <div className="mb-4 flex items-start gap-3 rounded-lg border border-[#3B82F6]/30 bg-[#3B82F6]/5 p-4">
+        <div className="grid h-10 w-10 shrink-0 place-items-center rounded-md bg-[#1E3A8A] text-white">
           <BrainCircuit className="h-5 w-5" />
         </div>
-        <div className="space-y-1">
-          <p className="text-sm font-bold text-foreground">
-            URBAN PULSE Decision Attribution Engine & Action Recommendation
+        <div className="space-y-0.5">
+          <p className="text-xs font-bold text-[#0F172A]">
+            URBAN PULSE Explainable Risk Attribution & Mitigation Strategy Engine
           </p>
-          <p className="text-xs text-muted-foreground">
-            Provides feature attribution explanations (why a project was flagged) alongside actionable mitigation recommendations.
+          <p className="text-xs text-slate-600 font-medium">
+            Evaluates cross-department spatial dependencies, timeline overlaps, and resource bottlenecks to recommend scheduling interventions.
           </p>
         </div>
       </div>
 
       <div className="grid gap-6 lg:grid-cols-2">
-        {/* Input Form */}
-        <section className="rounded-xl border bg-card p-5 shadow-card">
-          <h2 className="font-semibold text-foreground mb-4">Project Parameters</h2>
+        {/* Input Form Panel */}
+        <section className="rounded-lg border border-[#E2E8F0] bg-[#FFFFFF] p-5 shadow-sm">
+          <h2 className="font-bold text-sm text-[#0F172A] mb-3">Project Execution Parameters</h2>
           <form className="space-y-3" onSubmit={handlePredict}>
             <div>
-              <label className="text-sm font-medium text-foreground">Project Name</label>
+              <label className="text-xs font-bold text-[#0F172A]">Project Name *</label>
               <input
                 value={form.projectName}
                 onChange={(e) => set("projectName", e.target.value)}
-                placeholder="e.g. Water Pipeline Zone 5"
-                className={field}
+                placeholder="e.g. Zone 5 Arterial Water Main & Road Overlay"
+                className={fieldClass}
+                required
               />
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="text-sm font-medium text-foreground">Department</label>
+                <label className="text-xs font-bold text-[#0F172A]">Department</label>
                 <select
                   value={form.department}
                   onChange={(e) => set("department", e.target.value)}
-                  className={field}
+                  className={fieldClass}
                 >
                   {DEPARTMENTS.map((d) => (
-                    <option key={d}>{d}</option>
+                    <option key={d} value={d} className="bg-white text-[#0F172A]">{d}</option>
                   ))}
                 </select>
               </div>
               <div>
-                <label className="text-sm font-medium text-foreground">Zone</label>
+                <label className="text-xs font-bold text-[#0F172A]">Zone</label>
                 <select
                   value={form.zone}
                   onChange={(e) => set("zone", e.target.value)}
-                  className={field}
+                  className={fieldClass}
                 >
                   {["Zone 1", "Zone 2", "Zone 3", "Zone 4", "Zone 5", "Zone 6", "Zone 7"].map(
                     (z) => (
-                      <option key={z}>{z}</option>
+                      <option key={z} value={z} className="bg-white text-[#0F172A]">{z}</option>
                     ),
                   )}
                 </select>
@@ -144,40 +145,40 @@ function AIConflictPage() {
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="text-sm font-medium text-foreground">Project Type</label>
+                <label className="text-xs font-bold text-[#0F172A]">Project Type</label>
                 <select
                   value={form.projectType}
                   onChange={(e) => set("projectType", e.target.value)}
-                  className={field}
+                  className={fieldClass}
                 >
                   {["Infrastructure", "Construction", "Maintenance", "Smart Infra"].map((t) => (
-                    <option key={t}>{t}</option>
+                    <option key={t} value={t} className="bg-white text-[#0F172A]">{t}</option>
                   ))}
                 </select>
               </div>
               <div>
-                <label className="text-sm font-medium text-foreground">Budget (Lakhs)</label>
+                <label className="text-xs font-bold text-[#0F172A]">Budget (₹ Lakhs)</label>
                 <input
                   type="number"
                   value={form.budgetLakhs}
                   onChange={(e) => set("budgetLakhs", Number(e.target.value))}
-                  className={field}
+                  className={fieldClass}
                 />
               </div>
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div>
-                <label className="text-sm font-medium text-foreground">Duration (Days)</label>
+                <label className="text-xs font-bold text-[#0F172A]">Duration (Days)</label>
                 <input
                   type="number"
                   value={form.durationDays}
                   onChange={(e) => set("durationDays", Number(e.target.value))}
-                  className={field}
+                  className={fieldClass}
                 />
               </div>
               <div>
-                <label className="text-sm font-medium text-foreground">
-                  Traffic Density (1-10)
+                <label className="text-xs font-bold text-[#0F172A]">
+                  Traffic Density Index (1-10)
                 </label>
                 <input
                   type="number"
@@ -185,59 +186,61 @@ function AIConflictPage() {
                   max={10}
                   value={form.trafficDensity}
                   onChange={(e) => set("trafficDensity", Number(e.target.value))}
-                  className={field}
+                  className={fieldClass}
                 />
               </div>
             </div>
-            <Button type="submit" className="w-full mt-2" disabled={loading}>
+            <Button type="submit" className="w-full mt-2 bg-[#1E3A8A] hover:bg-[#1E3A8A]/90 text-white font-bold text-xs gap-2" disabled={loading}>
               {loading ? (
                 <>
-                  <Loader2 className="h-4 w-4 animate-spin" /> Analyzing via Machine Learning Engine…
+                  <Loader2 className="h-4 w-4 animate-spin" /> Evaluating via XGBoost Machine Learning Engine…
                 </>
               ) : (
                 <>
-                  <BrainCircuit className="h-4 w-4" /> Run Conflict & Attribution Analysis
+                  <BrainCircuit className="h-4 w-4" /> Run Predictive Analysis & Attribution
                 </>
               )}
             </Button>
           </form>
         </section>
 
-        {/* Result & Explainable Attribution Panel */}
+        {/* Prediction Results & Accordions */}
         <section className="space-y-4">
           {!result && !loading && (
-            <Card className="p-8 text-center text-muted-foreground text-sm flex flex-col items-center justify-center min-h-[350px]">
-              <BrainCircuit className="h-12 w-12 text-primary/40 mb-3" />
-              Submit project parameters to execute predictive analysis & view feature attribution.
+            <Card className="p-8 text-center text-slate-500 text-xs flex flex-col items-center justify-center min-h-[350px] border-[#E2E8F0] bg-[#FFFFFF]">
+              <BrainCircuit className="h-12 w-12 text-[#1E3A8A]/30 mb-3" />
+              Fill project execution parameters and submit to run XGBoost model prediction.
             </Card>
           )}
 
           {loading && (
-            <Card className="p-8 text-center text-muted-foreground text-sm flex flex-col items-center justify-center min-h-[350px]">
-              <Loader2 className="h-10 w-10 animate-spin text-primary mb-3" />
-              Running Predictive Conflict Model & Priority Classifier...
+            <Card className="p-8 text-center text-slate-600 text-xs flex flex-col items-center justify-center min-h-[350px] border-[#E2E8F0] bg-[#FFFFFF]">
+              <Loader2 className="h-10 w-10 animate-spin text-[#1E3A8A] mb-3" />
+              Evaluating Conflict Model & Priority Classifier...
             </Card>
           )}
 
           {result && pred && (
             <div className="space-y-4">
-              {/* Main Prediction Banner */}
+              {/* Main Conflict Status Card */}
               <div
-                className={`rounded-xl border p-4 ${isConflict ? "border-red-500/30 bg-red-500/5" : "border-emerald-500/30 bg-emerald-500/5"}`}
+                className={`rounded-lg border p-4 shadow-sm ${
+                  isConflict ? "border-[#DC2626]/40 bg-[#DC2626]/5" : "border-[#16A34A]/40 bg-[#16A34A]/5"
+                }`}
               >
                 <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-3">
                     {isConflict ? (
-                      <TriangleAlert className="h-6 w-6 text-red-500" />
+                      <TriangleAlert className="h-7 w-7 text-[#DC2626]" />
                     ) : (
-                      <ShieldCheck className="h-6 w-6 text-emerald-500" />
+                      <ShieldCheck className="h-7 w-7 text-[#16A34A]" />
                     )}
                     <div>
-                      <span className={`font-extrabold text-base ${isConflict ? "text-red-600" : "text-emerald-600"}`}>
+                      <span className={`font-black text-sm tracking-wide ${isConflict ? "text-[#DC2626]" : "text-[#16A34A]"}`}>
                         {isConflict ? "HIGH CONFLICT RISK DETECTED" : "CLEAN INFRASTRUCTURE CORRIDOR"}
                       </span>
-                      <p className="text-xs text-muted-foreground">
-                        Probability Score: <span className="font-bold text-foreground">{confidence}%</span>
+                      <p className="text-xs text-slate-600 font-medium mt-0.5">
+                        Model Confidence Score: <span className="font-extrabold text-[#0F172A]">{confidence}%</span>
                       </p>
                     </div>
                   </div>
@@ -245,60 +248,60 @@ function AIConflictPage() {
                 </div>
               </div>
 
-              {/* Module 2: Explainable Attribution Expandable Card */}
-              <Card className="border shadow-md bg-card">
-                <CardHeader className="p-4 cursor-pointer flex flex-row items-center justify-between border-b" onClick={() => setShowXai(!showXai)}>
+              {/* Module 2: Explainable Feature Attribution Accordion */}
+              <Card className="border border-[#E2E8F0] bg-[#FFFFFF] shadow-sm">
+                <CardHeader className="p-4 cursor-pointer flex flex-row items-center justify-between border-b border-[#E2E8F0] bg-[#F8FAFC]" onClick={() => setShowXai(!showXai)}>
                   <div className="flex items-center gap-2">
-                    <Info className="h-5 w-5 text-cyan-500" />
+                    <Info className="h-4 w-4 text-[#3B82F6]" />
                     <div>
-                      <CardTitle className="text-sm font-bold text-foreground">Module 2 — Explainable Feature Attribution</CardTitle>
-                      <CardDescription className="text-xs">Feature attribution and spatial/temporal justification</CardDescription>
+                      <CardTitle className="text-xs font-bold text-[#0F172A]">Module 2 — Explainable Feature Attribution (XAI)</CardTitle>
+                      <CardDescription className="text-[11px] text-slate-600 font-medium">Spatial, timeline, and resource overlap triggers</CardDescription>
                     </div>
                   </div>
-                  {showXai ? <ChevronUp className="h-4 w-4" /> : <ChevronDown className="h-4 w-4" />}
+                  {showXai ? <ChevronUp className="h-4 w-4 text-slate-500" /> : <ChevronDown className="h-4 w-4 text-slate-500" />}
                 </CardHeader>
                 {showXai && (
-                  <CardContent className="p-4 space-y-2">
+                  <CardContent className="p-4 space-y-2 bg-[#FFFFFF]">
                     <ul className="space-y-2 text-xs">
                       {pred.explanations && pred.explanations.length > 0 ? (
                         pred.explanations.map((exp, idx) => (
-                          <li key={idx} className="flex items-start gap-2 p-2 rounded-lg bg-muted/40 border">
-                            <span className="h-2 w-2 rounded-full bg-cyan-500 mt-1"></span>
-                            <span className="text-foreground">{exp}</span>
+                          <li key={idx} className="flex items-start gap-2 p-2.5 rounded border border-[#E2E8F0] bg-[#F8FAFC]">
+                            <span className="h-2 w-2 rounded-full bg-[#3B82F6] mt-1 shrink-0"></span>
+                            <span className="text-[#0F172A] font-semibold">{exp}</span>
                           </li>
                         ))
                       ) : (
-                        <li className="text-muted-foreground">No specific risk triggers identified.</li>
+                        <li className="text-slate-500 font-medium">No specific risk triggers identified.</li>
                       )}
                     </ul>
                   </CardContent>
                 )}
               </Card>
 
-              {/* Module 3: Recommendation Cards */}
-              <Card className="border shadow-md bg-card">
-                <CardHeader className="p-4 border-b bg-amber-500/5">
+              {/* Module 3: Strategy Recommendation Cards */}
+              <Card className="border border-[#E2E8F0] bg-[#FFFFFF] shadow-sm">
+                <CardHeader className="p-4 border-b border-[#E2E8F0] bg-[#F8FAFC]">
                   <div className="flex items-center gap-2">
-                    <Lightbulb className="h-5 w-5 text-amber-500" />
+                    <Lightbulb className="h-4 w-4 text-[#F59E0B]" />
                     <div>
-                      <CardTitle className="text-sm font-bold text-foreground">Module 3 — Actionable Recommendations</CardTitle>
-                      <CardDescription className="text-xs">Suggested actions to eliminate conflict & fast-track execution</CardDescription>
+                      <CardTitle className="text-xs font-bold text-[#0F172A]">Module 3 — Automated Mitigation Recommendations</CardTitle>
+                      <CardDescription className="text-[11px] text-slate-600 font-medium">Actionable interventions to prevent project collisions</CardDescription>
                     </div>
                   </div>
                 </CardHeader>
-                <CardContent className="p-4 space-y-2">
+                <CardContent className="p-4 space-y-2 bg-[#FFFFFF]">
                   <div className="grid grid-cols-1 gap-2">
                     {pred.recommendations && pred.recommendations.length > 0 ? (
                       pred.recommendations.map((rec, idx) => (
-                        <div key={idx} className="p-2.5 rounded-lg border bg-amber-500/10 border-amber-200/50 flex items-center justify-between text-xs">
-                          <span className="font-semibold text-foreground">💡 {rec}</span>
-                          <Button size="sm" variant="outline" className="h-6 text-[10px] bg-background">
-                            Apply
+                        <div key={idx} className="p-3 rounded border border-[#E2E8F0] bg-[#F8FAFC] flex items-center justify-between text-xs">
+                          <span className="font-bold text-[#0F172A]">💡 {rec}</span>
+                          <Button size="sm" variant="outline" className="h-7 text-[11px] border-[#1E3A8A] text-[#1E3A8A] font-bold hover:bg-[#1E3A8A]/10">
+                            Apply Strategy
                           </Button>
                         </div>
                       ))
                     ) : (
-                      <p className="text-xs text-muted-foreground">Standard schedule applies.</p>
+                      <p className="text-xs text-slate-500 font-medium">Standard project schedule applies.</p>
                     )}
                   </div>
                 </CardContent>

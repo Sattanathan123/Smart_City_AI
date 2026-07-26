@@ -11,7 +11,7 @@ import { fetchWithAuth } from "@/lib/api";
 export const Route = createFileRoute("/audit-logs")({
   head: () => ({
     meta: [
-      { title: "Security Audit Logs — URBAN PULSE AI" },
+      { title: "Security Audit Logs — URBAN PULSE Platform" },
       { name: "description", content: "System transparency and audit logging." },
     ],
   }),
@@ -62,9 +62,9 @@ export default function AuditLogsPage() {
     },
     {
       id: 4,
-      userEmail: "system.ai@smartcity.gov.in",
-      role: "SYSTEM_AI",
-      action: "AI_CONFLICT_PREDICTED",
+      userEmail: "system.audit@smartcity.gov.in",
+      role: "SYSTEM_ENGINE",
+      action: "PREDICTIVE_CONFLICT_CHECK",
       details: "Generated 99.6% conflict risk warning for Zone 5 Metro Trenching & Road Overlay.",
       ipAddress: "localhost",
       timestamp: new Date(Date.now() - 10800000).toISOString(),
@@ -100,60 +100,53 @@ export default function AuditLogsPage() {
     const url = URL.createObjectURL(blob);
     const a = document.createElement("a");
     a.href = url;
-    a.download = `UrbanPulse_Audit_Logs_${new Date().toISOString().split("T")[0]}.csv`;
+    a.download = `URBAN_PULSE_Audit_Logs_${new Date().toISOString().split("T")[0]}.csv`;
     a.click();
   };
 
   return (
-    <DashboardShell title="System Security Audit Logs" subtitle="Module 8 — System Security & Transparency">
-      <div className="space-y-6">
+    <DashboardShell title="Security Audit Logs" subtitle="Module 8 — Immutable Audit Trail & Access Verification">
+      <div className="space-y-4">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-border/40 pb-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-[#E2E8F0] pb-3">
           <div>
-            <div className="flex items-center gap-2">
-              <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
-                Module 8 — Security & Transparency
-              </Badge>
-            </div>
-            <h1 className="text-3xl font-extrabold tracking-tight mt-1 text-foreground flex items-center gap-2">
-              System Audit Logs <ShieldCheck className="h-6 w-6 text-primary" />
+            <Badge variant="outline" className="bg-[#1E3A8A]/10 text-[#1E3A8A] border-[#1E3A8A]/30 font-bold text-[10px]">
+              Module 8 — Security & Transparency
+            </Badge>
+            <h1 className="text-2xl font-black tracking-tight text-[#0F172A] mt-1 flex items-center gap-2">
+              System Audit Logs <ShieldCheck className="h-5 w-5 text-[#1E3A8A]" />
             </h1>
-            <p className="text-muted-foreground text-sm">
-              Complete immutable security audit trail of user actions, AI predictions, and administrative decisions.
-            </p>
           </div>
 
-          <div className="flex items-center gap-2">
-            <Button onClick={exportToCSV} variant="outline" size="sm" className="gap-2">
-              <Download className="h-4 w-4" /> Export CSV Report
-            </Button>
-          </div>
+          <Button onClick={exportToCSV} variant="outline" size="sm" className="gap-2 text-xs border-[#E2E8F0] text-[#0F172A] hover:bg-[#F1F5F9]">
+            <Download className="h-4 w-4" /> Export CSV Report
+          </Button>
         </div>
 
         {/* Search & Filter Bar */}
-        <Card className="border shadow-sm">
-          <CardContent className="p-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+        <Card className="border border-[#E2E8F0] bg-[#FFFFFF] shadow-sm">
+          <CardContent className="p-3 flex flex-col sm:flex-row items-center justify-between gap-4">
             <div className="relative w-full sm:w-80">
-              <Search className="absolute left-3 top-2.5 h-4 w-4 text-muted-foreground" />
+              <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-slate-400" />
               <Input
                 placeholder="Search user, action, or details..."
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                className="pl-9 h-9 text-xs"
+                className="pl-8 h-8 text-xs bg-white text-[#0F172A] border-[#E2E8F0]"
               />
             </div>
 
-            <div className="text-xs text-muted-foreground">
-              Showing <span className="font-bold text-foreground">{filteredLogs.length}</span> audit log entries
+            <div className="text-xs text-slate-600 font-medium">
+              Showing <span className="font-bold text-[#0F172A]">{filteredLogs.length}</span> security audit entries
             </div>
           </CardContent>
         </Card>
 
         {/* Audit Log Table */}
-        <Card className="border shadow-md overflow-hidden">
+        <Card className="border border-[#E2E8F0] bg-[#FFFFFF] shadow-sm overflow-hidden">
           <div className="overflow-x-auto">
-            <table className="w-full text-xs text-left text-foreground">
-              <thead className="bg-muted/50 uppercase text-[10px] text-muted-foreground font-semibold border-b">
+            <table className="w-full text-xs text-left text-[#0F172A]">
+              <thead className="bg-[#F8FAFC] uppercase text-[10px] text-slate-500 font-bold border-b border-[#E2E8F0]">
                 <tr>
                   <th className="px-4 py-3">Timestamp</th>
                   <th className="px-4 py-3">User & Role</th>
@@ -162,23 +155,23 @@ export default function AuditLogsPage() {
                   <th className="px-4 py-3">IP Address</th>
                 </tr>
               </thead>
-              <tbody className="divide-y divide-border/60">
+              <tbody className="divide-y divide-[#E2E8F0]">
                 {filteredLogs.map((l) => (
-                  <tr key={l.id} className="hover:bg-muted/30 transition">
-                    <td className="px-4 py-3 font-mono text-muted-foreground whitespace-nowrap">
+                  <tr key={l.id} className="hover:bg-[#F8FAFC] transition">
+                    <td className="px-4 py-3 font-mono text-slate-500 font-medium whitespace-nowrap">
                       {new Date(l.timestamp).toLocaleString()}
                     </td>
                     <td className="px-4 py-3 whitespace-nowrap">
-                      <div className="font-semibold text-foreground">{l.userEmail}</div>
-                      <Badge variant="outline" className="text-[9px] mt-0.5">
+                      <div className="font-bold text-[#0F172A]">{l.userEmail}</div>
+                      <Badge variant="outline" className="text-[9px] mt-0.5 font-bold">
                         {l.role}
                       </Badge>
                     </td>
-                    <td className="px-4 py-3 whitespace-nowrap font-mono font-semibold text-cyan-600">
+                    <td className="px-4 py-3 whitespace-nowrap font-mono font-bold text-[#3B82F6]">
                       {l.action}
                     </td>
-                    <td className="px-4 py-3 max-w-xs sm:max-w-md truncate">{l.details}</td>
-                    <td className="px-4 py-3 font-mono text-muted-foreground whitespace-nowrap">
+                    <td className="px-4 py-3 max-w-xs sm:max-w-md text-slate-700 font-medium truncate">{l.details}</td>
+                    <td className="px-4 py-3 font-mono text-slate-500 font-medium whitespace-nowrap">
                       {l.ipAddress || "127.0.0.1"}
                     </td>
                   </tr>

@@ -20,6 +20,8 @@ public class RegisterRequest {
 
     private String department;
 
+    private String employeeId;
+
     @Pattern(regexp = "^[6-9]\\d{9}$", message = "Enter a valid 10-digit Indian mobile number")
     private String phone;
 
@@ -34,6 +36,8 @@ public class RegisterRequest {
     public void setPassword(String password) { this.password = password; }
     public String getDepartment() { return department; }
     public void setDepartment(String department) { this.department = department; }
+    public String getEmployeeId() { return employeeId; }
+    public void setEmployeeId(String employeeId) { this.employeeId = employeeId; }
     public String getPhone() { return phone; }
     public void setPhone(String phone) { this.phone = phone; }
     public String getRole() { return role; }

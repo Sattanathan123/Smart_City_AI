@@ -4,13 +4,13 @@ import { DashboardShell } from "@/components/DashboardShell";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
-import { Filter, Layers, Navigation, ShieldAlert, CheckCircle2 } from "lucide-react";
+import { Filter, Navigation } from "lucide-react";
 import { fetchProjects, ProjectData } from "@/lib/api";
 
 export const Route = createFileRoute("/gis-map")({
   head: () => ({
     meta: [
-      { title: "GIS Project Map — URBAN PULSE AI" },
+      { title: "GIS Spatial Map — URBAN PULSE Platform" },
       { name: "description", content: "Interactive OpenStreetMap spatial visualization for city projects." },
     ],
   }),
@@ -109,31 +109,31 @@ export default function GisMapPage() {
 
       const isConflict = p.prediction?.conflictPrediction === "Conflict";
       const color = isConflict
-        ? "#ef4444"
+        ? "#DC2626"
         : p.status === "COMPLETED"
-        ? "#10b981"
+        ? "#16A34A"
         : p.status === "ACTIVE" || p.status === "IN_PROGRESS"
-        ? "#f59e0b"
-        : "#3b82f6";
+        ? "#F59E0B"
+        : "#3B82F6";
 
       const marker = L.circleMarker([lat, lng], {
         radius: 10,
         fillColor: color,
-        color: "#ffffff",
+        color: "#FFFFFF",
         weight: 2,
         opacity: 1,
         fillOpacity: 0.9,
       });
 
       const popupContent = `
-        <div style="font-family: sans-serif; padding: 4px;">
-          <b style="color: #0f172a; font-size: 13px;">${p.projectName}</b><br/>
-          <span style="font-size: 11px; color: #64748b;">${p.department} Dept · ${p.zone}</span><br/>
-          <div style="margin-top: 4px; font-size: 11px;">
+        <div style="font-family: sans-serif; padding: 4px; color: #0F172A;">
+          <b style="color: #0F172A; font-size: 13px;">${p.projectName}</b><br/>
+          <span style="font-size: 11px; color: #475569;">${p.department} Dept · ${p.zone}</span><br/>
+          <div style="margin-top: 4px; font-size: 11px; color: #0F172A;">
             <b>Budget:</b> ₹${p.budgetLakhs}L<br/>
             <b>Status:</b> ${p.status}<br/>
-            <b style="color: ${isConflict ? '#ef4444' : '#10b981'}">
-              ${isConflict ? '⚠️ AI CONFLICT DETECTED' : '✅ NO CONFLICT'}
+            <b style="color: ${isConflict ? '#DC2626' : '#16A34A'}">
+              ${isConflict ? '⚠️ CONFLICT RISK' : '✅ CLEAN CORRIDOR'}
             </b>
           </div>
         </div>
@@ -155,181 +155,121 @@ export default function GisMapPage() {
   };
 
   return (
-    <DashboardShell title="GIS Project Interactive Map" subtitle="Module 4 — Real OpenStreetMap Spatial Intelligence">
-      <div className="space-y-6">
+    <DashboardShell title="GIS Project Interactive Map" subtitle="Module 4 — OpenStreetMap Geospatial Infrastructure Engine">
+      <div className="space-y-4">
         {/* Header */}
-        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-border/40 pb-4">
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-[#E2E8F0] pb-3">
           <div>
-            <div className="flex items-center gap-2">
-              <Badge variant="outline" className="bg-emerald-500/10 text-emerald-600 border-emerald-200 font-bold">
-                100% Real OpenStreetMap + Leaflet GIS
-              </Badge>
-            </div>
-            <h1 className="text-3xl font-extrabold tracking-tight mt-1 text-foreground">
-              GIS Project Interactive Visualization
-            </h1>
-            <p className="text-muted-foreground text-sm">
-              Live geospatial mapping powered by OpenStreetMap & Leaflet JS tile engine.
-            </p>
+            <Badge variant="outline" className="bg-[#1E3A8A]/10 text-[#1E3A8A] border-[#1E3A8A]/30 font-bold text-[10px]">
+              Module 4 — Geospatial Intelligence
+            </Badge>
+            <h1 className="text-2xl font-black tracking-tight text-[#0F172A] mt-1">Geospatial Infrastructure Map</h1>
           </div>
-          <div className="flex items-center gap-2">
-            <Button variant="outline" size="sm" className="gap-2" onClick={handleRecenter}>
-              <Navigation className="h-4 w-4" /> Recenter Map
-            </Button>
-          </div>
+          <Button variant="outline" size="sm" onClick={handleRecenter} className="gap-2 text-xs border-[#E2E8F0] text-[#0F172A] hover:bg-[#F1F5F9]">
+            <Navigation className="h-4 w-4" /> Recenter Map
+          </Button>
         </div>
 
         {/* Filters */}
-        <Card className="border shadow-sm bg-card/60 backdrop-blur">
-          <CardContent className="p-4">
-            <div className="flex flex-wrap items-center gap-4">
-              <div className="flex items-center gap-2 text-sm font-semibold text-foreground">
-                <Filter className="h-4 w-4 text-primary" /> Filter GIS Map:
+        <Card className="border border-[#E2E8F0] bg-[#FFFFFF] shadow-sm">
+          <CardContent className="p-3 flex flex-wrap items-center justify-between gap-3 text-xs">
+            <div className="flex flex-wrap items-center gap-3">
+              <div className="flex items-center gap-1.5 font-bold text-[#0F172A]">
+                <Filter className="h-4 w-4 text-[#1E3A8A]" /> GIS Filters:
               </div>
 
-              {/* Department Filter */}
               <div className="flex items-center gap-1.5">
-                <span className="text-xs text-muted-foreground">Department:</span>
+                <span className="text-slate-600 font-medium">Department:</span>
                 <select
                   value={selectedDepartment}
                   onChange={(e) => setSelectedDepartment(e.target.value)}
-                  className="h-8 text-xs rounded-md border border-input bg-background px-2 py-1 text-foreground"
+                  className="h-8 text-xs rounded border border-[#E2E8F0] bg-white px-2 text-[#0F172A] font-semibold"
                 >
                   {departments.map((d) => (
-                    <option key={d} value={d}>
-                      {d}
-                    </option>
+                    <option key={d} value={d} className="bg-white text-[#0F172A]">{d}</option>
                   ))}
                 </select>
               </div>
 
-              {/* Status Filter */}
               <div className="flex items-center gap-1.5">
-                <span className="text-xs text-muted-foreground">Status:</span>
+                <span className="text-slate-600 font-medium">Status:</span>
                 <select
                   value={selectedStatus}
                   onChange={(e) => setSelectedStatus(e.target.value)}
-                  className="h-8 text-xs rounded-md border border-input bg-background px-2 py-1 text-foreground"
+                  className="h-8 text-xs rounded border border-[#E2E8F0] bg-white px-2 text-[#0F172A] font-semibold"
                 >
                   {statuses.map((s) => (
-                    <option key={s} value={s}>
-                      {s.replace("_", " ")}
-                    </option>
+                    <option key={s} value={s} className="bg-white text-[#0F172A]">{s.replace("_", " ")}</option>
                   ))}
                 </select>
               </div>
+            </div>
 
-              {/* Conflict Filter */}
-              <div className="flex items-center gap-1.5">
-                <span className="text-xs text-muted-foreground">AI Conflict:</span>
-                <select
-                  value={selectedConflict}
-                  onChange={(e) => setSelectedConflict(e.target.value)}
-                  className="h-8 text-xs rounded-md border border-input bg-background px-2 py-1 text-foreground"
-                >
-                  <option value="ALL">All Risk Levels</option>
-                  <option value="CONFLICT">High Risk / Conflict Only</option>
-                  <option value="NO_CONFLICT">Clean Corridor Only</option>
-                </select>
-              </div>
-
-              {/* Map Legend */}
-              <div className="ml-auto flex items-center gap-3 text-xs">
-                <span className="flex items-center gap-1">
-                  <span className="h-3 w-3 rounded-full bg-emerald-500"></span> Completed
-                </span>
-                <span className="flex items-center gap-1">
-                  <span className="h-3 w-3 rounded-full bg-amber-500"></span> Ongoing
-                </span>
-                <span className="flex items-center gap-1">
-                  <span className="h-3 w-3 rounded-full bg-blue-500"></span> Planned
-                </span>
-                <span className="flex items-center gap-1">
-                  <span className="h-3 w-3 rounded-full bg-red-500 animate-pulse"></span> AI Conflict Risk
-                </span>
-              </div>
+            {/* Map Legend */}
+            <div className="flex items-center gap-3 font-bold text-[11px] text-[#0F172A]">
+              <span className="flex items-center gap-1"><span className="h-3 w-3 rounded-full bg-[#16A34A]"></span> Completed</span>
+              <span className="flex items-center gap-1"><span className="h-3 w-3 rounded-full bg-[#F59E0B]"></span> Ongoing</span>
+              <span className="flex items-center gap-1"><span className="h-3 w-3 rounded-full bg-[#3B82F6]"></span> Planned</span>
+              <span className="flex items-center gap-1"><span className="h-3 w-3 rounded-full bg-[#DC2626] animate-pulse"></span> Conflict Risk</span>
             </div>
           </CardContent>
         </Card>
 
-        {/* Map Canvas & Detail Inspector */}
+        {/* Map Canvas & Inspector */}
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          {/* REAL OpenStreetMap Leaflet Map Div */}
-          <div className="lg:col-span-2 relative min-h-[520px] rounded-xl border shadow-inner overflow-hidden z-0 bg-slate-900">
+          <div className="lg:col-span-2 relative min-h-[500px] rounded-lg border border-[#E2E8F0] shadow-sm overflow-hidden z-0 bg-slate-900">
             <div ref={mapRef} className="absolute inset-0 h-full w-full z-0"></div>
           </div>
 
-          {/* Project GIS Detail Inspector */}
           <div className="space-y-4">
             {activeProject ? (
-              <Card className="border shadow-md">
-                <CardHeader className="pb-3 border-b bg-muted/30">
+              <Card className="border border-[#E2E8F0] bg-[#FFFFFF] shadow-sm">
+                <CardHeader className="pb-3 border-b border-[#E2E8F0] bg-[#F8FAFC]">
                   <div className="flex items-center justify-between">
-                    <Badge variant="outline" className="bg-primary/10 text-primary border-primary/20">
+                    <Badge variant="outline" className="bg-[#1E3A8A]/10 text-[#1E3A8A] border-[#1E3A8A]/20 font-bold">
                       {activeProject.zone}
                     </Badge>
                     <Badge
                       className={
                         activeProject.prediction?.conflictPrediction === "Conflict"
-                          ? "bg-red-500/10 text-red-600 border-red-200"
-                          : "bg-emerald-500/10 text-emerald-600 border-emerald-200"
+                          ? "bg-[#DC2626] text-white font-bold"
+                          : "bg-[#16A34A] text-white font-bold"
                       }
                     >
-                      {activeProject.prediction?.conflictPrediction === "Conflict" ? "AI Conflict Detected" : "No Conflict"}
+                      {activeProject.prediction?.conflictPrediction === "Conflict" ? "Conflict Risk" : "Clean Corridor"}
                     </Badge>
                   </div>
-                  <CardTitle className="text-lg mt-2 text-foreground">{activeProject.projectName}</CardTitle>
-                  <CardDescription className="text-xs">{activeProject.department} Department</CardDescription>
+                  <CardTitle className="text-base font-bold text-[#0F172A] mt-2">{activeProject.projectName}</CardTitle>
+                  <CardDescription className="text-xs text-slate-600 font-medium">{activeProject.department} Department</CardDescription>
                 </CardHeader>
-                <CardContent className="p-4 space-y-4">
-                  <div className="grid grid-cols-2 gap-3 text-xs">
-                    <div className="p-2.5 rounded-lg bg-muted/50 border">
-                      <span className="text-muted-foreground block text-[10px]">Budget Allocated</span>
-                      <span className="font-bold text-sm text-foreground">₹{activeProject.budgetLakhs} Lakhs</span>
+                <CardContent className="p-4 space-y-3 text-xs bg-[#FFFFFF]">
+                  <div className="grid grid-cols-2 gap-2">
+                    <div className="p-2.5 rounded border border-[#E2E8F0] bg-[#F8FAFC]">
+                      <span className="text-[10px] text-slate-500 font-bold block">BUDGET ALLOCATED</span>
+                      <span className="font-black text-sm text-[#0F172A]">₹{activeProject.budgetLakhs}L</span>
                     </div>
-                    <div className="p-2.5 rounded-lg bg-muted/50 border">
-                      <span className="text-muted-foreground block text-[10px]">Duration</span>
-                      <span className="font-bold text-sm text-foreground">{activeProject.durationDays} Days</span>
+                    <div className="p-2.5 rounded border border-[#E2E8F0] bg-[#F8FAFC]">
+                      <span className="text-[10px] text-slate-500 font-bold block">DURATION</span>
+                      <span className="font-black text-sm text-[#0F172A]">{activeProject.durationDays} Days</span>
                     </div>
                   </div>
 
-                  {/* AI Prediction Details */}
-                  <div className="p-3 rounded-lg border bg-card space-y-2">
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="text-muted-foreground">Conflict Probability:</span>
-                      <span className="font-bold text-red-500">
+                  <div className="p-3 rounded border border-[#E2E8F0] bg-[#F8FAFC] space-y-1">
+                    <div className="flex items-center justify-between">
+                      <span className="text-slate-600 font-bold">Conflict Probability:</span>
+                      <span className="font-black text-[#DC2626]">
                         {activeProject.prediction?.conflictProbability
                           ? (activeProject.prediction.conflictProbability * 100).toFixed(1)
                           : "0.0"}
                         %
                       </span>
                     </div>
-                    <div className="flex items-center justify-between text-xs">
-                      <span className="text-muted-foreground">Priority Classification:</span>
-                      <Badge variant="secondary">{activeProject.prediction?.priorityPrediction || "Medium"}</Badge>
-                    </div>
-                  </div>
-
-                  {/* GIS Metadata */}
-                  <div className="space-y-2 text-xs">
-                    <div className="flex items-center justify-between py-1 border-b">
-                      <span className="text-muted-foreground">Traffic Density Index:</span>
-                      <span className="font-medium">{activeProject.trafficDensity || 5} / 10</span>
-                    </div>
-                    <div className="flex items-center justify-between py-1 border-b">
-                      <span className="text-muted-foreground">Utility Dependency:</span>
-                      <span className="font-medium">{activeProject.utilityDependency || 5} / 10</span>
-                    </div>
-                    <div className="flex items-center justify-between py-1">
-                      <span className="text-muted-foreground">Status:</span>
-                      <Badge variant="outline">{activeProject.status}</Badge>
-                    </div>
                   </div>
                 </CardContent>
               </Card>
             ) : (
-              <Card className="p-6 text-center text-muted-foreground text-sm">
-                Click any marker on the OpenStreetMap GIS canvas to view detailed attributes.
+              <Card className="p-6 text-center text-slate-500 text-xs font-medium border-[#E2E8F0] bg-[#FFFFFF]">
+                Click any GIS marker on OpenStreetMap to inspect attributes.
               </Card>
             )}
           </div>
