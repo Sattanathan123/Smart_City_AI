@@ -63,7 +63,7 @@ export default function AuditLogsPage() {
     {
       id: 4,
       userEmail: "system.audit@smartcity.gov.in",
-      role: "SYSTEM_ENGINE",
+      role: "SYSTEM_SERVICE",
       action: "PREDICTIVE_CONFLICT_CHECK",
       details: "Generated 99.6% conflict risk warning for Zone 5 Metro Trenching & Road Overlay.",
       ipAddress: "localhost",
@@ -105,13 +105,13 @@ export default function AuditLogsPage() {
   };
 
   return (
-    <DashboardShell title="Security Audit Logs" subtitle="Module 8 — Immutable Audit Trail & Access Verification">
+    <DashboardShell title="Security Audit Logs" subtitle="Immutable Audit Trail & Access Verification">
       <div className="space-y-4">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-[#E2E8F0] pb-3">
           <div>
             <Badge variant="outline" className="bg-[#1E3A8A]/10 text-[#1E3A8A] border-[#1E3A8A]/30 font-bold text-[10px]">
-              Module 8 — Security & Transparency
+              System Security & Transparency
             </Badge>
             <h1 className="text-2xl font-black tracking-tight text-[#0F172A] mt-1 flex items-center gap-2">
               System Audit Logs <ShieldCheck className="h-5 w-5 text-[#1E3A8A]" />

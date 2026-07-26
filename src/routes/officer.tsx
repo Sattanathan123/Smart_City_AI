@@ -84,7 +84,7 @@ function OfficerDashboard() {
           value={String(data?.highPriorityProjects ?? "5")}
           icon={Activity}
           accent="success"
-          hint="Model classified"
+          hint="AI Assessed"
         />
         <StatCard
           label="Predictive Conflicts"
@@ -98,7 +98,7 @@ function OfficerDashboard() {
           value={String(data?.mediumPriorityProjects ?? "4")}
           icon={Boxes}
           accent="warning"
-          hint="Model classified"
+          hint="AI Assessed"
         />
       </div>
 

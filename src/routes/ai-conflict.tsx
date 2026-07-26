@@ -83,8 +83,8 @@ function AIConflictPage() {
 
   return (
     <DashboardShell
-      title="Predictive Conflict & Risk Attribution Engine"
-      subtitle="Modules 2 & 3 · Cross-Department Risk Attribution & Action Accordions"
+      title="Predictive Conflict & Priority Risk Analysis"
+      subtitle="Inter-Department Infrastructure Conflict & Mitigation Strategy"
     >
       <div className="mb-4 flex items-start gap-3 rounded-lg border border-[#3B82F6]/30 bg-[#3B82F6]/5 p-4">
         <div className="grid h-10 w-10 shrink-0 place-items-center rounded-md bg-[#1E3A8A] text-white">
@@ -92,7 +92,7 @@ function AIConflictPage() {
         </div>
         <div className="space-y-0.5">
           <p className="text-xs font-bold text-[#0F172A]">
-            URBAN PULSE Explainable Risk Attribution & Mitigation Strategy Engine
+            URBAN PULSE Infrastructure Conflict Analysis & Mitigation Strategy
           </p>
           <p className="text-xs text-slate-600 font-medium">
             Evaluates cross-department spatial dependencies, timeline overlaps, and resource bottlenecks to recommend scheduling interventions.
@@ -193,11 +193,11 @@ function AIConflictPage() {
             <Button type="submit" className="w-full mt-2 bg-[#1E3A8A] hover:bg-[#1E3A8A]/90 text-white font-bold text-xs gap-2" disabled={loading}>
               {loading ? (
                 <>
-                  <Loader2 className="h-4 w-4 animate-spin" /> Evaluating via XGBoost Machine Learning Engine…
+                  <Loader2 className="h-4 w-4 animate-spin" /> Evaluating Project Conflict Parameters…
                 </>
               ) : (
                 <>
-                  <BrainCircuit className="h-4 w-4" /> Run Predictive Analysis & Attribution
+                  <BrainCircuit className="h-4 w-4" /> Run Predictive Risk Analysis
                 </>
               )}
             </Button>
@@ -209,14 +209,14 @@ function AIConflictPage() {
           {!result && !loading && (
             <Card className="p-8 text-center text-slate-500 text-xs flex flex-col items-center justify-center min-h-[350px] border-[#E2E8F0] bg-[#FFFFFF]">
               <BrainCircuit className="h-12 w-12 text-[#1E3A8A]/30 mb-3" />
-              Fill project execution parameters and submit to run XGBoost model prediction.
+              Fill project execution parameters to run automated conflict analysis.
             </Card>
           )}
 
           {loading && (
             <Card className="p-8 text-center text-slate-600 text-xs flex flex-col items-center justify-center min-h-[350px] border-[#E2E8F0] bg-[#FFFFFF]">
               <Loader2 className="h-10 w-10 animate-spin text-[#1E3A8A] mb-3" />
-              Evaluating Conflict Model & Priority Classifier...
+              Analyzing Infrastructure Conflicts & Priority Level...
             </Card>
           )}
 
@@ -240,7 +240,7 @@ function AIConflictPage() {
                         {isConflict ? "HIGH CONFLICT RISK DETECTED" : "CLEAN INFRASTRUCTURE CORRIDOR"}
                       </span>
                       <p className="text-xs text-slate-600 font-medium mt-0.5">
-                        Model Confidence Score: <span className="font-extrabold text-[#0F172A]">{confidence}%</span>
+                        Risk Probability Score: <span className="font-extrabold text-[#0F172A]">{confidence}%</span>
                       </p>
                     </div>
                   </div>
@@ -254,7 +254,7 @@ function AIConflictPage() {
                   <div className="flex items-center gap-2">
                     <Info className="h-4 w-4 text-[#3B82F6]" />
                     <div>
-                      <CardTitle className="text-xs font-bold text-[#0F172A]">Module 2 — Explainable Feature Attribution (XAI)</CardTitle>
+                      <CardTitle className="text-xs font-bold text-[#0F172A]">Explainable Feature Attribution (XAI)</CardTitle>
                       <CardDescription className="text-[11px] text-slate-600 font-medium">Spatial, timeline, and resource overlap triggers</CardDescription>
                     </div>
                   </div>
@@ -284,7 +284,7 @@ function AIConflictPage() {
                   <div className="flex items-center gap-2">
                     <Lightbulb className="h-4 w-4 text-[#F59E0B]" />
                     <div>
-                      <CardTitle className="text-xs font-bold text-[#0F172A]">Module 3 — Automated Mitigation Recommendations</CardTitle>
+                      <CardTitle className="text-xs font-bold text-[#0F172A]">Automated Mitigation Recommendations</CardTitle>
                       <CardDescription className="text-[11px] text-slate-600 font-medium">Actionable interventions to prevent project collisions</CardDescription>
                     </div>
                   </div>

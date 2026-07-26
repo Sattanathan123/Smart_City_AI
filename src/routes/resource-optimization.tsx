@@ -10,8 +10,8 @@ import { fetchProjects, ProjectData } from "@/lib/api";
 export const Route = createFileRoute("/resource-optimization")({
   head: () => ({
     meta: [
-      { title: "AI Resource Optimization — URBAN PULSE" },
-      { name: "description", content: "Smart workforce, heavy machinery, and equipment optimization engine." },
+      { title: "Municipal Resource Optimization — URBAN PULSE" },
+      { name: "description", content: "Smart workforce, heavy machinery, and equipment allocation system." },
     ],
   }),
   component: ResourceOptimizationPage,
@@ -42,7 +42,7 @@ export default function ResourceOptimizationPage() {
       type: "EQUIPMENT",
     },
     {
-      title: "Workforce Re-balancing Model",
+      title: "Workforce Re-balancing Protocol",
       target: "Zone 1 Central Flyover Structural Repair",
       suggestion: "Reassign 4 Structural Engineers from Zone 2 Completed Solar Project to Zone 1 Flyover repair team.",
       saving: "Reduces execution timeline by 8 Days",
@@ -58,16 +58,16 @@ export default function ResourceOptimizationPage() {
   ];
 
   return (
-    <DashboardShell title="Resource Optimization Engine" subtitle="Module 6 — Constrained Linear Resource Allocation">
+    <DashboardShell title="Resource Optimization" subtitle="Workforce & Equipment Allocation System">
       <div className="space-y-6">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-[#E5E7EB] pb-3">
           <div>
             <Badge variant="outline" className="bg-[#1E3A8A]/10 text-[#1E3A8A] border-[#1E3A8A]/30 font-bold text-[10px]">
-              Module 6 — Resource Optimization Engine
+              Resource Optimization & Allocation
             </Badge>
             <h1 className="text-2xl font-black tracking-tight text-[#111827] mt-1 flex items-center gap-2">
-              Resource Allocation Engine <Cpu className="h-5 w-5 text-[#3B82F6]" />
+              Resource Allocation System <Cpu className="h-5 w-5 text-[#3B82F6]" />
             </h1>
           </div>
         </div>
@@ -114,7 +114,7 @@ export default function ResourceOptimizationPage() {
         {/* Optimization Recommendations Cards */}
         <div className="space-y-4">
           <h2 className="text-base font-bold tracking-tight text-[#111827] flex items-center gap-2">
-            <Lightbulb className="h-4 w-4 text-[#F59E0B]" /> AI Resource Optimization Models & Savings
+            <Lightbulb className="h-4 w-4 text-[#F59E0B]" /> Resource Optimization Protocols & Savings
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">

@@ -164,7 +164,7 @@ function AdminAnalytics() {
   }));
 
   return (
-    <DashboardShell title="Executive Analytics & Report Engine" subtitle="Module 1 & 7 · Municipal AI Command Center">
+    <DashboardShell title="Executive Analytics & Sanction Dashboard" subtitle="Municipal Command Center · Performance & Report Suite">
       {/* Top Controls Bar */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-[#E5E7EB] pb-4">
         <div>

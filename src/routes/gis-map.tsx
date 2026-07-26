@@ -11,7 +11,7 @@ export const Route = createFileRoute("/gis-map")({
   head: () => ({
     meta: [
       { title: "GIS Spatial Map — URBAN PULSE Platform" },
-      { name: "description", content: "Interactive OpenStreetMap spatial visualization for city projects." },
+      { name: "description", content: "Interactive Municipal GIS Spatial Map visualization for city projects." },
     ],
   }),
   component: GisMapPage,
@@ -155,13 +155,13 @@ export default function GisMapPage() {
   };
 
   return (
-    <DashboardShell title="GIS Project Interactive Map" subtitle="Module 4 — OpenStreetMap Geospatial Infrastructure Engine">
+    <DashboardShell title="GIS Project Interactive Map" subtitle="Municipal Spatial Infrastructure Coordinates">
       <div className="space-y-4">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-[#E2E8F0] pb-3">
           <div>
             <Badge variant="outline" className="bg-[#1E3A8A]/10 text-[#1E3A8A] border-[#1E3A8A]/30 font-bold text-[10px]">
-              Module 4 — Geospatial Intelligence
+              Geospatial Infrastructure Intelligence
             </Badge>
             <h1 className="text-2xl font-black tracking-tight text-[#0F172A] mt-1">Geospatial Infrastructure Map</h1>
           </div>
@@ -269,7 +269,7 @@ export default function GisMapPage() {
               </Card>
             ) : (
               <Card className="p-6 text-center text-slate-500 text-xs font-medium border-[#E2E8F0] bg-[#FFFFFF]">
-                Click any GIS marker on OpenStreetMap to inspect attributes.
+                Click any GIS marker on the map to inspect project attributes.
               </Card>
             )}
           </div>

@@ -30,10 +30,9 @@ const navItems = [
   { title: "Predictive Conflicts", url: "/ai-conflict", icon: TriangleAlert },
   { title: "GIS Map View", url: "/gis-map", icon: Map },
   { title: "Spatial Heatmap", url: "/conflict-heatmap", icon: Flame },
-  { title: "Resource Engine", url: "/resource-optimization", icon: Cpu },
+  { title: "Resource Optimization", url: "/resource-optimization", icon: Cpu },
   { title: "Analytics & Reports", url: "/admin", icon: FileBarChart },
   { title: "Security Audit Logs", url: "/audit-logs", icon: ShieldCheck },
-  { title: "Citizen Complaints", url: "/citizen", icon: MessageSquareWarning },
 ];
 
 export function DashboardShell({

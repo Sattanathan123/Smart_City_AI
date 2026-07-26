@@ -10,7 +10,7 @@ export const Route = createFileRoute("/conflict-heatmap")({
   head: () => ({
     meta: [
       { title: "Spatial Conflict Heat Map — URBAN PULSE Platform" },
-      { name: "description", content: "Interactive OpenStreetMap spatial overlap risk density heatmap." },
+      { name: "description", content: "Interactive Municipal GIS Spatial overlap risk density heatmap." },
     ],
   }),
   component: ConflictHeatmapPage,
@@ -129,13 +129,13 @@ export default function ConflictHeatmapPage() {
   };
 
   return (
-    <DashboardShell title="Spatial Conflict Heat Map" subtitle="Module 5 — OpenStreetMap Overlap Density Hotspot Engine">
+    <DashboardShell title="Spatial Conflict Heat Map" subtitle="Municipal Spatial Overlap Density Hotspot Map">
       <div className="space-y-4">
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-[#E2E8F0] pb-3">
           <div>
             <Badge variant="outline" className="bg-[#DC2626]/10 text-[#DC2626] border-[#DC2626]/30 font-bold text-[10px]">
-              Module 5 — Spatial Density Heatmap
+              Spatial Density Risk Heatmap
             </Badge>
             <h1 className="text-2xl font-black tracking-tight text-[#0F172A] mt-1 flex items-center gap-2">
               Urban Conflict Heat Map <Flame className="h-5 w-5 text-[#DC2626]" />

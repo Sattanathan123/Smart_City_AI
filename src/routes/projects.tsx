@@ -160,7 +160,7 @@ function ProjectsPage() {
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-[#E5E7EB] pb-4">
         <div>
           <Badge variant="outline" className="bg-[#1E3A8A]/10 text-[#1E3A8A] border-[#1E3A8A]/30 font-bold text-[10px]">
-            Portfolio & Approval Engine
+            Portfolio & Sanctions Workflow
           </Badge>
           <h1 className="text-2xl font-black tracking-tight text-[#111827] mt-1">Infrastructure Projects</h1>
         </div>
