@@ -26,6 +26,7 @@ import {
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import heroCity from "@/assets/hero-city.jpg";
+import { useLanguage, LanguageSwitcher } from "@/lib/i18n";
 
 export const Route = createFileRoute("/")({
   head: () => ({
@@ -52,38 +53,10 @@ const ANNOUNCEMENTS = [
   { id: 4, type: "POLICY", tag: "Department Directive", text: "Mandatory Joint GIS Trenching Audit enforced for Road & Water Excavations in Zone 5." },
 ];
 
-// Impact KPI Statistics
-const STATS = [
-  { value: "1,200+", label: "Projects Managed", desc: "Across 7 Municipal Zones", icon: Building2 },
-  { value: "18", label: "Government Departments", desc: "Inter-connected Divisions", icon: Network },
-  { value: "50,000+", label: "Citizens Served", desc: "Civic Grievances Resolved", icon: Users },
-  { value: "92%", label: "Conflict Prevention Rate", desc: "Municipal Coordination", icon: BrainCircuit },
-  { value: "250+", label: "Conflicts Prevented", desc: "Spatial & Timeline Clashes", icon: ShieldAlert },
-  { value: "35%", label: "Faster Execution", desc: "Inter-Agency Optimization", icon: Zap },
-];
-
-// Citizen & Public Services Tiles
-const CITIZEN_SERVICES = [
-  { title: "Submit Grievance", desc: "Register road damage, water leaks, or street light issues directly to municipal departments.", icon: Megaphone, link: "/login" },
-  { title: "Track Complaint", desc: "Track real-time resolution status using your unique Tracking Identifier.", icon: Search, link: "/login" },
-  { title: "View Public Projects", desc: "Inspect active and sanctioned infrastructure projects across your municipal zone.", icon: Map, link: "/login" },
-  { title: "Infrastructure Proposals", desc: "Submit civic infrastructure improvement proposals for officer review.", icon: Building2, link: "/login" },
-  { title: "Emergency Helpline Portal", desc: "Access 24/7 municipal emergency helpline numbers for water burst or power outages.", icon: Phone, link: "/login" },
-  { title: "Download Reports", desc: "Access official public infrastructure audit reports and monthly performance summaries.", icon: FileText, link: "/login" },
-];
-
-// Sample Official Government Project Table Data
-const RECENT_PROJECTS = [
-  { id: "PRJ-2026-101", name: "Sector 4 Metro Line 3 Drainage Duct Relocation", dept: "Water Supply & Drainage", status: "SANCTIONED", priority: "HIGH", timeline: "90 Days" },
-  { id: "PRJ-2026-102", name: "Anna Salai Arterial Underground Fiber Cable Laying", dept: "IT & Telecommunications", status: "IN_PROGRESS", priority: "HIGH", timeline: "60 Days" },
-  { id: "PRJ-2026-103", name: "Zone 3 Stormwater Channel Excavation & Trenching", dept: "Roads & Storm Water", status: "PENDING_APPROVAL", priority: "MEDIUM", timeline: "120 Days" },
-  { id: "PRJ-2026-104", name: "Central Substation Power Line Overhead Shift", dept: "Electricity Board", status: "SANCTIONED", priority: "HIGH", timeline: "45 Days" },
-  { id: "PRJ-2026-105", name: "Sector 7 Bio-Waste Treatment Plant Pipeline", dept: "Waste Management", status: "IN_PROGRESS", priority: "LOW", timeline: "150 Days" },
-];
-
 export function UniqueLandingPage() {
   const [currentDate, setCurrentDate] = useState("");
   const [fontSize, setFontSize] = useState<"normal" | "large" | "xlarge">("normal");
+  const { t, tText } = useLanguage();
 
   useEffect(() => {
     const updateTime = () => {
@@ -100,6 +73,32 @@ export function UniqueLandingPage() {
     updateTime();
   }, []);
 
+  const STATS = [
+    { value: "1,200+", label: tText("Projects Managed"), desc: "Across 7 Municipal Zones", icon: Building2 },
+    { value: "18", label: tText("Government Departments"), desc: "Inter-connected Divisions", icon: Network },
+    { value: "50,000+", label: tText("Citizens Served"), desc: "Civic Grievances Resolved", icon: Users },
+    { value: "92%", label: tText("Conflict Prevention Rate"), desc: "Municipal Coordination", icon: BrainCircuit },
+    { value: "250+", label: tText("Conflicts Prevented"), desc: "Spatial & Timeline Clashes", icon: ShieldAlert },
+    { value: "35%", label: tText("Faster Execution"), desc: "Inter-Agency Optimization", icon: Zap },
+  ];
+
+  const CITIZEN_SERVICES = [
+    { title: tText("Submit Grievance"), desc: "Register road damage, water leaks, or street light issues directly to municipal departments.", icon: Megaphone, link: "/login" },
+    { title: tText("Track Complaint"), desc: "Track real-time resolution status using your unique Tracking Identifier.", icon: Search, link: "/login" },
+    { title: tText("View Public Projects"), desc: "Inspect active and sanctioned infrastructure projects across your municipal zone.", icon: Map, link: "/login" },
+    { title: tText("Infrastructure Proposals"), desc: "Submit civic infrastructure improvement proposals for officer review.", icon: Building2, link: "/login" },
+    { title: tText("Emergency Helpline Portal"), desc: "Access 24/7 municipal emergency helpline numbers for water burst or power outages.", icon: Phone, link: "/login" },
+    { title: tText("Download Reports"), desc: "Access official public infrastructure audit reports and monthly performance summaries.", icon: FileText, link: "/login" },
+  ];
+
+  const RECENT_PROJECTS = [
+    { id: "PRJ-2026-101", name: "Sector 4 Metro Line 3 Drainage Duct Relocation", dept: "Water Supply & Drainage", status: t.sanctioned, priority: "HIGH", timeline: "90 Days" },
+    { id: "PRJ-2026-102", name: "Anna Salai Arterial Underground Fiber Cable Laying", dept: "IT & Telecommunications", status: t.active, priority: "HIGH", timeline: "60 Days" },
+    { id: "PRJ-2026-103", name: "Zone 3 Stormwater Channel Excavation & Trenching", dept: "Roads & Storm Water", status: t.pendingApproval, priority: "MEDIUM", timeline: "120 Days" },
+    { id: "PRJ-2026-104", name: "Central Substation Power Line Overhead Shift", dept: "Electricity Board", status: t.sanctioned, priority: "HIGH", timeline: "45 Days" },
+    { id: "PRJ-2026-105", name: "Sector 7 Bio-Waste Treatment Plant Pipeline", dept: "Waste Management", status: t.active, priority: "LOW", timeline: "150 Days" },
+  ];
+
   return (
     <div
       className={`min-h-screen bg-[#FFFFFF] text-[#0F172A] font-sans antialiased selection:bg-[#1E3A8A] selection:text-white scroll-smooth ${
@@ -111,15 +110,15 @@ export function UniqueLandingPage() {
         <div className="mx-auto flex max-w-7xl items-center justify-between">
           <div className="flex items-center gap-2">
             <span className="h-2 w-2 rounded-full bg-[#16A34A] animate-pulse" />
-            <span className="font-bold text-white tracking-wide">URBAN PULSE</span>
+            <span className="font-bold text-white tracking-wide">{t.appName}</span>
             <span className="text-slate-500">•</span>
-            <span className="text-slate-400 font-medium hidden sm:inline">Smart Infrastructure Governance OS</span>
+            <span className="text-slate-400 font-medium hidden sm:inline">{t.commandCenterOS}</span>
           </div>
 
           <div className="flex items-center gap-4 text-[11px] font-medium">
             <span className="hidden md:inline text-slate-300">{currentDate}</span>
             <div className="flex items-center gap-1 border-l border-slate-700 pl-3">
-              <span className="cursor-pointer text-white font-bold">English</span>
+              <LanguageSwitcher />
             </div>
             <div className="hidden sm:flex items-center gap-1 border-l border-slate-700 pl-3 text-[10px]">
               <button onClick={() => setFontSize("normal")} className="hover:text-white font-bold px-1 text-slate-400">A-</button>
@@ -140,7 +139,7 @@ export function UniqueLandingPage() {
             </div>
             <div>
               <span className="font-black text-base text-[#0F172A] tracking-wide block leading-tight">
-                URBAN PULSE
+                {t.appName}
               </span>
               <span className="text-[10px] text-[#3B82F6] font-extrabold uppercase tracking-wider block">
                 Infrastructure OS
@@ -150,17 +149,17 @@ export function UniqueLandingPage() {
 
           {/* Navigation Links */}
           <nav className="hidden lg:flex items-center gap-7 text-xs font-bold text-slate-700">
-            <a href="#home" className="hover:text-[#1E3A8A] transition-colors">Home</a>
-            <a href="#services" className="hover:text-[#1E3A8A] transition-colors">Services</a>
-            <a href="#directory" className="hover:text-[#1E3A8A] transition-colors">Public Directory</a>
-            <a href="#contact" className="hover:text-[#1E3A8A] transition-colors">Contact</a>
+            <a href="#home" className="hover:text-[#1E3A8A] transition-colors">{tText("Home")}</a>
+            <a href="#services" className="hover:text-[#1E3A8A] transition-colors">{tText("Services")}</a>
+            <a href="#directory" className="hover:text-[#1E3A8A] transition-colors">{tText("Public Directory")}</a>
+            <a href="#contact" className="hover:text-[#1E3A8A] transition-colors">{tText("Contact")}</a>
           </nav>
 
           {/* Auth Action Buttons - Sign In Only */}
           <div className="flex items-center gap-3">
             <Button asChild size="sm" className="bg-[#1E3A8A] hover:bg-[#1E3A8A]/90 text-white font-bold text-xs px-5 shadow-sm gap-1.5">
               <Link to="/login">
-                <Lock className="h-3.5 w-3.5" /> Sign In / Login
+                <Lock className="h-3.5 w-3.5" /> {t.signIn}
               </Link>
             </Button>
           </div>
@@ -175,15 +174,15 @@ export function UniqueLandingPage() {
           {/* Left Column */}
           <div className="space-y-5">
             <Badge variant="outline" className="bg-[#3B82F6]/20 text-[#3B82F6] border-[#3B82F6]/40 font-bold text-xs py-1 px-3">
-              <Activity className="h-3.5 w-3.5 mr-1.5 text-[#3B82F6]" /> Municipal Infrastructure Command System
+              <Activity className="h-3.5 w-3.5 mr-1.5 text-[#3B82F6]" /> {tText("Municipal Infrastructure Command System")}
             </Badge>
 
             <h1 className="text-3xl font-black leading-tight tracking-tight sm:text-4xl text-white">
-              Intelligent Smart City Infrastructure & Governance Platform
+              {tText("Intelligent Smart City Infrastructure & Governance Platform")}
             </h1>
 
             <h2 className="text-sm sm:text-base font-bold text-[#3B82F6] leading-snug">
-              Empowering Urban Governance through AI-Based Predictive Analytics & Inter-Departmental Data Interoperability
+              {tText("Empowering Urban Governance through AI-Based Predictive Analytics & Inter-Departmental Data Interoperability")}
             </h2>
 
             <p className="text-slate-300 text-xs sm:text-sm font-normal leading-relaxed">
@@ -194,7 +193,7 @@ export function UniqueLandingPage() {
             <div className="flex flex-wrap gap-3 pt-2">
               <Button asChild size="lg" className="bg-[#3B82F6] hover:bg-[#3B82F6]/90 text-white font-extrabold text-xs sm:text-sm px-8 shadow-md gap-2">
                 <Link to="/login">
-                  Sign In to Access System <ArrowRight className="h-4 w-4" />
+                  {tText("Sign In to Access System")} <ArrowRight className="h-4 w-4" />
                 </Link>
               </Button>
             </div>
@@ -202,10 +201,10 @@ export function UniqueLandingPage() {
             {/* Badges */}
             <div className="grid grid-cols-3 gap-3 pt-4 border-t border-slate-800 text-xs">
               <div className="flex items-center gap-1.5 font-bold text-[#16A34A]">
-                <CheckCircle2 className="h-4 w-4 text-[#16A34A]" /> AI Decision Support
+                <CheckCircle2 className="h-4 w-4 text-[#16A34A]" /> {t.aiDecisionSupport}
               </div>
               <div className="flex items-center gap-1.5 font-bold text-[#3B82F6]">
-                <CheckCircle2 className="h-4 w-4 text-[#3B82F6]" /> Municipal GIS Spatial Map
+                <CheckCircle2 className="h-4 w-4 text-[#3B82F6]" /> {t.gisSpatialMap}
               </div>
               <div className="flex items-center gap-1.5 font-bold text-[#F59E0B]">
                 <CheckCircle2 className="h-4 w-4 text-[#F59E0B]" /> Risk Factor Analysis
@@ -262,9 +261,9 @@ export function UniqueLandingPage() {
         <div className="mx-auto max-w-7xl px-4 md:px-8">
           <div className="text-center max-w-2xl mx-auto mb-10 space-y-1">
             <Badge variant="outline" className="bg-[#1E3A8A]/10 text-[#1E3A8A] border-[#1E3A8A]/20 font-bold text-xs">
-              System Impact
+              {tText("System Impact")}
             </Badge>
-            <h2 className="text-2xl font-black text-[#0F172A]">Operational Impact Metrics</h2>
+            <h2 className="text-2xl font-black text-[#0F172A]">{tText("Operational Impact Metrics")}</h2>
             <p className="text-slate-600 text-xs font-semibold">
               Live indicators monitored across municipal infrastructure deployments.
             </p>
@@ -295,7 +294,7 @@ export function UniqueLandingPage() {
             <Badge variant="outline" className="bg-[#3B82F6]/15 text-[#3B82F6] border-[#3B82F6]/40 font-bold text-xs">
               Public & Officer Services
             </Badge>
-            <h2 className="text-2xl font-black text-[#0F172A]">Citizen & Department Services</h2>
+            <h2 className="text-2xl font-black text-[#0F172A]">{tText("Citizen & Department Services")}</h2>
             <p className="text-slate-600 text-xs font-semibold">
               Sign in with your credentials to access municipal services, file grievances, and manage projects.
             </p>
@@ -334,10 +333,10 @@ export function UniqueLandingPage() {
               <Badge variant="outline" className="bg-[#1E3A8A]/10 text-[#1E3A8A] border-[#1E3A8A]/20 font-bold text-xs mb-1">
                 Official Directory
               </Badge>
-              <h2 className="text-2xl font-black text-[#0F172A]">Recent Infrastructure Works Directory</h2>
+              <h2 className="text-2xl font-black text-[#0F172A]">{tText("Recent Infrastructure Works Directory")}</h2>
             </div>
             <Button asChild size="sm" className="bg-[#1E3A8A] hover:bg-[#1E3A8A]/90 text-white font-bold text-xs">
-              <Link to="/login">Login to View Directory</Link>
+              <Link to="/login">{tText("Login to View Directory")}</Link>
             </Button>
           </div>
 
@@ -345,12 +344,12 @@ export function UniqueLandingPage() {
             <table className="w-full text-xs text-left text-[#0F172A]">
               <thead className="bg-[#1E3A8A] text-white uppercase text-[10px] font-extrabold">
                 <tr>
-                  <th className="px-4 py-3">Project Ref ID</th>
-                  <th className="px-4 py-3">Infrastructure Work Title</th>
-                  <th className="px-4 py-3">Department Division</th>
-                  <th className="px-4 py-3">Status</th>
-                  <th className="px-4 py-3">Priority</th>
-                  <th className="px-4 py-3">Timeline</th>
+                  <th className="px-4 py-3">{tText("Project Ref ID")}</th>
+                  <th className="px-4 py-3">{tText("Infrastructure Work Title")}</th>
+                  <th className="px-4 py-3">{tText("Department Division")}</th>
+                  <th className="px-4 py-3">{tText("Status")}</th>
+                  <th className="px-4 py-3">{tText("Priority")}</th>
+                  <th className="px-4 py-3">{tText("Timeline")}</th>
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#E2E8F0] bg-[#FFFFFF]">
@@ -361,8 +360,8 @@ export function UniqueLandingPage() {
                     <td className="px-4 py-3 text-slate-600 font-semibold">{p.dept}</td>
                     <td className="px-4 py-3">
                       <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                        p.status === "SANCTIONED" ? "bg-[#16A34A]/15 text-[#16A34A]" :
-                        p.status === "IN_PROGRESS" ? "bg-[#3B82F6]/15 text-[#3B82F6]" :
+                        p.status === t.sanctioned ? "bg-[#16A34A]/15 text-[#16A34A]" :
+                        p.status === t.active ? "bg-[#3B82F6]/15 text-[#3B82F6]" :
                         "bg-[#F59E0B]/15 text-[#F59E0B]"
                       }`}>
                         {p.status}
@@ -396,7 +395,7 @@ export function UniqueLandingPage() {
           <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
             <Button asChild size="lg" className="bg-[#3B82F6] hover:bg-[#3B82F6]/90 text-white font-extrabold text-xs sm:text-sm px-8 shadow-md gap-2">
               <Link to="/login">
-                Proceed to Login Page <ArrowRight className="h-4 w-4" />
+                {tText("Sign In to Access System")} <ArrowRight className="h-4 w-4" />
               </Link>
             </Button>
           </div>
@@ -413,7 +412,7 @@ export function UniqueLandingPage() {
                   UP
                 </div>
                 <div>
-                  <span className="font-extrabold text-sm text-white block">URBAN PULSE</span>
+                  <span className="font-extrabold text-sm text-white block">{t.appName}</span>
                   <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Command Center OS</span>
                 </div>
               </div>
@@ -425,10 +424,10 @@ export function UniqueLandingPage() {
             <div className="space-y-2">
               <h4 className="font-extrabold text-xs text-white uppercase tracking-wider">Quick Navigation</h4>
               <ul className="space-y-1.5 text-slate-300 font-medium">
-                <li><a href="#home" className="hover:text-white transition">Home</a></li>
-                <li><a href="#services" className="hover:text-white transition">Services</a></li>
-                <li><a href="#directory" className="hover:text-white transition">Public Directory</a></li>
-                <li><Link to="/login" className="hover:text-white transition">Official Login</Link></li>
+                <li><a href="#home" className="hover:text-white transition">{tText("Home")}</a></li>
+                <li><a href="#services" className="hover:text-white transition">{tText("Services")}</a></li>
+                <li><a href="#directory" className="hover:text-white transition">{tText("Public Directory")}</a></li>
+                <li><Link to="/login" className="hover:text-white transition">{t.signIn}</Link></li>
               </ul>
             </div>
 
@@ -460,7 +459,7 @@ export function UniqueLandingPage() {
           </div>
 
           <div className="pt-6 border-t border-slate-800 flex flex-col md:flex-row items-center justify-between gap-3 text-[11px] text-slate-400">
-            <p>© 2026 URBAN PULSE · All Rights Reserved.</p>
+            <p>© 2026 {t.appName} · All Rights Reserved.</p>
             <p className="text-slate-300 font-semibold">
               Developed as an AI-Powered Smart City Infrastructure OS
             </p>

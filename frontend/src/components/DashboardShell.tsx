@@ -25,38 +25,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { NotificationsPopover } from "@/components/NotificationsPopover";
-
-// Internal Government Command Navigation Groups
-const navGroups = [
-  {
-    category: "Officer Workspace",
-    items: [
-      { title: "Department Dashboard", url: "/officer", icon: LayoutDashboard },
-      { title: "Project Proposals", url: "/projects", icon: FolderKanban },
-      { title: "AI Decision Support", url: "/ai-conflict", icon: TriangleAlert },
-    ],
-  },
-  {
-    category: "Command & Control",
-    items: [
-      { title: "Municipal Command Center", url: "/admin", icon: Landmark },
-      { title: "GIS Spatial Map", url: "/gis-map", icon: Map },
-      { title: "Conflict Heatmap", url: "/conflict-heatmap", icon: Flame },
-    ],
-  },
-  {
-    category: "Execution & Resources",
-    items: [
-      { title: "Resource Optimization", url: "/resource-optimization", icon: Cpu },
-    ],
-  },
-  {
-    category: "Security & Audit",
-    items: [
-      { title: "System Audit Logs", url: "/audit-logs", icon: ShieldCheck },
-    ],
-  },
-];
+import { useLanguage, LanguageSwitcher } from "@/lib/i18n";
 
 export function DashboardShell({
   title,
@@ -71,6 +40,38 @@ export function DashboardShell({
   const [mobileOpen, setMobileOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const [user, setUser] = useState<{ name?: string; department?: string; role?: string }>({});
+  const { t } = useLanguage();
+
+  const navGroups = [
+    {
+      category: t.officerWorkspace,
+      items: [
+        { title: t.departmentDashboard, url: "/officer", icon: LayoutDashboard },
+        { title: t.projectProposals, url: "/projects", icon: FolderKanban },
+        { title: t.aiDecisionSupport, url: "/ai-conflict", icon: TriangleAlert },
+      ],
+    },
+    {
+      category: t.commandAndControl,
+      items: [
+        { title: t.municipalCommandCenter, url: "/admin", icon: Landmark },
+        { title: t.gisSpatialMap, url: t.gisSpatialMap, icon: Map },
+        { title: t.conflictHeatmap, url: "/conflict-heatmap", icon: Flame },
+      ],
+    },
+    {
+      category: t.executionAndResources,
+      items: [
+        { title: t.resourceOptimization, url: "/resource-optimization", icon: Cpu },
+      ],
+    },
+    {
+      category: t.securityAndAudit,
+      items: [
+        { title: t.systemAuditLogs, url: "/audit-logs", icon: ShieldCheck },
+      ],
+    },
+  ];
 
   useEffect(() => {
     try {
@@ -108,7 +109,7 @@ export function DashboardShell({
             </div>
             {!collapsed && (
               <div className="min-w-0">
-                <p className="truncate text-xs font-black tracking-wider text-white uppercase">URBAN PULSE</p>
+                <p className="truncate text-xs font-black tracking-wider text-white uppercase">{t.appName}</p>
                 <p className="truncate text-[10px] text-slate-400 font-medium">Command Center OS</p>
               </div>
             )}
@@ -180,7 +181,7 @@ export function DashboardShell({
             className="flex items-center gap-3 rounded-md px-3 py-2 text-xs font-medium text-slate-400 hover:bg-slate-800 hover:text-white"
           >
             <LogOut className="h-4 w-4" />
-            {!collapsed && <span>Sign out</span>}
+            {!collapsed && <span>{t.signOut}</span>}
           </Link>
         </div>
       </aside>
@@ -203,10 +204,12 @@ export function DashboardShell({
           </div>
 
           <div className="flex items-center gap-3">
+            <LanguageSwitcher />
+
             <div className="relative hidden lg:block w-56">
               <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-slate-400" />
               <Input
-                placeholder="Search projects or complaints..."
+                placeholder={t.searchPlaceholder}
                 className="h-8 pl-8 text-xs bg-[#F8FAFC] border-[#E5E7EB] text-[#111827]"
               />
             </div>

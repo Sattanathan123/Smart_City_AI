@@ -12,6 +12,7 @@ import { useEffect, type ReactNode } from "react";
 import appCss from "../styles.css?url";
 import { reportLovableError } from "../lib/lovable-error-reporting";
 import { Toaster } from "@/components/ui/sonner";
+import { LanguageProvider } from "@/lib/i18n";
 
 function NotFoundComponent() {
   return (
@@ -78,13 +79,13 @@ export const Route = createRootRouteWithContext<{ queryClient: QueryClient }>()(
     meta: [
       { charSet: "utf-8" },
       { name: "viewport", content: "width=device-width, initial-scale=1" },
-      { title: "SmartCity OS — AI-Powered Smart City Collaboration Platform" },
+      { title: "URBAN PULSE — AI-Powered Smart City Collaboration Platform" },
       {
         name: "description",
         content:
           "Connecting city departments through intelligent data sharing, predictive analytics, and AI conflict detection for coordinated urban planning.",
       },
-      { name: "author", content: "SmartCity OS" },
+      { name: "author", content: "URBAN PULSE" },
       { property: "og:title", content: "AI-Powered Smart City Collaboration Platform" },
       {
         property: "og:description",
@@ -114,8 +115,25 @@ function RootShell({ children }: { children: ReactNode }) {
     <html lang="en">
       <head>
         <HeadContent />
+        <script
+          dangerouslySetInnerHTML={{
+            __html: `
+              function googleTranslateElementInit() {
+                if (window.google && window.google.translate) {
+                  new window.google.translate.TranslateElement({
+                    pageLanguage: 'en',
+                    includedLanguages: 'en,ta,hi',
+                    autoDisplay: false
+                  }, 'google_translate_element');
+                }
+              }
+            `,
+          }}
+        />
+        <script src="//translate.google.com/translate_a/element.js?cb=googleTranslateElementInit" async></script>
       </head>
       <body>
+        <div id="google_translate_element" style={{ display: "none" }}></div>
         {children}
         <Scripts />
       </body>
@@ -128,9 +146,10 @@ function RootComponent() {
 
   return (
     <QueryClientProvider client={queryClient}>
-      {/* Required: nested routes render here. Removing <Outlet /> breaks all child routes. */}
-      <Outlet />
-      <Toaster richColors position="top-right" />
+      <LanguageProvider>
+        <Outlet />
+        <Toaster richColors position="top-right" />
+      </LanguageProvider>
     </QueryClientProvider>
   );
 }

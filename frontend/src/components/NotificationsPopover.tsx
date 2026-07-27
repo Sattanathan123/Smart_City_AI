@@ -70,7 +70,7 @@ export function NotificationsPopover() {
       <Button
         variant="ghost"
         size="icon"
-        className="relative shrink-0 text-white hover:bg-blue-800"
+        className="relative shrink-0 text-[#111827] hover:bg-[#F1F5F9] hover:text-[#1E3A8A] border border-[#E5E7EB] h-9 w-9"
         onClick={() => {
           setOpen((prev) => !prev);
           if (!open) fetchAlerts();

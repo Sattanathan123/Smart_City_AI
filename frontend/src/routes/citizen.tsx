@@ -23,6 +23,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { complaintsApi, alertsApi, ComplaintData, AlertData } from "@/lib/api";
 import { toast } from "sonner";
+import { processCitizenComplaintTranslation } from "@/lib/geminiTranslate";
 
 export const Route = createFileRoute("/citizen")({
   head: () => ({
@@ -116,15 +117,22 @@ function CitizenDashboard() {
     }
     setSubmitting(true);
     try {
+      // Automatically detect Tamil input and translate to English for Officers using Gemini AI
+      const { isTamil, finalDescription } = await processCitizenComplaintTranslation(description);
+
       const created = await complaintsApi.create({
         userId: user.id ?? 1,
         userName: user.name ?? "Citizen User",
         category,
-        description,
+        description: finalDescription,
         zone,
       });
       setSubmittedId(created.id);
-      toast.success("Complaint submitted successfully!");
+      if (isTamil) {
+        toast.success("தமிழ் புகார் பெறப்பட்டது! (Gemini AI translated to English for Officer review)");
+      } else {
+        toast.success("Complaint submitted successfully!");
+      }
       setDescription("");
       loadComplaints();
     } catch {
