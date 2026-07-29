@@ -3,7 +3,7 @@
  * Uses Google Gemini API to contextually translate municipal infrastructure terms,
  * officer sanction remarks, and citizen complaints into Tamil, Hindi, etc.
  */
-const DEFAULT_GEMINI_KEY = "AQ.Ab8RN6LCemwka96bC-EsdtWPyGxP6GmYDBcCXnx3P5Mf9AjvLQ";
+const DEFAULT_GEMINI_KEY = "";
 export async function translateWithGemini(
   text: string,
   targetLang: "ta" | "hi" | "en",
