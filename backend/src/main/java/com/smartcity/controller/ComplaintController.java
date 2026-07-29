@@ -21,8 +21,8 @@ public class ComplaintController {
         this.service = service;
     }
 
-    @PostMapping
-    public ResponseEntity<ComplaintResponse> create(@Valid @RequestBody ComplaintRequest req) {
+    @PostMapping(consumes = MediaType.MULTIPART_FORM_DATA_VALUE)
+    public ResponseEntity<ComplaintResponse> create(@Valid @ModelAttribute ComplaintRequest req) {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.create(req));
     }
 

@@ -6,6 +6,13 @@ import com.smartcity.entity.Complaint;
 import com.smartcity.exception.ResourceNotFoundException;
 import com.smartcity.repository.ComplaintRepository;
 import org.springframework.stereotype.Service;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.core.io.Resource;
+import java.nio.file.Path;
+import java.nio.file.Files;
+import java.util.UUID;
+import org.springframework.util.StringUtils;
+import java.io.IOException;
 
 import java.util.List;
 
@@ -15,9 +22,12 @@ public class ComplaintService {
     private final ComplaintRepository repo;
     private final EmailService emailService;
 
-    public ComplaintService(ComplaintRepository repo, EmailService emailService) {
+    private final Path fileStorageLocation;
+
+public ComplaintService(ComplaintRepository repo, EmailService emailService, @Autowired Path fileStorageLocation) {
         this.repo = repo;
         this.emailService = emailService;
+        this.fileStorageLocation = fileStorageLocation;
     }
 
     public ComplaintResponse create(ComplaintRequest req) {
@@ -27,7 +37,25 @@ public class ComplaintService {
         c.setCategory(req.getCategory());
         c.setDescription(req.getDescription());
         c.setZone(req.getZone());
-        c.setImageUrl(req.getImageUrl());
+        // Handle uploaded image
+        if (req.getImage() != null && !req.getImage().isEmpty()) {
+            String originalFilename = StringUtils.cleanPath(req.getImage().getOriginalFilename());
+            String fileExtension = "";
+            int dotIndex = originalFilename.lastIndexOf('.');
+            if (dotIndex > 0) {
+                fileExtension = originalFilename.substring(dotIndex);
+            }
+            String filename = UUID.randomUUID().toString() + fileExtension;
+            try {
+                Path targetLocation = this.fileStorageLocation.resolve(filename);
+                Files.copy(req.getImage().getInputStream(), targetLocation);
+                c.setImageUrl(filename);
+            } catch (IOException ex) {
+                throw new RuntimeException("Could not store file " + filename + ". Please try again!", ex);
+            }
+        } else {
+            c.setImageUrl(req.getImageUrl());
+        }
         c.setStatus("SUBMITTED");
         c.setProgress(0);
         Complaint saved = repo.save(c);

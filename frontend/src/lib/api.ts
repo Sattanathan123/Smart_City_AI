@@ -1,5 +1,18 @@
 const BASE = "http://localhost:8082/api";
 
+// Helper for multipart/form-data requests (no JSON headers)
+export async function requestMultipart<T>(path: string, formData: FormData): Promise<T> {
+  const res = await fetch(`${BASE}${path}`, {
+    method: "POST",
+    body: formData,
+  });
+  if (!res.ok) {
+    const err = await res.json().catch(() => ({ message: res.statusText }));
+    throw new Error(err.message ?? "Request failed");
+  }
+  return res.json();
+}
+
 export async function fetchWithAuth<T>(path: string, options?: RequestInit): Promise<T> {
   const user = (() => {
     if (typeof window === "undefined" || typeof sessionStorage === "undefined") return {};
@@ -141,14 +154,26 @@ export interface ComplaintData {
 }
 
 export const complaintsApi = {
-  create: (body: {
+  // Create complaint with optional image upload using multipart/form-data
+  create: (data: {
     userId: number;
     userName: string;
     category: string;
     description: string;
     zone: string;
-    imageUrl?: string;
-  }) => request<ComplaintData>("/complaints", { method: "POST", body: JSON.stringify(body) }),
+    image?: File;
+  }) => {
+    const formData = new FormData();
+    formData.append('userId', String(data.userId));
+    formData.append('userName', data.userName);
+    formData.append('category', data.category);
+    formData.append('description', data.description);
+    formData.append('zone', data.zone);
+    if (data.image) {
+      formData.append('image', data.image);
+    }
+    return requestMultipart<ComplaintData>("/complaints", formData);
+  },
   getByUser: (userId: number) => request<ComplaintData[]>(`/complaints/user/${userId}`),
   getAll: () => request<ComplaintData[]>("/complaints"),
   getById: (id: number) => request<ComplaintData>(`/complaints/${id}`),

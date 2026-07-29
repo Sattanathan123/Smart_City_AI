@@ -76,6 +76,7 @@ function CitizenDashboard() {
   const [description, setDescription] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [submittedId, setSubmittedId] = useState<number | null>(null);
+const [imageFile, setImageFile] = useState<File | null>(null);
 
   // Data State
   const [complaints, setComplaints] = useState<ComplaintData[]>([]);
@@ -127,6 +128,7 @@ function CitizenDashboard() {
         category,
         description: finalDescription,
         zone,
+        image: imageFile ?? undefined,
       });
       setSubmittedId(created.id);
       if (isTamil) {
@@ -135,6 +137,7 @@ function CitizenDashboard() {
         toast.success("Complaint submitted successfully!");
       }
       setDescription("");
+      setImageFile(null);
       loadComplaints();
     } catch {
       toast.error("Failed to submit complaint");
@@ -297,6 +300,11 @@ function CitizenDashboard() {
                     />
                   </div>
 
+                  <div className="mt-2">
+                    <label className="text-xs font-bold text-[#0F172A]">Attach Image (optional)</label>
+                    <input type="file" accept="image/*" onChange={e => setImageFile(e.target.files?.[0] ?? null)} className={fieldClass} />
+                  </div>
+
                   <Button
                     type="submit"
                     disabled={submitting}
@@ -341,6 +349,7 @@ function CitizenDashboard() {
                     <th className="px-4 py-3">Tracking ID</th>
                     <th className="px-4 py-3">Category & Zone</th>
                     <th className="px-4 py-3">Description</th>
+                    <th className="px-4 py-3">Image</th>
                     <th className="px-4 py-3">Status</th>
                     <th className="px-4 py-3">Submitted Date</th>
                   </tr>
@@ -351,6 +360,9 @@ function CitizenDashboard() {
                       <td className="px-4 py-3 font-mono font-bold text-[#1E3A8A]">#{c.id}</td>
                       <td className="px-4 py-3 font-bold">{c.category} ({c.zone})</td>
                       <td className="px-4 py-3 font-medium text-slate-600 max-w-xs truncate">{c.description}</td>
+                      <td className="px-4 py-3">
+                        {c.imageUrl ? (<img src={c.imageUrl} alt="Complaint" className="h-12 w-12 object-cover rounded" />) : "-"}
+                      </td>
                       <td className="px-4 py-3">
                         <span className={cn("px-2.5 py-1 rounded text-[10px]", statusColor[c.status] ?? "bg-slate-100 text-slate-700 font-bold")}>
                           {statusLabel[c.status] ?? c.status}
@@ -393,6 +405,7 @@ function CitizenDashboard() {
                   <p><b>Category:</b> {trackedComplaint.category}</p>
                   <p><b>Zone:</b> {trackedComplaint.zone}</p>
                   <p><b>Description:</b> {trackedComplaint.description}</p>
+                  <p><b>Image:</b> {trackedComplaint.imageUrl ? (<img src={trackedComplaint.imageUrl} alt="Complaint" className="h-24 w-24 object-cover rounded" />) : "-"}</p>
                 </div>
               </div>
             )}
