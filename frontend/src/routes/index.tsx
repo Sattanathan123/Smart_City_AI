@@ -204,7 +204,7 @@ export function UniqueLandingPage() {
                 <CheckCircle2 className="h-4 w-4 text-[#16A34A]" /> {t.aiDecisionSupport}
               </div>
               <div className="flex items-center gap-1.5 font-bold text-[#3B82F6]">
-                <CheckCircle2 className="h-4 w-4 text-[#3B82F6]" /> {t.gisSpatialMap}
+                <CheckCircle2 className="h-4 w-4 text-[#3B82F6]" /> <Link to="/gis-map" className="ml-1 text-[#3B82F6] hover:underline">{t.gisSpatialMap}</Link>
               </div>
               <div className="flex items-center gap-1.5 font-bold text-[#F59E0B]">
                 <CheckCircle2 className="h-4 w-4 text-[#F59E0B]" /> Risk Factor Analysis

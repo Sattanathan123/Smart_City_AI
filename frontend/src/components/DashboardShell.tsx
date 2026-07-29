@@ -55,7 +55,7 @@ export function DashboardShell({
       category: t.commandAndControl,
       items: [
         { title: t.municipalCommandCenter, url: "/admin", icon: Landmark },
-        { title: t.gisSpatialMap, url: t.gisSpatialMap, icon: Map },
+        { title: t.gisSpatialMap, url: "/gis-map", icon: Map },
         { title: t.conflictHeatmap, url: "/conflict-heatmap", icon: Flame },
       ],
     },

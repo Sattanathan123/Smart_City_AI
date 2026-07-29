@@ -1,6 +1,7 @@
 package com.smartcity.controller;
 
 import com.smartcity.dto.AuthResponse;
+import org.springframework.web.bind.annotation.RestController;
 import com.smartcity.dto.LoginRequest;
 import com.smartcity.dto.RegisterRequest;
 import com.smartcity.service.AuthService;
@@ -8,6 +9,7 @@ import jakarta.validation.Valid;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
+@CrossOrigin(origins = "*")
 @RestController
 @RequestMapping("/api/auth")
 public class AuthController {

@@ -4,6 +4,8 @@ import com.smartcity.dto.ComplaintRequest;
 import com.smartcity.dto.ComplaintResponse;
 import com.smartcity.service.ComplaintService;
 import jakarta.validation.Valid;
+
+import org.springframework.http.MediaType;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;

@@ -23,6 +23,7 @@ C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\e
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\exception\ErrorResponse.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\security\JwtUtil.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\util\ProjectMapper.java
+C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\config\FileStorageConfig.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\entity\ProjectDependency.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\dto\UserResponse.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\controller\AlertController.java

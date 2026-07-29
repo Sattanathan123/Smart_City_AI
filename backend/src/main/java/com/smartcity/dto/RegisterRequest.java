@@ -22,6 +22,7 @@ public class RegisterRequest {
 
     private String employeeId;
 
+    @NotBlank
     @Pattern(regexp = "^[6-9]\\d{9}$", message = "Enter a valid 10-digit Indian mobile number")
     private String phone;
 

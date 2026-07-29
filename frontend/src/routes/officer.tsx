@@ -283,6 +283,12 @@ function OfficerDashboard() {
           </table>
         </div>
       </div>
+<div className="mt-6 rounded-lg border border-[#E2E8F0] bg-[#FFFFFF] p-5 shadow-sm">
+  <h2 className="font-bold text-sm text-[#0F172A] mb-2">GIS Spatial Map</h2>
+  <Button asChild size="sm" className="bg-[#1E3A8A] hover:bg-[#1E3A8A]/90 text-white font-bold">
+    <Link to="/gis-map">Open GIS Map</Link>
+  </Button>
+</div>
     </DashboardShell>
   );
 }

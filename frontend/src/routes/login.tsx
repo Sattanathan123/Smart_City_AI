@@ -96,7 +96,7 @@ function LoginPage() {
       );
       return;
     }
-    if (roleId === "citizen" && regPhone && !/^[6-9]\d{9}$/.test(regPhone)) {
+    if (!regPhone || !/^[6-9]\d{9}$/.test(regPhone)) {
       toast.error("Enter a valid 10-digit Indian mobile number");
       return;
     }
@@ -351,18 +351,17 @@ function LoginPage() {
                 </div>
               )}
 
-              {roleId === "citizen" && (
-                <div>
-                  <label className="text-xs font-bold text-slate-700">Mobile Number (Optional)</label>
-                  <input
-                    type="tel"
-                    placeholder="10-digit phone number"
-                    value={regPhone}
-                    onChange={(e) => setRegPhone(e.target.value)}
-                    className={fieldClass}
-                  />
-                </div>
-              )}
+              <div>
+                <label className="text-xs font-bold text-slate-700">Mobile Number <span className="text-[10px] text-red-500 font-extrabold">*</span> Required</label>
+                <input
+                  type="tel"
+                  placeholder="10-digit phone number"
+                  value={regPhone}
+                  onChange={(e) => setRegPhone(e.target.value)}
+                  className={fieldClass}
+                  required
+                />
+              </div>
 
               {roleId === "officer" && (
                 <div>

@@ -23,7 +23,6 @@ import { Route as AiConflictRouteImport } from './routes/ai-conflict'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
 import { Route as OfficerGisMapRouteImport } from './routes/officer/gis-map'
-import { Route as AdminGisMapRouteImport } from './routes/admin/gis-map'
 
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
@@ -95,15 +94,10 @@ const OfficerGisMapRoute = OfficerGisMapRouteImport.update({
   path: '/gis-map',
   getParentRoute: () => OfficerRoute,
 } as any)
-const AdminGisMapRoute = AdminGisMapRouteImport.update({
-  id: '/gis-map',
-  path: '/gis-map',
-  getParentRoute: () => AdminRoute,
-} as any)
 
 export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
-  '/admin': typeof AdminRouteWithChildren
+  '/admin': typeof AdminRoute
   '/ai-conflict': typeof AiConflictRoute
   '/audit-logs': typeof AuditLogsRoute
   '/citizen': typeof CitizenRoute
@@ -115,12 +109,11 @@ export interface FileRoutesByFullPath {
   '/projects': typeof ProjectsRoute
   '/resource-optimization': typeof ResourceOptimizationRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/admin/gis-map': typeof AdminGisMapRoute
   '/officer/gis-map': typeof OfficerGisMapRoute
 }
 export interface FileRoutesByTo {
   '/': typeof IndexRoute
-  '/admin': typeof AdminRouteWithChildren
+  '/admin': typeof AdminRoute
   '/ai-conflict': typeof AiConflictRoute
   '/audit-logs': typeof AuditLogsRoute
   '/citizen': typeof CitizenRoute
@@ -132,13 +125,12 @@ export interface FileRoutesByTo {
   '/projects': typeof ProjectsRoute
   '/resource-optimization': typeof ResourceOptimizationRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/admin/gis-map': typeof AdminGisMapRoute
   '/officer/gis-map': typeof OfficerGisMapRoute
 }
 export interface FileRoutesById {
   __root__: typeof rootRouteImport
   '/': typeof IndexRoute
-  '/admin': typeof AdminRouteWithChildren
+  '/admin': typeof AdminRoute
   '/ai-conflict': typeof AiConflictRoute
   '/audit-logs': typeof AuditLogsRoute
   '/citizen': typeof CitizenRoute
@@ -150,7 +142,6 @@ export interface FileRoutesById {
   '/projects': typeof ProjectsRoute
   '/resource-optimization': typeof ResourceOptimizationRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
-  '/admin/gis-map': typeof AdminGisMapRoute
   '/officer/gis-map': typeof OfficerGisMapRoute
 }
 export interface FileRouteTypes {
@@ -169,7 +160,6 @@ export interface FileRouteTypes {
     | '/projects'
     | '/resource-optimization'
     | '/sitemap.xml'
-    | '/admin/gis-map'
     | '/officer/gis-map'
   fileRoutesByTo: FileRoutesByTo
   to:
@@ -186,7 +176,6 @@ export interface FileRouteTypes {
     | '/projects'
     | '/resource-optimization'
     | '/sitemap.xml'
-    | '/admin/gis-map'
     | '/officer/gis-map'
   id:
     | '__root__'
@@ -203,13 +192,12 @@ export interface FileRouteTypes {
     | '/projects'
     | '/resource-optimization'
     | '/sitemap.xml'
-    | '/admin/gis-map'
     | '/officer/gis-map'
   fileRoutesById: FileRoutesById
 }
 export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
-  AdminRoute: typeof AdminRouteWithChildren
+  AdminRoute: typeof AdminRoute
   AiConflictRoute: typeof AiConflictRoute
   AuditLogsRoute: typeof AuditLogsRoute
   CitizenRoute: typeof CitizenRoute
@@ -323,25 +311,8 @@ declare module '@tanstack/react-router' {
       preLoaderRoute: typeof OfficerGisMapRouteImport
       parentRoute: typeof OfficerRoute
     }
-    '/admin/gis-map': {
-      id: '/admin/gis-map'
-      path: '/gis-map'
-      fullPath: '/admin/gis-map'
-      preLoaderRoute: typeof AdminGisMapRouteImport
-      parentRoute: typeof AdminRoute
-    }
   }
 }
-
-interface AdminRouteChildren {
-  AdminGisMapRoute: typeof AdminGisMapRoute
-}
-
-const AdminRouteChildren: AdminRouteChildren = {
-  AdminGisMapRoute: AdminGisMapRoute,
-}
-
-const AdminRouteWithChildren = AdminRoute._addFileChildren(AdminRouteChildren)
 
 interface OfficerRouteChildren {
   OfficerGisMapRoute: typeof OfficerGisMapRoute
@@ -356,7 +327,7 @@ const OfficerRouteWithChildren =
 
 const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
-  AdminRoute: AdminRouteWithChildren,
+  AdminRoute: AdminRoute,
   AiConflictRoute: AiConflictRoute,
   AuditLogsRoute: AuditLogsRoute,
   CitizenRoute: CitizenRoute,
