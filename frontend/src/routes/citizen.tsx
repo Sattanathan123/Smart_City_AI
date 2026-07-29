@@ -24,6 +24,7 @@ import { cn } from "@/lib/utils";
 import { complaintsApi, alertsApi, ComplaintData, AlertData } from "@/lib/api";
 import { toast } from "sonner";
 import { processCitizenComplaintTranslation } from "@/lib/geminiTranslate";
+import { useLanguage, LanguageSwitcher } from "@/lib/i18n";
 
 export const Route = createFileRoute("/citizen")({
   head: () => ({
@@ -163,6 +164,8 @@ function CitizenDashboard() {
   const fieldClass =
     "mt-1 w-full rounded-md border border-[#E2E8F0] bg-[#FFFFFF] px-3 py-2 text-xs font-semibold text-[#0F172A] outline-none focus:border-[#1E3A8A] focus:ring-1 focus:ring-[#1E3A8A]";
 
+  const { t, tText } = useLanguage();
+
   return (
     <div className="min-h-screen bg-[#F8FAFC] text-[#0F172A]">
       {/* Navbar Header */}
@@ -173,7 +176,7 @@ function CitizenDashboard() {
               <div className="grid h-9 w-9 place-items-center rounded-lg bg-[#3B82F6] text-white font-black">
                 UP
               </div>
-              <span className="font-extrabold text-sm text-white tracking-wide">URBAN PULSE</span>
+              <span className="font-extrabold text-sm text-white tracking-wide">{t.appName}</span>
             </Link>
             <span className="hidden sm:inline text-xs text-blue-200 border-l border-blue-800 pl-3">
               Citizen Civic Services Portal
@@ -181,6 +184,8 @@ function CitizenDashboard() {
           </div>
 
           <div className="flex items-center gap-3">
+            <LanguageSwitcher />
+
             <Button
               variant="ghost"
               size="sm"
@@ -200,7 +205,7 @@ function CitizenDashboard() {
               <span className="font-bold">{user.name ?? "Citizen"}</span>
             </div>
             <Button asChild size="sm" variant="outline" className="text-xs font-bold border-blue-400 text-white bg-transparent hover:bg-blue-800">
-              <Link to="/login">Sign Out</Link>
+              <Link to="/login">{t.signOut}</Link>
             </Button>
           </div>
         </div>
@@ -211,23 +216,23 @@ function CitizenDashboard() {
         {/* Navigation Tabs */}
         <div className="flex rounded-md border border-[#E2E8F0] bg-[#FFFFFF] p-1 shadow-sm overflow-x-auto">
           {[
-            { id: "report", label: "Report Civic Issue", icon: Megaphone },
-            { id: "myreports", label: `My Complaints (${complaints.length})`, icon: Clock },
-            { id: "track", label: "Track Status", icon: Search },
-            { id: "alerts", label: `City Advisory Alerts (${alerts.length})`, icon: Bell },
-          ].map((t) => (
+            { id: "report", label: tText("Submit Grievance"), icon: Megaphone },
+            { id: "myreports", label: `${tText("My Complaints")} (${complaints.length})`, icon: Clock },
+            { id: "track", label: tText("Track Complaint"), icon: Search },
+            { id: "alerts", label: `${tText("City Advisory Alerts")} (${alerts.length})`, icon: Bell },
+          ].map((tabItem) => (
             <button
-              key={t.id}
-              onClick={() => setActiveTab(t.id as Tab)}
+              key={tabItem.id}
+              onClick={() => setActiveTab(tabItem.id as Tab)}
               className={cn(
                 "flex items-center gap-2 rounded-md px-4 py-2 text-xs font-bold whitespace-nowrap transition-all flex-1 justify-center",
-                activeTab === t.id
+                activeTab === tabItem.id
                   ? "bg-[#1E3A8A] text-white shadow-sm"
                   : "text-slate-600 hover:bg-[#F8FAFC] hover:text-[#0F172A]"
               )}
             >
-              <t.icon className="h-4 w-4" />
-              {t.label}
+              <tabItem.icon className="h-4 w-4" />
+              {tabItem.label}
             </button>
           ))}
         </div>

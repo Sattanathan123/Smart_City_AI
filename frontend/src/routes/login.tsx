@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import { authApi } from "@/lib/api";
 import { toast } from "sonner";
+import { useLanguage, LanguageSwitcher } from "@/lib/i18n";
 
 export const Route = createFileRoute("/login")({
   head: () => ({
@@ -20,38 +21,41 @@ export const Route = createFileRoute("/login")({
   component: LoginPage,
 });
 
-const roles = [
-  {
-    id: "citizen",
-    label: "Citizen Portal",
-    desc: "Report & track civic infrastructure issues",
-    icon: User,
-    to: "/citizen",
-  },
-  {
-    id: "officer",
-    label: "Department Officer",
-    desc: "Manage projects, conflicts & resources",
-    icon: Briefcase,
-    to: "/officer",
-  },
-  {
-    id: "admin",
-    label: "Administrator",
-    desc: "City-wide analytics & sanction approval",
-    icon: ShieldCheck,
-    to: "/admin",
-  },
-] as const;
-
 const fieldClass =
   "mt-1 w-full rounded-md border border-[#E2E8F0] bg-[#FFFFFF] px-3 py-2 text-xs font-semibold text-[#0F172A] outline-none focus:border-[#1E3A8A] focus:ring-1 focus:ring-[#1E3A8A]";
 
 function LoginPage() {
   const [tab, setTab] = useState<"login" | "register">("login");
-  const [role, setRole] = useState<(typeof roles)[number]>(roles[1]);
+  const [roleId, setRoleId] = useState<"citizen" | "officer" | "admin">("officer");
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
+  const { t, tText } = useLanguage();
+
+  const roles = [
+    {
+      id: "citizen",
+      label: t.citizenPortal,
+      desc: "Report & track civic infrastructure issues",
+      icon: User,
+      to: "/citizen",
+    },
+    {
+      id: "officer",
+      label: t.departmentDashboard,
+      desc: "Manage projects, conflicts & resources",
+      icon: Briefcase,
+      to: "/officer",
+    },
+    {
+      id: "admin",
+      label: t.municipalCommandCenter,
+      desc: "City-wide analytics & sanction approval",
+      icon: ShieldCheck,
+      to: "/admin",
+    },
+  ] as const;
+
+  const currentRole = roles.find((r) => r.id === roleId) || roles[1];
 
   // Login State
   const [email, setEmail] = useState("");
@@ -71,7 +75,7 @@ function LoginPage() {
       const user = await authApi.login({ email, password });
       sessionStorage.setItem("user", JSON.stringify(user));
       toast.success(`Welcome, ${user.name}!`);
-      navigate({ to: role.to });
+      navigate({ to: currentRole.to });
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : "Login failed");
     } finally {
@@ -84,33 +88,32 @@ function LoginPage() {
       toast.error("Please fill all required fields");
       return;
     }
-    if ((role.id === "officer" || role.id === "admin") && !regEmployeeId.trim()) {
+    if ((roleId === "officer" || roleId === "admin") && !regEmployeeId.trim()) {
       toast.error(
-        role.id === "officer"
+        roleId === "officer"
           ? "Employee ID (Emp ID) is required to verify official department authorization."
           : "Admin Clearance Code / Emp ID is required for Administrator registration."
       );
       return;
     }
-    if (role.id === "citizen" && regPhone && !/^[6-9]\d{9}$/.test(regPhone)) {
+    if (roleId === "citizen" && regPhone && !/^[6-9]\d{9}$/.test(regPhone)) {
       toast.error("Enter a valid 10-digit Indian mobile number");
       return;
     }
     setLoading(true);
     try {
-      await authApi.register({
+      const user = await authApi.register({
         name: regName,
         email: regEmail,
         password: regPassword,
+        role: roleId.toUpperCase(),
+        department: roleId === "citizen" ? "PUBLIC" : regDepartment,
         employeeId: regEmployeeId,
-        ...(role.id === "citizen" && regPhone ? { phone: regPhone } : {}),
-        department: regDepartment,
-        role: role.id,
+        phone: regPhone,
       });
-      toast.success("Registration successful! Official credentials saved. Please sign in.");
-      setEmail(regEmail);
-      setPassword(regPassword);
-      setTab("login");
+      sessionStorage.setItem("user", JSON.stringify(user));
+      toast.success("Account created successfully!");
+      navigate({ to: currentRole.to });
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : "Registration failed");
     } finally {
@@ -119,36 +122,39 @@ function LoginPage() {
   };
 
   return (
-    <div className="grid min-h-screen md:grid-cols-2 bg-[#FFFFFF] text-[#0F172A]">
-      {/* Left Creative Executive Banner */}
-      <div className="hidden flex-col justify-between bg-[#0F172A] p-12 text-white md:flex border-r border-slate-800 relative overflow-hidden">
-        <div className="absolute inset-0 bg-gradient-to-br from-[#1E3A8A]/50 via-transparent to-[#0B132B] pointer-events-none" />
-        
-        {/* Header Branding */}
-        <Link to="/" className="flex items-center gap-3 relative z-10">
-          <div className="grid h-10 w-10 place-items-center rounded-lg bg-[#3B82F6] text-white font-black shadow-md">
-            UP
-          </div>
-          <div>
-            <span className="font-extrabold text-base tracking-wide text-white block">URBAN PULSE</span>
-            <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Command OS</span>
-          </div>
-        </Link>
+    <div className="min-h-screen grid md:grid-cols-2 bg-[#FFFFFF]">
+      {/* Left Branding Panel */}
+      <div className="hidden md:flex flex-col justify-between p-12 bg-[#0F172A] text-white relative overflow-hidden border-r border-slate-800">
+        <div className="absolute inset-0 bg-gradient-to-b from-[#1E3A8A]/30 to-transparent pointer-events-none" />
 
-        {/* Center Creative Content Card */}
-        <div className="relative z-10 space-y-6">
+        <div className="relative z-10">
+          <Link to="/" className="flex items-center gap-3 group">
+            <div className="grid h-10 w-10 place-items-center rounded-lg bg-[#1E3A8A] text-white font-black text-sm shadow-md">
+              UP
+            </div>
+            <div>
+              <span className="font-black text-[#FFFFFF] text-base tracking-wide block">
+                {t.appName}
+              </span>
+              <span className="text-[10px] text-[#3B82F6] font-extrabold uppercase tracking-wider block">
+                Infrastructure OS
+              </span>
+            </div>
+          </Link>
+        </div>
+
+        <div className="relative z-10 space-y-6 max-w-md">
           <Badge variant="outline" className="bg-[#3B82F6]/20 text-[#3B82F6] border-[#3B82F6]/40 font-bold text-xs py-1 px-3">
-            <Shield className="h-3.5 w-3.5 mr-1.5" /> Official Governance Authentication
+            Official E-Governance Authentication
           </Badge>
 
-          <div className="space-y-3">
-            <h2 className="text-3xl font-black leading-tight text-white tracking-wide">
-              Smart City Infrastructure Co-Ordination Command OS
-            </h2>
-            <p className="max-w-md text-slate-300 text-xs font-medium leading-relaxed">
-              Unified inter-departmental platform connecting Road, Water, Electricity, Drainage, and Waste Management divisions with official employee verification.
-            </p>
-          </div>
+          <h2 className="text-3xl font-black leading-tight text-white">
+            {tText("Intelligent Smart City Infrastructure & Governance Platform")}
+          </h2>
+
+          <p className="text-slate-300 text-xs font-normal leading-relaxed">
+            Secure multi-role portal for Citizens, Department Officers, and Municipal Administrators.
+          </p>
 
           {/* Interactive Feature Cards */}
           <div className="space-y-2.5 pt-2">
@@ -177,18 +183,23 @@ function LoginPage() {
 
         {/* Footer */}
         <p className="text-xs text-slate-400 font-medium relative z-10 flex items-center gap-2">
-          <CheckCircle2 className="h-4 w-4 text-[#16A34A]" /> © 2026 URBAN PULSE · Municipal Governance Platform
+          <CheckCircle2 className="h-4 w-4 text-[#16A34A]" /> © 2026 {t.appName} · Municipal Governance Platform
         </p>
       </div>
 
       {/* Right Login / Register Card */}
-      <div className="flex items-center justify-center p-6 md:p-12 bg-[#FFFFFF]">
+      <div className="flex items-center justify-center p-6 md:p-12 bg-[#FFFFFF] relative">
+        {/* Language Switcher Top Corner */}
+        <div className="absolute top-4 right-4 z-20">
+          <LanguageSwitcher />
+        </div>
+
         <div className="w-full max-w-md space-y-6">
           <Link to="/" className="flex items-center gap-2.5 md:hidden mb-6">
             <div className="grid h-9 w-9 place-items-center rounded-lg bg-[#1E3A8A] text-white font-black">
               UP
             </div>
-            <span className="font-extrabold text-[#0F172A]">URBAN PULSE</span>
+            <span className="font-extrabold text-[#0F172A]">{t.appName}</span>
           </Link>
 
           {/* Header text */}
@@ -206,18 +217,18 @@ function LoginPage() {
             <button
               onClick={() => setTab("login")}
               className={cn(
-                "flex-1 rounded-md py-2 text-xs font-bold transition-all",
+                "flex-1 rounded-md py-2 text-xs font-bold transition-all cursor-pointer",
                 tab === "login"
                   ? "bg-[#1E3A8A] text-white shadow-sm"
                   : "text-slate-600 hover:text-[#0F172A]"
               )}
             >
-              Sign In
+              {t.signIn}
             </button>
             <button
               onClick={() => setTab("register")}
               className={cn(
-                "flex-1 rounded-md py-2 text-xs font-bold transition-all",
+                "flex-1 rounded-md py-2 text-xs font-bold transition-all cursor-pointer",
                 tab === "register"
                   ? "bg-[#1E3A8A] text-white shadow-sm"
                   : "text-slate-600 hover:text-[#0F172A]"
@@ -227,186 +238,156 @@ function LoginPage() {
             </button>
           </div>
 
-          {/* Role Selector */}
+          {/* Role Selection */}
           <div className="space-y-2">
-            <label className="text-xs font-bold text-[#0F172A]">Select Authorization Role</label>
-            <div className="grid grid-cols-1 gap-2">
+            <p className="text-xs font-extrabold text-[#0F172A] uppercase tracking-wider">
+              Select Your Access Level
+            </p>
+            <div className="grid grid-cols-3 gap-2">
               {roles.map((r) => {
-                const active = role.id === r.id;
+                const Icon = r.icon;
+                const selected = roleId === r.id;
                 return (
                   <button
                     key={r.id}
-                    type="button"
-                    onClick={() => setRole(r)}
+                    onClick={() => setRoleId(r.id as any)}
                     className={cn(
-                      "flex items-center gap-3 rounded-md border p-3 text-left transition-all",
-                      active
-                        ? "border-[#1E3A8A] bg-[#1E3A8A]/5 ring-1 ring-[#1E3A8A]"
-                        : "border-[#E2E8F0] bg-[#FFFFFF] hover:bg-[#F8FAFC]"
+                      "flex flex-col items-center gap-1.5 rounded-lg border p-3 text-center transition-all cursor-pointer",
+                      selected
+                        ? "border-[#1E3A8A] bg-[#1E3A8A]/5 text-[#1E3A8A] ring-1 ring-[#1E3A8A]"
+                        : "border-[#E2E8F0] bg-[#FFFFFF] text-slate-600 hover:bg-[#F8FAFC]"
                     )}
                   >
-                    <div
-                      className={cn(
-                        "grid h-8 w-8 shrink-0 place-items-center rounded-md font-bold text-xs",
-                        active ? "bg-[#1E3A8A] text-white" : "bg-[#F1F5F9] text-[#0F172A]"
-                      )}
-                    >
-                      <r.icon className="h-4 w-4" />
-                    </div>
-                    <div className="min-w-0">
-                      <p className="text-xs font-bold text-[#0F172A]">{r.label}</p>
-                      <p className="text-[11px] text-slate-500 font-medium">{r.desc}</p>
-                    </div>
+                    <Icon className="h-5 w-5" />
+                    <span className="text-xs font-bold leading-snug">{r.label}</span>
                   </button>
                 );
               })}
             </div>
           </div>
 
-          {/* Login Form */}
-          {tab === "login" && (
-            <div className="space-y-3 pt-2">
+          {/* Form */}
+          {tab === "login" ? (
+            <div className="space-y-4 pt-2">
               <div>
-                <label className="text-xs font-bold text-[#0F172A]">Official Email Address *</label>
+                <label className="text-xs font-bold text-slate-700">Email Address / User ID</label>
                 <input
                   type="email"
+                  placeholder="e.g. officer@smartcity.gov.in"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
-                  placeholder="e.g. officer@smartcity.gov.in"
                   className={fieldClass}
                 />
               </div>
+
               <div>
-                <label className="text-xs font-bold text-[#0F172A]">Password *</label>
+                <label className="text-xs font-bold text-slate-700">Password</label>
                 <input
                   type="password"
+                  placeholder="••••••••"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
-                  placeholder="••••••••"
                   className={fieldClass}
                 />
               </div>
+
               <Button
-                className="mt-3 w-full bg-[#1E3A8A] hover:bg-[#1E3A8A]/90 text-white font-extrabold text-xs h-10 shadow-sm"
                 onClick={handleLogin}
                 disabled={loading}
+                className="w-full bg-[#1E3A8A] hover:bg-[#1E3A8A]/90 text-white font-bold text-xs py-2.5 shadow-sm gap-2"
               >
-                {loading ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <>
-                    Sign In as {role.label} <ArrowRight className="h-4 w-4 ml-1" />
-                  </>
-                )}
+                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Lock className="h-4 w-4" />}
+                {t.signIn} as {currentRole.label}
               </Button>
             </div>
-          )}
-
-          {/* Register Form */}
-          {tab === "register" && (
-            <div className="space-y-3 pt-2">
+          ) : (
+            <div className="space-y-3 pt-1">
               <div>
-                <label className="text-xs font-bold text-[#0F172A]">Full Name *</label>
+                <label className="text-xs font-bold text-slate-700">Full Name</label>
                 <input
+                  type="text"
+                  placeholder="e.g. Sattanathan R"
                   value={regName}
                   onChange={(e) => setRegName(e.target.value)}
-                  placeholder="e.g. Sattanathan"
                   className={fieldClass}
                 />
               </div>
+
               <div>
-                <label className="text-xs font-bold text-[#0F172A]">Official Email Address *</label>
+                <label className="text-xs font-bold text-slate-700">Email Address</label>
                 <input
                   type="email"
+                  placeholder="name@smartcity.gov.in"
                   value={regEmail}
                   onChange={(e) => setRegEmail(e.target.value)}
-                  placeholder="e.g. officer@smartcity.gov.in"
                   className={fieldClass}
                 />
               </div>
-
-              {/* Employee ID (Emp ID) Field for Department Officer & Admin */}
-              {role.id === "officer" && (
-                <div>
-                  <label className="text-xs font-bold text-[#1E3A8A] flex items-center gap-1.5">
-                    <BadgeCheck className="h-3.5 w-3.5 text-[#1E3A8A]" /> Employee ID (Emp ID) *
-                  </label>
-                  <input
-                    value={regEmployeeId}
-                    onChange={(e) => setRegEmployeeId(e.target.value)}
-                    placeholder="e.g. EMP-1048 (Required for Officer Verification)"
-                    className={fieldClass}
-                    required
-                  />
-                  <span className="text-[10px] text-slate-500 font-semibold mt-0.5 block">
-                    Official department employee number used for identity verification.
-                  </span>
-                </div>
-              )}
-
-              {role.id === "admin" && (
-                <div>
-                  <label className="text-xs font-bold text-[#1E3A8A] flex items-center gap-1.5">
-                    <BadgeCheck className="h-3.5 w-3.5 text-[#1E3A8A]" /> Admin Clearance Code / Emp ID *
-                  </label>
-                  <input
-                    value={regEmployeeId}
-                    onChange={(e) => setRegEmployeeId(e.target.value)}
-                    placeholder="e.g. ADM-9901 (Required for Admin Clearance)"
-                    className={fieldClass}
-                    required
-                  />
-                  <span className="text-[10px] text-slate-500 font-semibold mt-0.5 block">
-                    Govt clearance code for executive sanction authorization.
-                  </span>
-                </div>
-              )}
 
               <div>
-                <label className="text-xs font-bold text-[#0F172A]">Password *</label>
+                <label className="text-xs font-bold text-slate-700">Password</label>
                 <input
                   type="password"
+                  placeholder="Create strong password"
                   value={regPassword}
                   onChange={(e) => setRegPassword(e.target.value)}
-                  placeholder="Min 6 characters"
                   className={fieldClass}
                 />
               </div>
 
-              {(role.id === "officer" || role.id === "admin") && (
+              {roleId !== "citizen" && (
                 <div>
-                  <label className="text-xs font-bold text-[#0F172A]">Department *</label>
+                  <label className="text-xs font-bold text-slate-700 flex items-center justify-between">
+                    <span>Employee ID / Clearance Code</span>
+                    <span className="text-[10px] text-red-500 font-extrabold">* Required</span>
+                  </label>
+                  <input
+                    type="text"
+                    placeholder="e.g. EMP-2026-88"
+                    value={regEmployeeId}
+                    onChange={(e) => setRegEmployeeId(e.target.value)}
+                    className={fieldClass}
+                  />
+                </div>
+              )}
+
+              {roleId === "citizen" && (
+                <div>
+                  <label className="text-xs font-bold text-slate-700">Mobile Number (Optional)</label>
+                  <input
+                    type="tel"
+                    placeholder="10-digit phone number"
+                    value={regPhone}
+                    onChange={(e) => setRegPhone(e.target.value)}
+                    className={fieldClass}
+                  />
+                </div>
+              )}
+
+              {roleId === "officer" && (
+                <div>
+                  <label className="text-xs font-bold text-slate-700">Department Division</label>
                   <select
                     value={regDepartment}
                     onChange={(e) => setRegDepartment(e.target.value)}
                     className={fieldClass}
                   >
-                    {[
-                      "Road",
-                      "Water",
-                      "Electricity",
-                      "Drainage",
-                      "Waste Management",
-                      "Admin",
-                    ].map((d) => (
-                      <option key={d} value={d} className="bg-white text-[#0F172A]">{d}</option>
-                    ))}
+                    <option value="Road">Road Infrastructure Division</option>
+                    <option value="Water">Water Supply & Sewerage Board</option>
+                    <option value="Electricity">Electricity Board</option>
+                    <option value="Storm Water">Storm Water Drainage Authority</option>
+                    <option value="Telecom">IT & Telecommunications</option>
                   </select>
                 </div>
               )}
 
               <Button
-                className="mt-3 w-full bg-[#1E3A8A] hover:bg-[#1E3A8A]/90 text-white font-extrabold text-xs h-10 shadow-sm"
                 onClick={handleRegister}
                 disabled={loading}
+                className="w-full bg-[#16A34A] hover:bg-[#16A34A]/90 text-white font-bold text-xs py-2.5 shadow-sm gap-2 mt-2"
               >
-                {loading ? (
-                  <Loader2 className="h-4 w-4 animate-spin" />
-                ) : (
-                  <>
-                    Complete Registration as {role.label} <ArrowRight className="h-4 w-4 ml-1" />
-                  </>
-                )}
+                {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Shield className="h-4 w-4" />}
+                Complete Registration
               </Button>
             </div>
           )}

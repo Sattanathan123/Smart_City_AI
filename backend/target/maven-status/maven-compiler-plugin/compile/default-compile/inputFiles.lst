@@ -8,6 +8,7 @@ C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\e
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\security\JwtAuthFilter.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\service\EmailService.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\controller\ProjectController.java
+C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\repository\ProjectDependencyRepository.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\dto\ComplaintRequest.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\config\DataInitializer.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\controller\AnalyticsController.java
@@ -22,6 +23,7 @@ C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\e
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\exception\ErrorResponse.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\security\JwtUtil.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\util\ProjectMapper.java
+C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\entity\ProjectDependency.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\dto\UserResponse.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\controller\AlertController.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\entity\AuditLog.java
@@ -40,6 +42,7 @@ C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\e
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\service\DashboardService.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\service\PredictionService.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\dto\ComplaintResponse.java
+C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\entity\AiPrediction.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\security\UserDetailsServiceImpl.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\SmartCityApplication.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\exception\ResourceNotFoundException.java
@@ -54,3 +57,4 @@ C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\c
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\entity\Project.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\repository\ComplaintRepository.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\dto\RegisterRequest.java
+C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\entity\Recommendation.java
