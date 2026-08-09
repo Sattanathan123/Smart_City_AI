@@ -19,7 +19,6 @@ com\smartcity\entity\ProjectDependency.class
 com\smartcity\config\DataInitializer.class
 com\smartcity\entity\Project.class
 com\smartcity\controller\DashboardController.class
-com\smartcity\dto\ComplaintResponse.class
 com\smartcity\ml\MlServiceClient.class
 com\smartcity\ml\MlServiceClient$PriorityResult.class
 com\smartcity\controller\PredictionController.class
@@ -38,7 +37,6 @@ com\smartcity\dto\DashboardResponse.class
 com\smartcity\repository\ProjectDependencyRepository.class
 com\smartcity\exception\ResourceNotFoundException.class
 com\smartcity\controller\AlertController.class
-com\smartcity\service\ComplaintService.class
 com\smartcity\entity\Complaint.class
 com\smartcity\config\AppConfig.class
 com\smartcity\service\AuditLogService.class

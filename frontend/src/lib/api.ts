@@ -2,8 +2,20 @@ const BASE = "http://localhost:8082/api";
 
 // Helper for multipart/form-data requests (no JSON headers)
 export async function requestMultipart<T>(path: string, formData: FormData): Promise<T> {
+  const user = (() => {
+    if (typeof window === "undefined" || typeof sessionStorage === "undefined") return {};
+    try {
+      return JSON.parse(sessionStorage.getItem("user") ?? "{}");
+    } catch {
+      return {};
+    }
+  })();
+  const token = user?.token ?? "";
   const res = await fetch(`${BASE}${path}`, {
     method: "POST",
+    headers: {
+      ...(token ? { Authorization: `Bearer ${token}` } : {}),
+    },
     body: formData,
   });
   if (!res.ok) {
@@ -151,10 +163,14 @@ export interface ComplaintData {
   status: string;
   progress: number;
   createdAt: string;
+  mediaType?: string | null;
+  authenticityScore?: number | null;
+  verificationStatus?: string | null;
+  detectionReason?: string | null;
 }
 
 export const complaintsApi = {
-  // Create complaint with optional image upload using multipart/form-data
+  // Create complaint with optional image or video upload using multipart/form-data
   create: (data: {
     userId: number;
     userName: string;

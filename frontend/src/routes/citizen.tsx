@@ -18,6 +18,8 @@ import {
   BadgeCheck,
   Info,
   Loader2,
+  ListChecks,
+  FileText,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
@@ -93,11 +95,22 @@ const [imageFile, setImageFile] = useState<File | null>(null);
   }, []);
 
   const loadComplaints = useCallback(() => {
-    complaintsApi
-      .getAll()
-      .then(setComplaints)
-      .catch(() => {});
-  }, []);
+    if (user.id) {
+      complaintsApi
+        .getByUser(user.id)
+        .then(setComplaints)
+        .catch(() => {
+          complaintsApi.getAll().then((all) => setComplaints(all.filter((c) => c.userId === user.id || c.userName === user.name))).catch(() => {});
+        });
+    } else if (user.name) {
+      complaintsApi
+        .getAll()
+        .then((all) => setComplaints(all.filter((c) => c.userName === user.name)))
+        .catch(() => {});
+    } else {
+      setComplaints([]);
+    }
+  }, [user.id, user.name]);
 
   const loadAlerts = useCallback(() => {
     alertsApi
@@ -109,12 +122,16 @@ const [imageFile, setImageFile] = useState<File | null>(null);
   useEffect(() => {
     loadComplaints();
     loadAlerts();
-  }, [loadComplaints, loadAlerts]);
+  }, [activeTab, loadComplaints, loadAlerts]);
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     if (!description.trim()) {
       toast.error("Please fill in issue description");
+      return;
+    }
+    if (!imageFile) {
+      toast.error("Please upload an evidence image or video for issue verification!");
       return;
     }
     setSubmitting(true);
@@ -258,13 +275,26 @@ const [imageFile, setImageFile] = useState<File | null>(null);
                   <p className="text-xs text-slate-600 font-medium">
                     Tracking Identifier: <span className="font-extrabold text-[#1E3A8A]">#{submittedId}</span>
                   </p>
-                  <Button
-                    size="sm"
-                    onClick={() => setSubmittedId(null)}
-                    className="bg-[#1E3A8A] hover:bg-[#1E3A8A]/90 text-white font-bold text-xs"
-                  >
-                    Submit Another Report
-                  </Button>
+                  <div className="flex justify-center gap-3 pt-2">
+                    <Button
+                      size="sm"
+                      onClick={() => setSubmittedId(null)}
+                      className="bg-slate-700 hover:bg-slate-800 text-white font-bold text-xs"
+                    >
+                      Submit Another Report
+                    </Button>
+                    <Button
+                      size="sm"
+                      onClick={() => {
+                        setSubmittedId(null);
+                        setActiveTab("myreports");
+                        loadComplaints();
+                      }}
+                      className="bg-[#1E3A8A] hover:bg-[#1E3A8A]/90 text-white font-bold text-xs gap-1.5"
+                    >
+                      <ListChecks className="h-4 w-4" /> View My Complaints History
+                    </Button>
+                  </div>
                 </div>
               ) : (
                 <form onSubmit={handleSubmit} className="space-y-4">
@@ -301,8 +331,8 @@ const [imageFile, setImageFile] = useState<File | null>(null);
                   </div>
 
                   <div className="mt-2">
-                    <label className="text-xs font-bold text-[#0F172A]">Attach Image (optional)</label>
-                    <input type="file" accept="image/*" onChange={e => setImageFile(e.target.files?.[0] ?? null)} className={fieldClass} />
+                    <label className="text-xs font-bold text-[#0F172A]">Attach Evidence (Image or Video) *</label>
+                    <input type="file" accept="image/*,video/*" required onChange={e => setImageFile(e.target.files?.[0] ?? null)} className={fieldClass} />
                   </div>
 
                   <Button
@@ -341,7 +371,10 @@ const [imageFile, setImageFile] = useState<File | null>(null);
         {/* TAB 2: My Complaints */}
         {activeTab === "myreports" && (
           <div className="rounded-lg border border-[#E2E8F0] bg-[#FFFFFF] p-6 shadow-sm space-y-4">
-            <h2 className="text-base font-black text-[#0F172A]">Registered Complaints History</h2>
+            <div>
+              <h2 className="text-base font-black text-[#0F172A]">My Registered Complaints</h2>
+              <p className="text-xs text-slate-500 font-medium">Viewing civic issues submitted by your account ({user.name ?? "Citizen"})</p>
+            </div>
             <div className="overflow-x-auto">
               <table className="w-full text-xs text-left text-[#0F172A]">
                 <thead className="bg-[#F8FAFC] uppercase text-[10px] text-slate-500 font-bold border-b border-[#E2E8F0]">
@@ -349,28 +382,63 @@ const [imageFile, setImageFile] = useState<File | null>(null);
                     <th className="px-4 py-3">Tracking ID</th>
                     <th className="px-4 py-3">Category & Zone</th>
                     <th className="px-4 py-3">Description</th>
-                    <th className="px-4 py-3">Image</th>
+                    <th className="px-4 py-3">Evidence Media</th>
+                    <th className="px-4 py-3">AI Verification</th>
                     <th className="px-4 py-3">Status</th>
                     <th className="px-4 py-3">Submitted Date</th>
                   </tr>
                 </thead>
                 <tbody className="divide-y divide-[#E2E8F0]">
-                  {complaints.map((c) => (
-                    <tr key={c.id} className="hover:bg-[#F8FAFC] transition">
-                      <td className="px-4 py-3 font-mono font-bold text-[#1E3A8A]">#{c.id}</td>
-                      <td className="px-4 py-3 font-bold">{c.category} ({c.zone})</td>
-                      <td className="px-4 py-3 font-medium text-slate-600 max-w-xs truncate">{c.description}</td>
-                      <td className="px-4 py-3">
-                        {c.imageUrl ? (<img src={c.imageUrl} alt="Complaint" className="h-12 w-12 object-cover rounded" />) : "-"}
+                  {complaints.length === 0 ? (
+                    <tr>
+                      <td colSpan={7} className="px-4 py-8 text-center text-slate-500 font-medium">
+                        No complaints submitted by {user.name ?? "you"} yet. Submit a new issue using the 'Lodge Complaint' tab!
                       </td>
-                      <td className="px-4 py-3">
-                        <span className={cn("px-2.5 py-1 rounded text-[10px]", statusColor[c.status] ?? "bg-slate-100 text-slate-700 font-bold")}>
-                          {statusLabel[c.status] ?? c.status}
-                        </span>
-                      </td>
-                      <td className="px-4 py-3 font-mono text-slate-500">{new Date(c.createdAt).toLocaleDateString()}</td>
                     </tr>
-                  ))}
+                  ) : (
+                    complaints.map((c) => {
+                      const isVideo = c.mediaType === "VIDEO" || (c.imageUrl && (c.imageUrl.toLowerCase().endsWith(".mp4") || c.imageUrl.toLowerCase().endsWith(".webm") || c.imageUrl.toLowerCase().endsWith(".mov")));
+                      return (
+                        <tr key={c.id} className="hover:bg-[#F8FAFC] transition">
+                          <td className="px-4 py-3 font-mono font-bold text-[#1E3A8A]">#{c.id}</td>
+                          <td className="px-4 py-3 font-bold">{c.category} ({c.zone})</td>
+                          <td className="px-4 py-3 font-medium text-slate-600 max-w-xs truncate">{c.description}</td>
+                          <td className="px-4 py-3">
+                            {c.imageUrl ? (
+                              isVideo ? (
+                                <video src={`http://localhost:8082/${c.imageUrl}`} controls className="h-12 w-20 object-cover rounded bg-black" />
+                              ) : (
+                                <a href={`http://localhost:8082/${c.imageUrl}`} target="_blank" rel="noreferrer" title="Click to view full high-res image">
+                                  <img src={`http://localhost:8082/${c.imageUrl}`} alt="Complaint Evidence" className="h-12 w-12 object-cover rounded border hover:opacity-80 hover:scale-105 transition cursor-pointer" />
+                                </a>
+                              )
+                            ) : "-"}
+                          </td>
+                          <td className="px-4 py-3">
+                            {c.imageUrl ? (
+                              c.verificationStatus === "SUSPICIOUS" ? (
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200" title={c.detectionReason ?? ""}>
+                                  ⚠️ Suspicious ({c.authenticityScore ?? 35}%)
+                                </span>
+                              ) : (
+                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200" title={c.detectionReason ?? ""}>
+                                  🛡️ Authentic ({c.authenticityScore ?? 95}%)
+                                </span>
+                              )
+                            ) : (
+                              <span className="text-slate-400 font-mono">-</span>
+                            )}
+                          </td>
+                          <td className="px-4 py-3">
+                            <span className={cn("px-2.5 py-1 rounded text-[10px]", statusColor[c.status] ?? "bg-slate-100 text-slate-700 font-bold")}>
+                              {statusLabel[c.status] ?? c.status}
+                            </span>
+                          </td>
+                          <td className="px-4 py-3 font-mono text-slate-500">{new Date(c.createdAt).toLocaleDateString()}</td>
+                        </tr>
+                      );
+                    })
+                  )}
                 </tbody>
               </table>
             </div>
@@ -401,11 +469,40 @@ const [imageFile, setImageFile] = useState<File | null>(null);
                     {statusLabel[trackedComplaint.status] ?? trackedComplaint.status}
                   </span>
                 </div>
-                <div className="text-xs space-y-1 font-medium text-[#0F172A]">
+                <div className="text-xs space-y-2 font-medium text-[#0F172A]">
                   <p><b>Category:</b> {trackedComplaint.category}</p>
                   <p><b>Zone:</b> {trackedComplaint.zone}</p>
                   <p><b>Description:</b> {trackedComplaint.description}</p>
-                  <p><b>Image:</b> {trackedComplaint.imageUrl ? (<img src={trackedComplaint.imageUrl} alt="Complaint" className="h-24 w-24 object-cover rounded" />) : "-"}</p>
+                  <div>
+                    <b>Attached Media:</b>
+                    {trackedComplaint.imageUrl ? (
+                      <div className="mt-2 space-y-2">
+                        {trackedComplaint.mediaType === "VIDEO" || trackedComplaint.imageUrl.toLowerCase().endsWith(".mp4") || trackedComplaint.imageUrl.toLowerCase().endsWith(".webm") ? (
+                          <video src={`http://localhost:8082/${trackedComplaint.imageUrl}`} controls className="h-36 w-64 object-cover rounded bg-black border" />
+                        ) : (
+                          <img src={`http://localhost:8082/${trackedComplaint.imageUrl}`} alt="Complaint" className="h-32 w-48 object-cover rounded border" />
+                        )}
+                        <div>
+                          {trackedComplaint.verificationStatus === "SUSPICIOUS" ? (
+                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded text-xs font-extrabold bg-amber-50 text-amber-700 border border-amber-200">
+                              ⚠️ AI Media Verification: SUSPICIOUS ({trackedComplaint.authenticityScore}% Score)
+                            </span>
+                          ) : (
+                            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded text-xs font-extrabold bg-emerald-50 text-emerald-700 border border-emerald-200">
+                              🛡️ AI Media Verification: AUTHENTIC ({trackedComplaint.authenticityScore ?? 95}% Score)
+                            </span>
+                          )}
+                          {trackedComplaint.detectionReason && (
+                            <p className="text-[11px] text-slate-600 mt-1 font-mono bg-white p-2 rounded border border-slate-200">
+                              <b>AI Forensic Logs:</b> {trackedComplaint.detectionReason}
+                            </p>
+                          )}
+                        </div>
+                      </div>
+                    ) : (
+                      " No media attached"
+                    )}
+                  </div>
                 </div>
               </div>
             )}

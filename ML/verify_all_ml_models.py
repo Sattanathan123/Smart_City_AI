@@ -139,7 +139,14 @@ def main():
         "budgetLakhs": 150
     })
 
-    # 6. Backend Authenticated Integration Test
+    # 6. Media Verification AI Model
+    test_ml_endpoint("/predict/media-verification", {
+        "fileName": "pothole_evidence.png",
+        "mediaType": "IMAGE",
+        "fileSize": 245000
+    })
+
+    # 7. Backend Authenticated Integration Test
     test_backend_predict()
 
     print("\n==================================================")

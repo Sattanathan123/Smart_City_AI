@@ -77,6 +77,40 @@ class MlServiceTests(unittest.TestCase):
         self.assertIn('optimizationCards', body)
         self.assertEqual(body['status'], 'OPTIMIZED')
 
+    def test_media_verification_model(self):
+        # 1. Authentic Image Test
+        res1 = self.client.post('/predict/media-verification', json={
+            'fileName': 'pothole_evidence.png',
+            'mediaType': 'IMAGE',
+            'fileSize': 150000
+        })
+        self.assertEqual(res1.status_code, 200)
+        body1 = res1.get_json()
+        self.assertEqual(body1['verificationStatus'], 'AUTHENTIC')
+        self.assertGreaterEqual(body1['authenticityScore'], 90)
+
+        # 2. Authentic Video Test
+        res2 = self.client.post('/predict/media-verification', json={
+            'fileName': 'road_damage_recording.mp4',
+            'mediaType': 'VIDEO',
+            'fileSize': 15000000
+        })
+        self.assertEqual(res2.status_code, 200)
+        body2 = res2.get_json()
+        self.assertEqual(body2['mediaType'], 'VIDEO')
+        self.assertEqual(body2['verificationStatus'], 'AUTHENTIC')
+
+        # 3. Suspicious / Fake Media Test
+        res3 = self.client.post('/predict/media-verification', json={
+            'fileName': 'fake_ai_generated_street.jpg',
+            'mediaType': 'IMAGE',
+            'fileSize': 1000
+        })
+        self.assertEqual(res3.status_code, 200)
+        body3 = res3.get_json()
+        self.assertEqual(body3['verificationStatus'], 'SUSPICIOUS')
+        self.assertLessEqual(body3['authenticityScore'], 50)
+
 
 if __name__ == '__main__':
     unittest.main()

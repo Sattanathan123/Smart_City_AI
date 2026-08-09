@@ -16,6 +16,7 @@ C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\e
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\dto\LoginRequest.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\dto\AlertResponse.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\controller\OfficerController.java
+C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\entity\MediaVerification.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\repository\AlertRepository.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\dto\PredictionResponse.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\controller\PredictionController.java
@@ -32,6 +33,7 @@ C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\r
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\service\ComplaintService.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\service\AlertService.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\service\ProjectService.java
+C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\repository\MediaVerificationRepository.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\config\WebConfig.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\controller\DashboardController.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\controller\AuditLogController.java

@@ -19,9 +19,13 @@ public class ComplaintRequest {
     // Existing field for stored image URL/path
     private String imageUrl;
 
-    // New field for uploaded image file
+    // New field for uploaded image or video file
     @JsonIgnore
     private MultipartFile image;
+    @JsonIgnore
+    private MultipartFile video;
+    @JsonIgnore
+    private MultipartFile media;
 
     public Long getUserId() { return userId; }
     public void setUserId(Long userId) { this.userId = userId; }
@@ -35,6 +39,14 @@ public class ComplaintRequest {
     public void setZone(String zone) { this.zone = zone; }
     public String getImageUrl() { return imageUrl; }
     public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
-    public MultipartFile getImage() { return image; }
+    public MultipartFile getImage() { 
+        if (image != null) return image;
+        if (video != null) return video;
+        return media;
+    }
     public void setImage(MultipartFile image) { this.image = image; }
+    public MultipartFile getVideo() { return video; }
+    public void setVideo(MultipartFile video) { this.video = video; }
+    public MultipartFile getMedia() { return media; }
+    public void setMedia(MultipartFile media) { this.media = media; }
 }

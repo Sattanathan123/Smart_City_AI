@@ -28,6 +28,11 @@ public class ComplaintController {
         return ResponseEntity.status(HttpStatus.CREATED).body(service.create(req));
     }
 
+    @PostMapping(consumes = MediaType.APPLICATION_JSON_VALUE)
+    public ResponseEntity<ComplaintResponse> createJson(@Valid @RequestBody ComplaintRequest req) {
+        return ResponseEntity.status(HttpStatus.CREATED).body(service.create(req));
+    }
+
     @GetMapping
     public ResponseEntity<List<ComplaintResponse>> getAll() {
         return ResponseEntity.ok(service.getAll());

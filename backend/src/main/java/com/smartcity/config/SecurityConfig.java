@@ -48,7 +48,8 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.GET, "/api/dashboard/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/analytics/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/alerts/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/complaints/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/complaints", "/api/complaints/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/projects/**").permitAll()
 
                 // Admin only
@@ -63,8 +64,9 @@ public class SecurityConfig {
                 // Predict — officer & admin
                 .requestMatchers("/api/predict/**").hasAnyRole("ADMIN", "DEPARTMENT_OFFICER")
 
-                // Complaints submission — authenticated
-                .requestMatchers(HttpMethod.POST, "/api/complaints/**").authenticated()
+                // Complaints submission — authenticated or public
+                .requestMatchers(HttpMethod.OPTIONS, "/api/complaints", "/api/complaints/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/complaints", "/api/complaints/**").permitAll()
 
                 .anyRequest().authenticated()
             )
@@ -80,7 +82,8 @@ public class SecurityConfig {
         config.setAllowedOrigins(List.of(
                 "http://localhost:5173",
                 "http://localhost:3000",
-                "http://localhost:8080"
+                "http://localhost:8080",
+                "http://localhost:8083"
         ));
         config.setAllowedMethods(List.of("GET", "POST", "PUT", "DELETE", "PATCH", "OPTIONS"));
         config.setAllowedHeaders(List.of("*"));
