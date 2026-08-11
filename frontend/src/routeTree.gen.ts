@@ -13,12 +13,14 @@ import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ResourceOptimizationRouteImport } from './routes/resource-optimization'
 import { Route as ProjectsRouteImport } from './routes/projects'
 import { Route as OfficerRouteImport } from './routes/officer'
+import { Route as NotificationsRouteImport } from './routes/notifications'
 import { Route as MapRouteImport } from './routes/map'
 import { Route as LoginRouteImport } from './routes/login'
 import { Route as GisMapRouteImport } from './routes/gis-map'
 import { Route as ConflictHeatmapRouteImport } from './routes/conflict-heatmap'
 import { Route as CitizenRouteImport } from './routes/citizen'
 import { Route as AuditLogsRouteImport } from './routes/audit-logs'
+import { Route as AnalyticsRouteImport } from './routes/analytics'
 import { Route as AiConflictRouteImport } from './routes/ai-conflict'
 import { Route as AdminRouteImport } from './routes/admin'
 import { Route as IndexRouteImport } from './routes/index'
@@ -43,6 +45,11 @@ const ProjectsRoute = ProjectsRouteImport.update({
 const OfficerRoute = OfficerRouteImport.update({
   id: '/officer',
   path: '/officer',
+  getParentRoute: () => rootRouteImport,
+} as any)
+const NotificationsRoute = NotificationsRouteImport.update({
+  id: '/notifications',
+  path: '/notifications',
   getParentRoute: () => rootRouteImport,
 } as any)
 const MapRoute = MapRouteImport.update({
@@ -75,6 +82,11 @@ const AuditLogsRoute = AuditLogsRouteImport.update({
   path: '/audit-logs',
   getParentRoute: () => rootRouteImport,
 } as any)
+const AnalyticsRoute = AnalyticsRouteImport.update({
+  id: '/analytics',
+  path: '/analytics',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const AiConflictRoute = AiConflictRouteImport.update({
   id: '/ai-conflict',
   path: '/ai-conflict',
@@ -105,12 +117,14 @@ export interface FileRoutesByFullPath {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/ai-conflict': typeof AiConflictRoute
+  '/analytics': typeof AnalyticsRoute
   '/audit-logs': typeof AuditLogsRoute
   '/citizen': typeof CitizenRoute
   '/conflict-heatmap': typeof ConflictHeatmapRoute
   '/gis-map': typeof GisMapRoute
   '/login': typeof LoginRoute
   '/map': typeof MapRoute
+  '/notifications': typeof NotificationsRoute
   '/officer': typeof OfficerRouteWithChildren
   '/projects': typeof ProjectsRoute
   '/resource-optimization': typeof ResourceOptimizationRoute
@@ -122,12 +136,14 @@ export interface FileRoutesByTo {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/ai-conflict': typeof AiConflictRoute
+  '/analytics': typeof AnalyticsRoute
   '/audit-logs': typeof AuditLogsRoute
   '/citizen': typeof CitizenRoute
   '/conflict-heatmap': typeof ConflictHeatmapRoute
   '/gis-map': typeof GisMapRoute
   '/login': typeof LoginRoute
   '/map': typeof MapRoute
+  '/notifications': typeof NotificationsRoute
   '/officer': typeof OfficerRouteWithChildren
   '/projects': typeof ProjectsRoute
   '/resource-optimization': typeof ResourceOptimizationRoute
@@ -140,12 +156,14 @@ export interface FileRoutesById {
   '/': typeof IndexRoute
   '/admin': typeof AdminRouteWithChildren
   '/ai-conflict': typeof AiConflictRoute
+  '/analytics': typeof AnalyticsRoute
   '/audit-logs': typeof AuditLogsRoute
   '/citizen': typeof CitizenRoute
   '/conflict-heatmap': typeof ConflictHeatmapRoute
   '/gis-map': typeof GisMapRoute
   '/login': typeof LoginRoute
   '/map': typeof MapRoute
+  '/notifications': typeof NotificationsRoute
   '/officer': typeof OfficerRouteWithChildren
   '/projects': typeof ProjectsRoute
   '/resource-optimization': typeof ResourceOptimizationRoute
@@ -159,12 +177,14 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/ai-conflict'
+    | '/analytics'
     | '/audit-logs'
     | '/citizen'
     | '/conflict-heatmap'
     | '/gis-map'
     | '/login'
     | '/map'
+    | '/notifications'
     | '/officer'
     | '/projects'
     | '/resource-optimization'
@@ -176,12 +196,14 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/ai-conflict'
+    | '/analytics'
     | '/audit-logs'
     | '/citizen'
     | '/conflict-heatmap'
     | '/gis-map'
     | '/login'
     | '/map'
+    | '/notifications'
     | '/officer'
     | '/projects'
     | '/resource-optimization'
@@ -193,12 +215,14 @@ export interface FileRouteTypes {
     | '/'
     | '/admin'
     | '/ai-conflict'
+    | '/analytics'
     | '/audit-logs'
     | '/citizen'
     | '/conflict-heatmap'
     | '/gis-map'
     | '/login'
     | '/map'
+    | '/notifications'
     | '/officer'
     | '/projects'
     | '/resource-optimization'
@@ -211,12 +235,14 @@ export interface RootRouteChildren {
   IndexRoute: typeof IndexRoute
   AdminRoute: typeof AdminRouteWithChildren
   AiConflictRoute: typeof AiConflictRoute
+  AnalyticsRoute: typeof AnalyticsRoute
   AuditLogsRoute: typeof AuditLogsRoute
   CitizenRoute: typeof CitizenRoute
   ConflictHeatmapRoute: typeof ConflictHeatmapRoute
   GisMapRoute: typeof GisMapRoute
   LoginRoute: typeof LoginRoute
   MapRoute: typeof MapRoute
+  NotificationsRoute: typeof NotificationsRoute
   OfficerRoute: typeof OfficerRouteWithChildren
   ProjectsRoute: typeof ProjectsRoute
   ResourceOptimizationRoute: typeof ResourceOptimizationRoute
@@ -251,6 +277,13 @@ declare module '@tanstack/react-router' {
       path: '/officer'
       fullPath: '/officer'
       preLoaderRoute: typeof OfficerRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/notifications': {
+      id: '/notifications'
+      path: '/notifications'
+      fullPath: '/notifications'
+      preLoaderRoute: typeof NotificationsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/map': {
@@ -293,6 +326,13 @@ declare module '@tanstack/react-router' {
       path: '/audit-logs'
       fullPath: '/audit-logs'
       preLoaderRoute: typeof AuditLogsRouteImport
+      parentRoute: typeof rootRouteImport
+    }
+    '/analytics': {
+      id: '/analytics'
+      path: '/analytics'
+      fullPath: '/analytics'
+      preLoaderRoute: typeof AnalyticsRouteImport
       parentRoute: typeof rootRouteImport
     }
     '/ai-conflict': {
@@ -358,12 +398,14 @@ const rootRouteChildren: RootRouteChildren = {
   IndexRoute: IndexRoute,
   AdminRoute: AdminRouteWithChildren,
   AiConflictRoute: AiConflictRoute,
+  AnalyticsRoute: AnalyticsRoute,
   AuditLogsRoute: AuditLogsRoute,
   CitizenRoute: CitizenRoute,
   ConflictHeatmapRoute: ConflictHeatmapRoute,
   GisMapRoute: GisMapRoute,
   LoginRoute: LoginRoute,
   MapRoute: MapRoute,
+  NotificationsRoute: NotificationsRoute,
   OfficerRoute: OfficerRouteWithChildren,
   ProjectsRoute: ProjectsRoute,
   ResourceOptimizationRoute: ResourceOptimizationRoute,

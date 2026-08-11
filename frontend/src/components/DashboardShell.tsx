@@ -25,6 +25,7 @@ import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { NotificationsPopover } from "@/components/NotificationsPopover";
+import { NotificationBell } from "@/components/NotificationBell";
 import { useLanguage, LanguageSwitcher } from "@/lib/i18n";
 
 export function DashboardShell({
@@ -55,6 +56,7 @@ export function DashboardShell({
       category: t.commandAndControl,
       items: [
         { title: t.municipalCommandCenter, url: "/admin", icon: Landmark },
+        { title: "Executive Analytics", url: "/analytics", icon: FileBarChart },
         { title: t.gisSpatialMap, url: "/gis-map", icon: Map },
         { title: t.conflictHeatmap, url: "/conflict-heatmap", icon: Flame },
       ],
@@ -68,6 +70,7 @@ export function DashboardShell({
     {
       category: t.securityAndAudit,
       items: [
+        { title: "Notification Feed", url: "/notifications", icon: Users },
         { title: t.systemAuditLogs, url: "/audit-logs", icon: ShieldCheck },
       ],
     },
@@ -204,16 +207,15 @@ export function DashboardShell({
           </div>
 
           <div className="flex items-center gap-3">
-            <LanguageSwitcher />
-
             <div className="relative hidden lg:block w-56">
               <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-slate-400" />
               <Input
-                placeholder={t.searchPlaceholder}
+                placeholder="Search projects, zones..."
                 className="h-8 pl-8 text-xs bg-[#F8FAFC] border-[#E5E7EB] text-[#111827]"
               />
             </div>
             <NotificationsPopover />
+            <NotificationBell role={user.role ?? "ADMIN"} />
           </div>
         </header>
 

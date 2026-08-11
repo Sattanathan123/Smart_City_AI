@@ -167,6 +167,7 @@ export interface ComplaintData {
   authenticityScore?: number | null;
   verificationStatus?: string | null;
   detectionReason?: string | null;
+  assignedOfficer?: string | null;
 }
 
 export const complaintsApi = {
@@ -247,4 +248,101 @@ export interface DashboardData {
 
 export const dashboardApi = {
   get: () => request<DashboardData>("/dashboard"),
+};
+
+// ── Notifications API ────────────────────────────────────────────────────────
+export interface NotificationData {
+  id: number;
+  recipientRole: string;
+  recipientUserId?: number;
+  title: string;
+  message: string;
+  type: string;
+  read: boolean;
+  createdAt: string;
+}
+
+export const notificationsApi = {
+  get: (role?: string, userId?: number) => request<NotificationData[]>(`/notifications?role=${role ?? "CITIZEN"}${userId ? `&userId=${userId}` : ""}`),
+  markAsRead: (id: number) => request<void>(`/notifications/${id}/read`, { method: "PUT" }),
+};
+
+// ── Audit Logs API ───────────────────────────────────────────────────────────
+export interface AuditLogData {
+  id: number;
+  userEmail: string;
+  role: string;
+  action: string;
+  details: string;
+  ipAddress: string;
+  timestamp: string;
+}
+
+export const auditLogsApi = {
+  get: (query?: string) => request<AuditLogData[]>(`/admin/audit-logs${query ? `?query=${encodeURIComponent(query)}` : ""}`),
+};
+
+// ── SHAP Explainability & GIS API ─────────────────────────────────────────────
+export interface ShapFeature {
+  feature: string;
+  weight: number;
+  percentage: number;
+  impactType: "POSITIVE" | "NEGATIVE";
+  description: string;
+}
+
+export interface ShapExplanationResponse {
+  modelType: string;
+  explanationSummary: string;
+  features: ShapFeature[];
+}
+
+export interface GisConflictItem {
+  conflictId: string;
+  projectA: any;
+  projectB: any;
+  distanceMeters: number;
+  overlapPercentage: number;
+  conflictLat: number;
+  conflictLng: number;
+  riskLevel: "HIGH" | "MEDIUM" | "LOW";
+  reason: string;
+}
+
+export interface GisAnalysisResponse {
+  totalProjects: number;
+  totalConflicts: number;
+  spatialConflicts: GisConflictItem[];
+  heatmapPoints: [number, number, number][];
+}
+
+export const shapApi = {
+  getExplanation: (payload: Record<string, any>) =>
+    fetch("http://localhost:8000/predict/shap-explanation", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify(payload),
+    }).then((res) => res.json() as Promise<ShapExplanationResponse>),
+};
+
+export const gisApi = {
+  getConflictAnalysis: (projects: any[]) =>
+    fetch("http://localhost:8000/predict/gis-conflict-analyzer", {
+      method: "POST",
+      headers: { "Content-Type": "application/json" },
+      body: JSON.stringify({ projects }),
+    }).then((res) => res.json() as Promise<GisAnalysisResponse>),
+};
+
+// ── Reports & PDF Export API ──────────────────────────────────────────────────
+export const reportsApi = {
+  getComplaintPdfUrl: (id: number) => `${BASE}/reports/complaint/${id}/pdf`,
+  getProjectPdfUrl: (id: number) => `${BASE}/reports/project/${id}/pdf`,
+  getAnalyticsPdfUrl: (timeRange = "30d") => `${BASE}/reports/analytics/monthly/pdf?timeRange=${timeRange}`,
+};
+
+export const exportApi = {
+  getComplaintsExcelUrl: () => `${BASE}/export/complaints`,
+  getProjectsExcelUrl: () => `${BASE}/export/projects`,
+  getAuditLogsExcelUrl: () => `${BASE}/export/audit-logs`,
 };

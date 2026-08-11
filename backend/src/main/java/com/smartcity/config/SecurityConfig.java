@@ -43,8 +43,11 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
             .authorizeHttpRequests(auth -> auth
-                // Public / Read-Only endpoints
                 .requestMatchers("/api/auth/**").permitAll()
+                .requestMatchers("/ws-notifications/**").permitAll()
+                .requestMatchers("/api/notifications/**").permitAll()
+                .requestMatchers("/api/reports/**").permitAll()
+                .requestMatchers("/api/export/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/dashboard/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/analytics/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/alerts/**").permitAll()

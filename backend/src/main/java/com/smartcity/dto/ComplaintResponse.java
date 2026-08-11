@@ -17,17 +17,19 @@ public class ComplaintResponse {
     public Integer authenticityScore;
     public String verificationStatus;
     public String detectionReason;
+    public String assignedOfficer;
 
     public ComplaintResponse(Long id, Long userId, String userName, String category,
                               String description, String zone, String imageUrl,
                               String status, Integer progress, LocalDateTime createdAt) {
-        this(id, userId, userName, category, description, zone, imageUrl, status, progress, createdAt, null, null, null, null);
+        this(id, userId, userName, category, description, zone, imageUrl, status, progress, createdAt, null, null, null, null, null);
     }
 
     public ComplaintResponse(Long id, Long userId, String userName, String category,
                               String description, String zone, String imageUrl,
                               String status, Integer progress, LocalDateTime createdAt,
-                              String mediaType, Integer authenticityScore, String verificationStatus, String detectionReason) {
+                              String mediaType, Integer authenticityScore, String verificationStatus, String detectionReason,
+                              String assignedOfficer) {
         this.id = id;
         this.userId = userId;
         this.userName = userName;
@@ -42,5 +44,6 @@ public class ComplaintResponse {
         this.authenticityScore = authenticityScore;
         this.verificationStatus = verificationStatus;
         this.detectionReason = detectionReason;
+        this.assignedOfficer = assignedOfficer;
     }
 }

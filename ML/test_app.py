@@ -100,16 +100,42 @@ class MlServiceTests(unittest.TestCase):
         self.assertEqual(body2['mediaType'], 'VIDEO')
         self.assertEqual(body2['verificationStatus'], 'AUTHENTIC')
 
-        # 3. Suspicious / Fake Media Test
+        # 3. Suspicious / Fake Image Test
         res3 = self.client.post('/predict/media-verification', json={
-            'fileName': 'fake_ai_generated_street.jpg',
+            'fileName': 'fake_ai_generated_pothole.png',
             'mediaType': 'IMAGE',
-            'fileSize': 1000
+            'fileSize': 1200
         })
         self.assertEqual(res3.status_code, 200)
         body3 = res3.get_json()
         self.assertEqual(body3['verificationStatus'], 'SUSPICIOUS')
         self.assertLessEqual(body3['authenticityScore'], 50)
+
+    def test_shap_explanation_model(self):
+        res = self.client.post('/predict/shap-explanation', json={
+            'modelType': 'conflict',
+            'trafficDensity': 8,
+            'timelineOverlap': 1,
+            'locationOverlap': 1
+        })
+        self.assertEqual(res.status_code, 200)
+        body = res.get_json()
+        self.assertIn('explanationSummary', body)
+        self.assertIn('features', body)
+        self.assertTrue(len(body['features']) > 0)
+
+    def test_gis_conflict_analyzer_model(self):
+        res = self.client.post('/predict/gis-conflict-analyzer', json={
+            'projects': [
+                {'id': 1, 'title': 'Road Paving', 'department': 'Road', 'zone': 'Zone 1', 'lat': 13.0827, 'lng': 80.2707, 'radiusMeters': 300},
+                {'id': 2, 'title': 'Water Pipe Replacement', 'department': 'Water', 'zone': 'Zone 1', 'lat': 13.0830, 'lng': 80.2710, 'radiusMeters': 300}
+            ]
+        })
+        self.assertEqual(res.status_code, 200)
+        body = res.get_json()
+        self.assertIn('spatialConflicts', body)
+        self.assertIn('heatmapPoints', body)
+        self.assertGreater(body['totalConflicts'], 0)
 
 
 if __name__ == '__main__':

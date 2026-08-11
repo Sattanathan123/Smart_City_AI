@@ -382,6 +382,7 @@ const [imageFile, setImageFile] = useState<File | null>(null);
                     <th className="px-4 py-3">Tracking ID</th>
                     <th className="px-4 py-3">Category & Zone</th>
                     <th className="px-4 py-3">Description</th>
+                    <th className="px-4 py-3">Assigned Officer</th>
                     <th className="px-4 py-3">Evidence Media</th>
                     <th className="px-4 py-3">AI Verification</th>
                     <th className="px-4 py-3">Status</th>
@@ -391,7 +392,7 @@ const [imageFile, setImageFile] = useState<File | null>(null);
                 <tbody className="divide-y divide-[#E2E8F0]">
                   {complaints.length === 0 ? (
                     <tr>
-                      <td colSpan={7} className="px-4 py-8 text-center text-slate-500 font-medium">
+                      <td colSpan={8} className="px-4 py-8 text-center text-slate-500 font-medium">
                         No complaints submitted by {user.name ?? "you"} yet. Submit a new issue using the 'Lodge Complaint' tab!
                       </td>
                     </tr>
@@ -403,6 +404,9 @@ const [imageFile, setImageFile] = useState<File | null>(null);
                           <td className="px-4 py-3 font-mono font-bold text-[#1E3A8A]">#{c.id}</td>
                           <td className="px-4 py-3 font-bold">{c.category} ({c.zone})</td>
                           <td className="px-4 py-3 font-medium text-slate-600 max-w-xs truncate">{c.description}</td>
+                          <td className="px-4 py-3 font-bold text-[#1E3A8A] max-w-xs">
+                            {c.assignedOfficer ?? "Department Officer Assigned"}
+                          </td>
                           <td className="px-4 py-3">
                             {c.imageUrl ? (
                               isVideo ? (
@@ -465,13 +469,25 @@ const [imageFile, setImageFile] = useState<File | null>(null);
               <div className="p-4 rounded border border-[#E2E8F0] bg-[#F8FAFC] space-y-3">
                 <div className="flex items-center justify-between border-b border-[#E2E8F0] pb-2">
                   <span className="font-extrabold text-sm text-[#1E3A8A]">Complaint #{trackedComplaint.id}</span>
-                  <span className={cn("px-2.5 py-1 rounded text-[10px]", statusColor[trackedComplaint.status])}>
-                    {statusLabel[trackedComplaint.status] ?? trackedComplaint.status}
-                  </span>
+                  <div className="flex items-center gap-2">
+                    <a
+                      href={`http://localhost:8082/api/reports/complaint/${trackedComplaint.id}/pdf`}
+                      target="_blank"
+                      rel="noreferrer"
+                      className="px-2.5 py-1 rounded bg-[#1E3A8A] text-white text-[10px] font-bold hover:bg-[#1E3A8A]/90 transition"
+                    >
+                      📄 Download PDF Report
+                    </a>
+                    <span className={cn("px-2.5 py-1 rounded text-[10px]", statusColor[trackedComplaint.status])}>
+                      {statusLabel[trackedComplaint.status] ?? trackedComplaint.status}
+                    </span>
+                  </div>
                 </div>
                 <div className="text-xs space-y-2 font-medium text-[#0F172A]">
                   <p><b>Category:</b> {trackedComplaint.category}</p>
                   <p><b>Zone:</b> {trackedComplaint.zone}</p>
+                  <p><b>Assigned Officer:</b> <span className="font-extrabold text-[#1E3A8A]">{trackedComplaint.assignedOfficer ?? "Department Executive Officer"}</span></p>
+                  <p><b>Officer Action:</b> Field inspection & resolution action scheduled within 48 hours.</p>
                   <p><b>Description:</b> {trackedComplaint.description}</p>
                   <div>
                     <b>Attached Media:</b>

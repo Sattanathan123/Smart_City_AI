@@ -19,6 +19,16 @@ export const Route = createFileRoute("/resource-optimization")({
 
 export default function ResourceOptimizationPage() {
   const [projects, setProjects] = useState<ProjectData[]>([]);
+  const [appliedCards, setAppliedCards] = useState<Record<number, boolean>>({});
+  const [applyingId, setApplyingId] = useState<number | null>(null);
+  const [toastMessage, setToastMessage] = useState<string | null>(null);
+
+  const [resourcePools, setResourcePools] = useState([
+    { type: "Civil Engineers & Inspectors", allocated: 42, total: 50, unit: "Personnel", status: "OPTIMAL" },
+    { type: "Heavy Excavators & Earthmovers", allocated: 28, total: 30, unit: "Units", status: "HIGH_UTILIZATION" },
+    { type: "Utility Asphalt Pavers & Rollers", allocated: 18, total: 20, unit: "Units", status: "CRITICAL_SHORTAGE" },
+    { type: "Traffic Diversion Vehicles", allocated: 35, total: 40, unit: "Vehicles", status: "OPTIMAL" },
+  ]);
 
   useEffect(() => {
     fetchProjects()
@@ -26,15 +36,9 @@ export default function ResourceOptimizationPage() {
       .catch((err) => console.error(err));
   }, []);
 
-  const resourcePools = [
-    { type: "Civil Engineers & Inspectors", allocated: 42, total: 50, unit: "Personnel", status: "OPTIMAL" },
-    { type: "Heavy Excavators & Earthmovers", allocated: 28, total: 30, unit: "Units", status: "HIGH_UTILIZATION" },
-    { type: "Utility Asphalt Pavers & Rollers", allocated: 18, total: 20, unit: "Units", status: "CRITICAL_SHORTAGE" },
-    { type: "Traffic Diversion Vehicles", allocated: 35, total: 40, unit: "Vehicles", status: "OPTIMAL" },
-  ];
-
   const optimizationCards = [
     {
+      id: 0,
       title: "Equipment Sharing Recommendation",
       target: "Zone 5 Water Pipeline & Zone 5 Road Trenching",
       suggestion: "Allocate 2 Heavy Excavators from Water Department to Road Department after Phase 1 completion.",
@@ -42,6 +46,7 @@ export default function ResourceOptimizationPage() {
       type: "EQUIPMENT",
     },
     {
+      id: 1,
       title: "Workforce Re-balancing Protocol",
       target: "Zone 1 Central Flyover Structural Repair",
       suggestion: "Reassign 4 Structural Engineers from Zone 2 Completed Solar Project to Zone 1 Flyover repair team.",
@@ -49,6 +54,7 @@ export default function ResourceOptimizationPage() {
       type: "WORKFORCE",
     },
     {
+      id: 2,
       title: "Shared Utility Trenching Protocol",
       target: "Zone 3 Underground Sewer & Electricity Cable Grid",
       suggestion: "Execute joint trenching protocol for Water & Power lines simultaneously in Sector 4.",
@@ -57,9 +63,60 @@ export default function ResourceOptimizationPage() {
     },
   ];
 
+  const handleApplyStrategy = (id: number) => {
+    setApplyingId(id);
+    setTimeout(() => {
+      setAppliedCards((prev) => ({ ...prev, [id]: true }));
+      setApplyingId(null);
+
+      // Dynamically optimize resource pools based on applied strategy
+      if (id === 0) {
+        // Equipment Sharing: Reduces heavy excavator strain
+        setResourcePools((pools) =>
+          pools.map((p) =>
+            p.type.includes("Excavators")
+              ? { ...p, allocated: 24, status: "OPTIMAL" }
+              : p
+          )
+        );
+        setToastMessage("✅ Equipment Sharing Protocol Activated: 2 Excavators reallocated to Road Department. Saved ₹8.5 Lakhs!");
+      } else if (id === 1) {
+        // Workforce Re-balancing
+        setResourcePools((pools) =>
+          pools.map((p) =>
+            p.type.includes("Engineers")
+              ? { ...p, allocated: 38 }
+              : p
+          )
+        );
+        setToastMessage("✅ Workforce Re-balancing Protocol Activated: 4 Engineers assigned to Zone 1 Flyover. Timeline reduced by 8 Days!");
+      } else if (id === 2) {
+        // Shared Utility Trenching
+        setResourcePools((pools) =>
+          pools.map((p) =>
+            p.type.includes("Asphalt Pavers")
+              ? { ...p, allocated: 15, status: "OPTIMAL" }
+              : p
+          )
+        );
+        setToastMessage("✅ Shared Utility Trenching Protocol Activated: Joint trenching deployed in Sector 4. Double excavation prevented!");
+      }
+    }, 500);
+  };
+
   return (
     <DashboardShell title="Resource Optimization" subtitle="Workforce & Equipment Allocation System">
       <div className="space-y-6">
+        {/* Toast Alert */}
+        {toastMessage && (
+          <div className="p-4 rounded-lg bg-emerald-50 border border-emerald-300 text-emerald-800 text-xs font-bold flex items-center justify-between shadow-xs animate-in fade-in">
+            <span>{toastMessage}</span>
+            <button onClick={() => setToastMessage(null)} className="text-emerald-600 hover:text-emerald-900 font-black text-sm ml-4">
+              ✕
+            </button>
+          </div>
+        )}
+
         {/* Header */}
         <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 border-b border-[#E5E7EB] pb-3">
           <div>
@@ -100,7 +157,7 @@ export default function ResourceOptimizationPage() {
                 </div>
                 <div className="w-full bg-[#E5E7EB] h-2 rounded-full overflow-hidden">
                   <div
-                    className={`h-full ${
+                    className={`h-full transition-all duration-500 ${
                       r.status === "CRITICAL_SHORTAGE" ? "bg-[#DC2626]" : "bg-[#1E3A8A]"
                     }`}
                     style={{ width: `${(r.allocated / r.total) * 100}%` }}
@@ -118,32 +175,46 @@ export default function ResourceOptimizationPage() {
           </h2>
 
           <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {optimizationCards.map((c, i) => (
-              <Card key={i} className="border border-[#E5E7EB] bg-[#FFFFFF] shadow-sm">
-                <CardHeader className="pb-3 border-b border-[#E5E7EB] bg-[#F8FAFC]">
-                  <div className="flex items-center justify-between">
-                    <Badge variant="secondary" className="text-[10px] bg-[#1E3A8A]/10 text-[#1E3A8A]">
-                      {c.type}
-                    </Badge>
-                    <CheckCircle2 className="h-4 w-4 text-[#16A34A]" />
-                  </div>
-                  <CardTitle className="text-sm font-bold text-[#111827] mt-2">{c.title}</CardTitle>
-                  <CardDescription className="text-xs font-semibold text-[#3B82F6]">{c.target}</CardDescription>
-                </CardHeader>
-                <CardContent className="p-4 space-y-4 text-xs">
-                  <p className="text-slate-600 leading-relaxed">{c.suggestion}</p>
+            {optimizationCards.map((c) => {
+              const isApplied = !!appliedCards[c.id];
+              const isApplying = applyingId === c.id;
 
-                  <div className="p-2.5 rounded border border-[#16A34A]/30 bg-[#16A34A]/10 text-[#16A34A] font-bold flex items-center justify-between">
-                    <span>{c.saving}</span>
-                    <ArrowRight className="h-4 w-4" />
-                  </div>
+              return (
+                <Card key={c.id} className={`border transition-all ${isApplied ? "border-emerald-300 bg-emerald-50/20" : "border-[#E5E7EB] bg-[#FFFFFF]"} shadow-sm`}>
+                  <CardHeader className="pb-3 border-b border-[#E5E5E5] bg-[#F8FAFC]">
+                    <div className="flex items-center justify-between">
+                      <Badge variant="secondary" className="text-[10px] bg-[#1E3A8A]/10 text-[#1E3A8A]">
+                        {c.type}
+                      </Badge>
+                      <CheckCircle2 className={`h-4 w-4 ${isApplied ? "text-emerald-600" : "text-slate-400"}`} />
+                    </div>
+                    <CardTitle className="text-sm font-bold text-[#111827] mt-2">{c.title}</CardTitle>
+                    <CardDescription className="text-xs font-semibold text-[#3B82F6]">{c.target}</CardDescription>
+                  </CardHeader>
+                  <CardContent className="p-4 space-y-4 text-xs">
+                    <p className="text-slate-600 leading-relaxed">{c.suggestion}</p>
 
-                  <Button size="sm" className="w-full bg-[#1E3A8A] hover:bg-[#1E3A8A]/90 text-white font-bold text-xs">
-                    Apply Optimization Strategy
-                  </Button>
-                </CardContent>
-              </Card>
-            ))}
+                    <div className={`p-2.5 rounded border ${isApplied ? "border-emerald-300 bg-emerald-100 text-emerald-800" : "border-[#16A34A]/30 bg-[#16A34A]/10 text-[#16A34A]"} font-bold flex items-center justify-between`}>
+                      <span>{c.saving}</span>
+                      <ArrowRight className="h-4 w-4" />
+                    </div>
+
+                    <Button
+                      size="sm"
+                      onClick={() => handleApplyStrategy(c.id)}
+                      disabled={isApplied || isApplying}
+                      className={`w-full font-bold text-xs transition-all ${
+                        isApplied
+                          ? "bg-emerald-600 hover:bg-emerald-600 text-white cursor-default"
+                          : "bg-[#1E3A8A] hover:bg-[#1E3A8A]/90 text-white"
+                      }`}
+                    >
+                      {isApplying ? "Applying Strategy..." : isApplied ? "Applied ✅ Protocol Active" : "Apply Optimization Strategy"}
+                    </Button>
+                  </CardContent>
+                </Card>
+              );
+            })}
           </div>
         </div>
       </div>

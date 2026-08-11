@@ -2,7 +2,6 @@ package com.smartcity.service;
 
 import com.smartcity.entity.AuditLog;
 import com.smartcity.repository.AuditLogRepository;
-import org.springframework.scheduling.annotation.Async;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -10,30 +9,27 @@ import java.util.List;
 @Service
 public class AuditLogService {
 
-    private final AuditLogRepository auditLogRepository;
+    private final AuditLogRepository repo;
 
-    public AuditLogService(AuditLogRepository auditLogRepository) {
-        this.auditLogRepository = auditLogRepository;
+    public AuditLogService(AuditLogRepository repo) {
+        this.repo = repo;
     }
 
-    @Async
-    public void logAction(String userEmail, String role, String action, String details, String ipAddress) {
-        try {
-            AuditLog log = new AuditLog(userEmail, role, action, details, ipAddress);
-            auditLogRepository.save(log);
-        } catch (Exception e) {
-            System.err.println("Audit logging failed: " + e.getMessage());
+    public AuditLog logAction(String userEmail, String role, String action, String details, String ipAddress) {
+        AuditLog log = new AuditLog(
+            userEmail != null ? userEmail : "system@smartcity.gov.in",
+            role != null ? role : "SYSTEM",
+            action,
+            details,
+            ipAddress != null ? ipAddress : "127.0.0.1"
+        );
+        return repo.save(log);
+    }
+
+    public List<AuditLog> getAllLogs(String query) {
+        if (query != null && !query.trim().isEmpty()) {
+            return repo.searchLogs(query.trim());
         }
-    }
-
-    public List<AuditLog> getAllLogs() {
-        return auditLogRepository.findAllByOrderByTimestampDesc();
-    }
-
-    public List<AuditLog> searchLogs(String query) {
-        if (query == null || query.trim().isEmpty()) {
-            return getAllLogs();
-        }
-        return auditLogRepository.searchLogs(query.trim());
+        return repo.findAllByOrderByTimestampDesc();
     }
 }

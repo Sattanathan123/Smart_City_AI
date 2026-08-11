@@ -30,8 +30,13 @@ public class Complaint {
 
     private Integer progress; // 0-100
 
+    private String assignedOfficer;
+
     @CreationTimestamp
     private LocalDateTime createdAt;
+
+    public String getAssignedOfficer() { return assignedOfficer; }
+    public void setAssignedOfficer(String assignedOfficer) { this.assignedOfficer = assignedOfficer; }
 
     public Long getId() { return id; }
     public void setId(Long id) { this.id = id; }

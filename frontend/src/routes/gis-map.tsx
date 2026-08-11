@@ -125,6 +125,16 @@ export default function GisMapPage() {
         fillOpacity: 0.9,
       });
 
+      // Spatial Buffer Circle (300 meters)
+      const bufferCircle = L.circle([lat, lng], {
+        radius: 300,
+        color: color,
+        weight: 1,
+        dashArray: isConflict ? "4, 4" : undefined,
+        fillColor: color,
+        fillOpacity: isConflict ? 0.25 : 0.08,
+      });
+
       const popupContent = `
         <div style="font-family: sans-serif; padding: 4px; color: #0F172A;">
           <b style="color: #0F172A; font-size: 13px;">${p.projectName}</b><br/>
@@ -133,14 +143,16 @@ export default function GisMapPage() {
             <b>Budget:</b> ₹${p.budgetLakhs}L<br/>
             <b>Status:</b> ${p.status}<br/>
             <b style="color: ${isConflict ? '#DC2626' : '#16A34A'}">
-              ${isConflict ? '⚠️ CONFLICT RISK' : '✅ CLEAN CORRIDOR'}
+              ${isConflict ? '⚠️ CONFLICT RISK (300m Overlap Corridor)' : '✅ CLEAN CORRIDOR'}
             </b>
           </div>
         </div>
       `;
 
       marker.bindPopup(popupContent);
+      bufferCircle.bindPopup(popupContent);
       marker.on("click", () => setActiveProject(p));
+      markersLayerRef.current.addLayer(bufferCircle);
       markersLayerRef.current.addLayer(marker);
     });
   }, [filteredProjects]);

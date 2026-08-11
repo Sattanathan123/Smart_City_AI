@@ -13,6 +13,7 @@ import {
 } from "recharts";
 import { useEffect, useState } from "react";
 import { DashboardShell, StatCard } from "@/components/DashboardShell";
+import { ShapExplanationCard } from "@/components/ShapExplanationCard";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import {
@@ -207,6 +208,10 @@ function OfficerDashboard() {
             )}
           </div>
         </div>
+      </div>
+
+      <div className="mt-6">
+        <ShapExplanationCard modelType="priority" />
       </div>
 
       {/* Projects Submission & Monitoring Table */}

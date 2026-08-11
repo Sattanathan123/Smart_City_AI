@@ -72,7 +72,7 @@ export default function AuditLogsPage() {
   ];
 
   useEffect(() => {
-    fetchWithAuth<AuditLog[]>("/audit-logs")
+    fetchWithAuth<AuditLog[]>("/admin/audit-logs")
       .then((data) => setLogs(data && data.length > 0 ? data : sampleLogs))
       .catch(() => setLogs(sampleLogs));
   }, []);

@@ -1,27 +1,17 @@
 import { createFileRoute, Link } from "@tanstack/react-router";
-import { useState, useEffect } from "react";
 import {
   Building2,
   ShieldAlert,
   Users,
   BrainCircuit,
   ArrowRight,
-  Network,
   Map,
-  Cpu,
   Lock,
   Zap,
-  TrendingUp,
-  FileText,
-  ChevronRight,
-  Phone,
-  Mail,
-  MapPin,
   Activity,
-  Bell,
   Megaphone,
   CheckCircle2,
-  Search,
+  FileBarChart,
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -32,132 +22,56 @@ export const Route = createFileRoute("/")({
   head: () => ({
     meta: [
       {
-        title:
-          "URBAN PULSE — Intelligent Smart City Infrastructure & Governance Platform",
+        title: "URBAN PULSE — Intelligent Smart City Infrastructure Platform",
       },
       {
         name: "description",
-        content:
-          "Unified municipal platform for infrastructure coordination, spatial conflict analysis, priority scoring, and citizen grievance resolution.",
+        content: "Unified municipal platform for AI conflict analysis, priority scoring, and citizen grievance resolution.",
       },
     ],
   }),
-  component: UniqueLandingPage,
+  component: MinimalLandingPage,
 });
 
-// Announcements / Notice Board Ticker Items
-const ANNOUNCEMENTS = [
-  { id: 1, type: "TENDER", tag: "Tender Notice", text: "Sector 4 Underground Drainage Pipeline Expansion Tender Published (Ref: #UP-SMC-2026-089)." },
-  { id: 2, type: "SYSTEM", tag: "System Update", text: "Inter-Departmental Spatial Conflict Coordination Service v2.4 Active across all 7 Municipal Zones." },
-  { id: 3, type: "MEETING", tag: "Review Schedule", text: "Quarterly Municipal Infrastructure Coordination Review Meeting scheduled for 28th July 2026." },
-  { id: 4, type: "POLICY", tag: "Department Directive", text: "Mandatory Joint GIS Trenching Audit enforced for Road & Water Excavations in Zone 5." },
-];
-
-export function UniqueLandingPage() {
-  const [currentDate, setCurrentDate] = useState("");
-  const [fontSize, setFontSize] = useState<"normal" | "large" | "xlarge">("normal");
+export function MinimalLandingPage() {
   const { t, tText } = useLanguage();
 
-  useEffect(() => {
-    const updateTime = () => {
-      const now = new Date();
-      setCurrentDate(
-        now.toLocaleDateString("en-IN", {
-          weekday: "long",
-          year: "numeric",
-          month: "long",
-          day: "numeric",
-        })
-      );
-    };
-    updateTime();
-  }, []);
-
   const STATS = [
-    { value: "1,200+", label: tText("Projects Managed"), desc: "Across 7 Municipal Zones", icon: Building2 },
-    { value: "18", label: tText("Government Departments"), desc: "Inter-connected Divisions", icon: Network },
-    { value: "50,000+", label: tText("Citizens Served"), desc: "Civic Grievances Resolved", icon: Users },
-    { value: "92%", label: tText("Conflict Prevention Rate"), desc: "Municipal Coordination", icon: BrainCircuit },
-    { value: "250+", label: tText("Conflicts Prevented"), desc: "Spatial & Timeline Clashes", icon: ShieldAlert },
-    { value: "35%", label: tText("Faster Execution"), desc: "Inter-Agency Optimization", icon: Zap },
+    { value: "1,200+", label: "Projects Managed", icon: Building2 },
+    { value: "18", label: "Departments", icon: Users },
+    { value: "92%", label: "AI Conflict Prevention", icon: BrainCircuit },
+    { value: "50k+", label: "Grievances Resolved", icon: ShieldAlert },
   ];
 
-  const CITIZEN_SERVICES = [
-    { title: tText("Submit Grievance"), desc: "Register road damage, water leaks, or street light issues directly to municipal departments.", icon: Megaphone, link: "/login" },
-    { title: tText("Track Complaint"), desc: "Track real-time resolution status using your unique Tracking Identifier.", icon: Search, link: "/login" },
-    { title: tText("View Public Projects"), desc: "Inspect active and sanctioned infrastructure projects across your municipal zone.", icon: Map, link: "/login" },
-    { title: tText("Infrastructure Proposals"), desc: "Submit civic infrastructure improvement proposals for officer review.", icon: Building2, link: "/login" },
-    { title: tText("Emergency Helpline Portal"), desc: "Access 24/7 municipal emergency helpline numbers for water burst or power outages.", icon: Phone, link: "/login" },
-    { title: tText("Download Reports"), desc: "Access official public infrastructure audit reports and monthly performance summaries.", icon: FileText, link: "/login" },
-  ];
-
-  const RECENT_PROJECTS = [
-    { id: "PRJ-2026-101", name: "Sector 4 Metro Line 3 Drainage Duct Relocation", dept: "Water Supply & Drainage", status: t.sanctioned, priority: "HIGH", timeline: "90 Days" },
-    { id: "PRJ-2026-102", name: "Anna Salai Arterial Underground Fiber Cable Laying", dept: "IT & Telecommunications", status: t.active, priority: "HIGH", timeline: "60 Days" },
-    { id: "PRJ-2026-103", name: "Zone 3 Stormwater Channel Excavation & Trenching", dept: "Roads & Storm Water", status: t.pendingApproval, priority: "MEDIUM", timeline: "120 Days" },
-    { id: "PRJ-2026-104", name: "Central Substation Power Line Overhead Shift", dept: "Electricity Board", status: t.sanctioned, priority: "HIGH", timeline: "45 Days" },
-    { id: "PRJ-2026-105", name: "Sector 7 Bio-Waste Treatment Plant Pipeline", dept: "Waste Management", status: t.active, priority: "LOW", timeline: "150 Days" },
+  const CORE_SERVICES = [
+    { title: "Citizen Grievance Portal", desc: "Report issues with AI media forgery detection & track real-time resolution.", icon: Megaphone },
+    { title: "AI Conflict Interceptor", desc: "XGBoost models predict overlapping road, water, and power construction projects.", icon: BrainCircuit },
+    { title: "GIS Spatial Analytics", desc: "Interactive OpenStreetMap spatial layers, conflict zones, and heatmaps.", icon: Map },
+    { title: "Executive Intelligence", desc: "Recharts analytics, SHAP feature importance, and downloadable PDF/Excel reports.", icon: FileBarChart },
   ];
 
   return (
-    <div
-      className={`min-h-screen bg-[#FFFFFF] text-[#0F172A] font-sans antialiased selection:bg-[#1E3A8A] selection:text-white scroll-smooth ${
-        fontSize === "large" ? "text-base" : fontSize === "xlarge" ? "text-lg" : "text-sm"
-      }`}
-    >
-      {/* 1. SLEEK TOP UTILITY HEADER */}
-      <div className="bg-[#0F172A] text-slate-300 py-2 px-4 md:px-8 text-xs font-semibold border-b border-slate-800">
-        <div className="mx-auto flex max-w-7xl items-center justify-between">
-          <div className="flex items-center gap-2">
-            <span className="h-2 w-2 rounded-full bg-[#16A34A] animate-pulse" />
-            <span className="font-bold text-white tracking-wide">{t.appName}</span>
-            <span className="text-slate-500">•</span>
-            <span className="text-slate-400 font-medium hidden sm:inline">{t.commandCenterOS}</span>
-          </div>
-
-          <div className="flex items-center gap-4 text-[11px] font-medium">
-            <span className="hidden md:inline text-slate-300">{currentDate}</span>
-            <div className="flex items-center gap-1 border-l border-slate-700 pl-3">
-              <LanguageSwitcher />
-            </div>
-            <div className="hidden sm:flex items-center gap-1 border-l border-slate-700 pl-3 text-[10px]">
-              <button onClick={() => setFontSize("normal")} className="hover:text-white font-bold px-1 text-slate-400">A-</button>
-              <button onClick={() => setFontSize("normal")} className="hover:text-white font-bold px-1 text-white">A</button>
-              <button onClick={() => setFontSize("large")} className="hover:text-white font-bold px-1 text-slate-400">A+</button>
-            </div>
-          </div>
-        </div>
-      </div>
-
-      {/* 2. MAIN STICKY NAVIGATION BAR */}
-      <header className="sticky top-0 z-50 border-b border-[#E2E8F0] bg-[#FFFFFF]/95 backdrop-blur-md shadow-sm">
-        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-4 md:px-8">
-          {/* Logo & Brand */}
-          <Link to="/" className="flex items-center gap-3 group">
-            <div className="grid h-10 w-10 place-items-center rounded-lg bg-[#1E3A8A] text-white font-black text-sm shadow-md">
+    <div className="min-h-screen bg-[#F8FAFC] text-[#0F172A] font-sans antialiased flex flex-col justify-between">
+      {/* Sleek Navigation Bar */}
+      <header className="sticky top-0 z-50 border-b border-[#E2E8F0] bg-white/90 backdrop-blur-md">
+        <div className="mx-auto flex h-16 max-w-7xl items-center justify-between px-6">
+          <Link to="/" className="flex items-center gap-3">
+            <div className="grid h-9 w-9 place-items-center rounded-lg bg-[#1E3A8A] text-white font-black text-xs shadow-xs">
               UP
             </div>
             <div>
-              <span className="font-black text-base text-[#0F172A] tracking-wide block leading-tight">
-                {t.appName}
+              <span className="font-black text-base text-[#0F172A] tracking-tight block leading-none">
+                URBAN PULSE
               </span>
-              <span className="text-[10px] text-[#3B82F6] font-extrabold uppercase tracking-wider block">
-                Infrastructure OS
+              <span className="text-[9px] text-[#3B82F6] font-bold uppercase tracking-wider block mt-0.5">
+                Smart Infrastructure OS
               </span>
             </div>
           </Link>
 
-          {/* Navigation Links */}
-          <nav className="hidden lg:flex items-center gap-7 text-xs font-bold text-slate-700">
-            <a href="#home" className="hover:text-[#1E3A8A] transition-colors">{tText("Home")}</a>
-            <a href="#services" className="hover:text-[#1E3A8A] transition-colors">{tText("Services")}</a>
-            <a href="#directory" className="hover:text-[#1E3A8A] transition-colors">{tText("Public Directory")}</a>
-            <a href="#contact" className="hover:text-[#1E3A8A] transition-colors">{tText("Contact")}</a>
-          </nav>
-
-          {/* Auth Action Buttons - Sign In Only */}
-          <div className="flex items-center gap-3">
-            <Button asChild size="sm" className="bg-[#1E3A8A] hover:bg-[#1E3A8A]/90 text-white font-bold text-xs px-5 shadow-sm gap-1.5">
+          <div className="flex items-center gap-4">
+            <LanguageSwitcher />
+            <Button asChild size="sm" className="bg-[#1E3A8A] hover:bg-[#1E3A8A]/90 text-white font-bold text-xs px-5 shadow-xs gap-1.5">
               <Link to="/login">
                 <Lock className="h-3.5 w-3.5" /> {t.signIn}
               </Link>
@@ -166,303 +80,147 @@ export function UniqueLandingPage() {
         </div>
       </header>
 
-      {/* 3. HERO SECTION */}
-      <section id="home" className="relative bg-[#0F172A] text-white py-16 md:py-20 overflow-hidden border-b border-slate-800">
-        <div className="absolute inset-0 bg-gradient-to-r from-[#1E3A8A]/40 to-transparent pointer-events-none" />
+      {/* Minimal Hero Section */}
+      <main className="flex-1">
+        <section className="relative bg-[#0F172A] text-white py-16 md:py-24 overflow-hidden">
+          <div className="absolute inset-0 bg-gradient-to-br from-[#1E3A8A]/30 to-transparent pointer-events-none" />
 
-        <div className="mx-auto grid max-w-7xl items-center gap-10 px-4 md:grid-cols-2 md:px-8 relative z-10">
-          {/* Left Column */}
-          <div className="space-y-5">
-            <Badge variant="outline" className="bg-[#3B82F6]/20 text-[#3B82F6] border-[#3B82F6]/40 font-bold text-xs py-1 px-3">
-              <Activity className="h-3.5 w-3.5 mr-1.5 text-[#3B82F6]" /> {tText("Municipal Infrastructure Command System")}
-            </Badge>
-
-            <h1 className="text-3xl font-black leading-tight tracking-tight sm:text-4xl text-white">
-              {tText("Intelligent Smart City Infrastructure & Governance Platform")}
-            </h1>
-
-            <h2 className="text-sm sm:text-base font-bold text-[#3B82F6] leading-snug">
-              {tText("Empowering Urban Governance through AI-Based Predictive Analytics & Inter-Departmental Data Interoperability")}
-            </h2>
-
-            <p className="text-slate-300 text-xs sm:text-sm font-normal leading-relaxed">
-              A unified digital platform enabling government departments to collaborate efficiently, predict infrastructure conflicts, prioritize public projects using Artificial Intelligence, and deliver transparent citizen-centric governance.
-            </p>
-
-            {/* Direct Action Buttons */}
-            <div className="flex flex-wrap gap-3 pt-2">
-              <Button asChild size="lg" className="bg-[#3B82F6] hover:bg-[#3B82F6]/90 text-white font-extrabold text-xs sm:text-sm px-8 shadow-md gap-2">
-                <Link to="/login">
-                  {tText("Sign In to Access System")} <ArrowRight className="h-4 w-4" />
-                </Link>
-              </Button>
-            </div>
-
-            {/* Badges */}
-            <div className="grid grid-cols-3 gap-3 pt-4 border-t border-slate-800 text-xs">
-              <div className="flex items-center gap-1.5 font-bold text-[#16A34A]">
-                <CheckCircle2 className="h-4 w-4 text-[#16A34A]" /> {t.aiDecisionSupport}
-              </div>
-              <div className="flex items-center gap-1.5 font-bold text-[#3B82F6]">
-                <CheckCircle2 className="h-4 w-4 text-[#3B82F6]" /> <Link to="/gis-map" className="ml-1 text-[#3B82F6] hover:underline">{t.gisSpatialMap}</Link>
-              </div>
-              <div className="flex items-center gap-1.5 font-bold text-[#F59E0B]">
-                <CheckCircle2 className="h-4 w-4 text-[#F59E0B]" /> Risk Factor Analysis
-              </div>
-            </div>
-          </div>
-
-          {/* Right Column Banner Image */}
-          <div className="relative">
-            <div className="rounded-xl border border-slate-700 bg-slate-900 p-3 shadow-2xl overflow-hidden relative">
-              <img
-                src={heroCity}
-                width={1280}
-                height={960}
-                alt="Smart Infrastructure Command City Banner"
-                className="rounded-lg w-full object-cover max-h-[420px]"
-              />
-              <div className="mt-3 p-3 rounded bg-[#1E3A8A] text-white flex items-center justify-between text-xs">
-                <div className="flex items-center gap-2">
-                  <Activity className="h-4 w-4 text-[#3B82F6] animate-pulse" />
-                  <span className="font-bold">Inter-Department Spatial Coordination</span>
-                </div>
-                <span className="text-[10px] font-mono bg-white/10 px-2 py-0.5 rounded font-bold">AUTHENTICATION REQUIRED</span>
-              </div>
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 4. ANNOUNCEMENTS TICKER */}
-      <section className="bg-[#F8FAFC] py-4 border-b border-[#E2E8F0]">
-        <div className="mx-auto max-w-7xl px-4 md:px-8">
-          <div className="flex flex-col md:flex-row items-start md:items-center gap-4">
-            <div className="flex items-center gap-2 bg-[#1E3A8A] text-white px-3 py-1 rounded font-extrabold text-xs shrink-0">
-              <Bell className="h-4 w-4" /> OFFICIAL NOTICES
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 w-full">
-              {ANNOUNCEMENTS.map((a) => (
-                <div key={a.id} className="p-2.5 rounded border border-[#E2E8F0] bg-[#FFFFFF] shadow-sm text-xs space-y-1">
-                  <span className="font-extrabold text-[10px] text-[#1E3A8A] uppercase tracking-wider block">
-                    {a.tag}
-                  </span>
-                  <p className="text-slate-700 font-medium line-clamp-2">{a.text}</p>
-                </div>
-              ))}
-            </div>
-          </div>
-        </div>
-      </section>
-
-      {/* 5. OPERATIONAL IMPACT METRICS */}
-      <section className="py-14 bg-[#FFFFFF] border-b border-[#E2E8F0]">
-        <div className="mx-auto max-w-7xl px-4 md:px-8">
-          <div className="text-center max-w-2xl mx-auto mb-10 space-y-1">
-            <Badge variant="outline" className="bg-[#1E3A8A]/10 text-[#1E3A8A] border-[#1E3A8A]/20 font-bold text-xs">
-              {tText("System Impact")}
-            </Badge>
-            <h2 className="text-2xl font-black text-[#0F172A]">{tText("Operational Impact Metrics")}</h2>
-            <p className="text-slate-600 text-xs font-semibold">
-              Live indicators monitored across municipal infrastructure deployments.
-            </p>
-          </div>
-
-          <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-4">
-            {STATS.map((s) => (
-              <div
-                key={s.label}
-                className="rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] p-4 text-center shadow-sm hover:border-[#1E3A8A] transition-all"
-              >
-                <div className="grid h-9 w-9 place-items-center rounded bg-[#FFFFFF] border border-[#E2E8F0] mx-auto text-[#1E3A8A] mb-2">
-                  <s.icon className="h-4 w-4" />
-                </div>
-                <p className="text-2xl font-black text-[#0F172A]">{s.value}</p>
-                <p className="mt-1 text-xs font-bold text-[#1E3A8A]">{s.label}</p>
-                <p className="mt-0.5 text-[10px] text-slate-500 font-medium">{s.desc}</p>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 6. SERVICES OVERVIEW */}
-      <section id="services" className="py-16 bg-[#F8FAFC] border-b border-[#E2E8F0]">
-        <div className="mx-auto max-w-7xl px-4 md:px-8 space-y-10">
-          <div className="text-center max-w-3xl mx-auto space-y-2">
-            <Badge variant="outline" className="bg-[#3B82F6]/15 text-[#3B82F6] border-[#3B82F6]/40 font-bold text-xs">
-              Public & Officer Services
-            </Badge>
-            <h2 className="text-2xl font-black text-[#0F172A]">{tText("Citizen & Department Services")}</h2>
-            <p className="text-slate-600 text-xs font-semibold">
-              Sign in with your credentials to access municipal services, file grievances, and manage projects.
-            </p>
-          </div>
-
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3">
-            {CITIZEN_SERVICES.map((cs) => (
-              <div
-                key={cs.title}
-                className="rounded-lg border border-[#E2E8F0] bg-[#FFFFFF] p-5 shadow-sm hover:shadow-md hover:border-[#1E3A8A] transition-all flex flex-col justify-between space-y-3"
-              >
-                <div className="space-y-2">
-                  <div className="grid h-10 w-10 place-items-center rounded bg-[#1E3A8A] text-white">
-                    <cs.icon className="h-5 w-5" />
-                  </div>
-                  <h3 className="text-sm font-extrabold text-[#0F172A]">{cs.title}</h3>
-                  <p className="text-xs text-slate-600 font-medium leading-relaxed">{cs.desc}</p>
-                </div>
-
-                <div className="pt-3 border-t border-[#E2E8F0]">
-                  <Link to="/login" className="inline-flex items-center gap-1.5 text-xs font-bold text-[#1E3A8A] hover:text-[#3B82F6]">
-                    <Lock className="h-3 w-3" /> Login to Access Service <ChevronRight className="h-3.5 w-3.5" />
-                  </Link>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      {/* 7. LATEST PROJECTS DIRECTORY TABLE */}
-      <section id="directory" className="py-16 bg-[#FFFFFF] border-b border-[#E2E8F0]">
-        <div className="mx-auto max-w-7xl px-4 md:px-8 space-y-8">
-          <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
-            <div>
-              <Badge variant="outline" className="bg-[#1E3A8A]/10 text-[#1E3A8A] border-[#1E3A8A]/20 font-bold text-xs mb-1">
-                Official Directory
+          <div className="mx-auto max-w-7xl px-6 grid grid-cols-1 lg:grid-cols-12 gap-12 items-center relative z-10">
+            <div className="lg:col-span-7 space-y-6">
+              <Badge variant="outline" className="bg-[#3B82F6]/20 text-[#3B82F6] border-[#3B82F6]/40 font-bold text-xs py-1 px-3">
+                <Activity className="h-3.5 w-3.5 mr-1.5" /> Next-Gen Urban Governance Platform
               </Badge>
-              <h2 className="text-2xl font-black text-[#0F172A]">{tText("Recent Infrastructure Works Directory")}</h2>
-            </div>
-            <Button asChild size="sm" className="bg-[#1E3A8A] hover:bg-[#1E3A8A]/90 text-white font-bold text-xs">
-              <Link to="/login">{tText("Login to View Directory")}</Link>
-            </Button>
-          </div>
 
-          <div className="rounded-lg border border-[#E2E8F0] overflow-hidden shadow-sm">
-            <table className="w-full text-xs text-left text-[#0F172A]">
-              <thead className="bg-[#1E3A8A] text-white uppercase text-[10px] font-extrabold">
-                <tr>
-                  <th className="px-4 py-3">{tText("Project Ref ID")}</th>
-                  <th className="px-4 py-3">{tText("Infrastructure Work Title")}</th>
-                  <th className="px-4 py-3">{tText("Department Division")}</th>
-                  <th className="px-4 py-3">{tText("Status")}</th>
-                  <th className="px-4 py-3">{tText("Priority")}</th>
-                  <th className="px-4 py-3">{tText("Timeline")}</th>
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-[#E2E8F0] bg-[#FFFFFF]">
-                {RECENT_PROJECTS.map((p) => (
-                  <tr key={p.id} className="hover:bg-[#F8FAFC] transition">
-                    <td className="px-4 py-3 font-mono font-bold text-[#1E3A8A]">{p.id}</td>
-                    <td className="px-4 py-3 font-extrabold">{p.name}</td>
-                    <td className="px-4 py-3 text-slate-600 font-semibold">{p.dept}</td>
-                    <td className="px-4 py-3">
-                      <span className={`px-2 py-0.5 rounded text-[10px] font-bold ${
-                        p.status === t.sanctioned ? "bg-[#16A34A]/15 text-[#16A34A]" :
-                        p.status === t.active ? "bg-[#3B82F6]/15 text-[#3B82F6]" :
-                        "bg-[#F59E0B]/15 text-[#F59E0B]"
-                      }`}>
-                        {p.status}
-                      </span>
-                    </td>
-                    <td className="px-4 py-3 font-bold text-[#0F172A]">{p.priority}</td>
-                    <td className="px-4 py-3 text-slate-500 font-medium">{p.timeline}</td>
-                  </tr>
+              <h1 className="text-3xl sm:text-5xl font-black tracking-tight leading-tight text-white">
+                AI-Driven Infrastructure Coordination & Citizen Services
+              </h1>
+
+              <p className="text-slate-300 text-sm sm:text-base font-medium leading-relaxed max-w-2xl">
+                Streamlining inter-departmental workflows, predicting spatial conflicts, scoring project priorities, and verifying civic grievance media with deep learning.
+              </p>
+
+              <div className="pt-2 flex flex-wrap items-center gap-4">
+                <Button asChild size="lg" className="bg-[#3B82F6] hover:bg-[#3B82F6]/90 text-white font-black text-sm px-8 shadow-md gap-2">
+                  <Link to="/login">
+                    Access Municipal Portal <ArrowRight className="h-4 w-4" />
+                  </Link>
+                </Button>
+              </div>
+
+              {/* Minimal Stats Strip */}
+              <div className="pt-8 grid grid-cols-2 sm:grid-cols-4 gap-4 border-t border-slate-800">
+                {STATS.map((s, i) => (
+                  <div key={i} className="space-y-0.5">
+                    <p className="text-2xl font-black text-white">{s.value}</p>
+                    <p className="text-xs font-bold text-[#3B82F6]">{s.label}</p>
+                  </div>
                 ))}
-              </tbody>
-            </table>
+              </div>
+            </div>
+
+            <div className="lg:col-span-5">
+              <div className="rounded-2xl border border-slate-700 bg-slate-900 p-3 shadow-2xl overflow-hidden relative group">
+                <img
+                  src={heroCity}
+                  alt="Smart Infrastructure City"
+                  className="rounded-xl w-full object-cover max-h-[380px]"
+                />
+                <div className="absolute bottom-6 left-6 right-6 p-3 rounded-lg bg-[#0F172A]/90 backdrop-blur-md border border-slate-700 text-white flex items-center justify-between text-xs">
+                  <span className="font-bold flex items-center gap-2">
+                    <Zap className="h-4 w-4 text-[#3B82F6]" /> Active Interoperability Engine
+                  </span>
+                  <span className="text-[10px] bg-emerald-500/20 text-emerald-400 border border-emerald-500/30 px-2 py-0.5 rounded font-bold">ONLINE</span>
+                </div>
+              </div>
+            </div>
           </div>
-        </div>
-      </section>
+        </section>
 
-      {/* 8. CALL TO ACTION */}
-      <section className="bg-[#0F172A] text-white py-16">
-        <div className="mx-auto max-w-4xl px-4 md:px-8 text-center space-y-6">
-          <Badge variant="outline" className="bg-white/10 text-white border-white/20 font-bold text-xs">
-            Municipal System Clearance Required
-          </Badge>
-
-          <h2 className="text-3xl font-black text-white sm:text-4xl">
-            Building Smarter Cities Through Artificial Intelligence
-          </h2>
-
-          <p className="text-slate-300 text-xs sm:text-sm font-medium max-w-xl mx-auto leading-relaxed">
-            Please log in with your credentials to access system features, file grievance reports, or review department project predictions.
-          </p>
-
-          <div className="flex flex-wrap items-center justify-center gap-4 pt-2">
-            <Button asChild size="lg" className="bg-[#3B82F6] hover:bg-[#3B82F6]/90 text-white font-extrabold text-xs sm:text-sm px-8 shadow-md gap-2">
-              <Link to="/login">
-                {tText("Sign In to Access System")} <ArrowRight className="h-4 w-4" />
-              </Link>
-            </Button>
+        {/* Minimal Core Services */}
+        <section className="py-16 max-w-7xl mx-auto px-6 space-y-8">
+          <div className="text-center max-w-xl mx-auto space-y-2">
+            <h2 className="text-2xl font-black text-[#0F172A]">Core Platform Modules</h2>
+            <p className="text-xs font-semibold text-slate-500">
+              Integrated infrastructure coordination for citizens, officers, and municipal leadership.
+            </p>
           </div>
-        </div>
-      </section>
 
-      {/* 9. FOOTER */}
-      <footer id="contact" className="bg-[#0B132B] text-slate-300 py-12 border-t border-slate-800 text-xs">
-        <div className="mx-auto max-w-7xl px-4 md:px-8 space-y-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            {CORE_SERVICES.map((s, i) => (
+              <div key={i} className="p-6 rounded-xl border border-[#E2E8F0] bg-white shadow-xs hover:border-[#1E3A8A] transition-all space-y-3">
+                <div className="grid h-10 w-10 place-items-center rounded-lg bg-blue-50 text-[#1E3A8A]">
+                  <s.icon className="h-5 w-5" />
+                </div>
+                <h3 className="font-bold text-sm text-[#0F172A]">{s.title}</h3>
+                <p className="text-xs text-slate-600 font-medium leading-relaxed">{s.desc}</p>
+              </div>
+            ))}
+          </div>
+        </section>
+      </main>
+
+      {/* Clean Multi-Column Footer */}
+      <footer className="border-t border-[#E2E8F0] bg-[#0F172A] text-slate-300 py-12 text-xs">
+        <div className="max-w-7xl mx-auto px-6 space-y-8">
           <div className="grid grid-cols-1 md:grid-cols-4 gap-8">
-            <div className="space-y-3 md:col-span-1">
-              <div className="flex items-center gap-3">
-                <div className="grid h-10 w-10 place-items-center rounded bg-[#1E3A8A] text-white font-black text-base border border-slate-700">
+            {/* Col 1: Brand & Tagline */}
+            <div className="space-y-3">
+              <div className="flex items-center gap-2.5">
+                <div className="grid h-8 w-8 place-items-center rounded-lg bg-[#3B82F6] text-white font-black text-xs">
                   UP
                 </div>
                 <div>
-                  <span className="font-extrabold text-sm text-white block">{t.appName}</span>
-                  <span className="text-[10px] text-slate-400 font-bold uppercase tracking-wider block">Command Center OS</span>
+                  <span className="font-black text-sm text-white tracking-tight block">URBAN PULSE</span>
+                  <span className="text-[9px] text-[#3B82F6] font-bold uppercase tracking-wider block">Smart Infrastructure OS</span>
                 </div>
               </div>
-              <p className="text-slate-300 text-[11px] leading-relaxed">
-                Intelligent Smart City Management System Using AI-Based Predictive Analytics and Inter-Departmental Data Interoperability.
+              <p className="text-slate-400 text-xs leading-relaxed font-medium">
+                Unified Municipal Infrastructure Platform powered by AI Predictive Analytics, Deep Learning Media Verification & GIS Spatial Mapping.
               </p>
             </div>
 
+            {/* Col 2: Quick Links */}
             <div className="space-y-2">
-              <h4 className="font-extrabold text-xs text-white uppercase tracking-wider">Quick Navigation</h4>
-              <ul className="space-y-1.5 text-slate-300 font-medium">
-                <li><a href="#home" className="hover:text-white transition">{tText("Home")}</a></li>
-                <li><a href="#services" className="hover:text-white transition">{tText("Services")}</a></li>
-                <li><a href="#directory" className="hover:text-white transition">{tText("Public Directory")}</a></li>
-                <li><Link to="/login" className="hover:text-white transition">{t.signIn}</Link></li>
+              <h4 className="font-extrabold text-white text-xs uppercase tracking-wider">Quick Access</h4>
+              <ul className="space-y-1.5 font-medium text-slate-400">
+                <li><Link to="/login" className="hover:text-white transition">Citizen Grievance Portal</Link></li>
+                <li><Link to="/login" className="hover:text-white transition">GIS Spatial Conflict Map</Link></li>
+                <li><Link to="/login" className="hover:text-white transition">Executive Analytics & Reports</Link></li>
+                <li><Link to="/login" className="hover:text-white flex items-center gap-1 font-bold text-[#3B82F6] transition">Sign In to Command Center →</Link></li>
               </ul>
             </div>
 
+            {/* Col 3: Municipal Divisions */}
             <div className="space-y-2">
-              <h4 className="font-extrabold text-xs text-white uppercase tracking-wider">Municipal Divisions</h4>
-              <ul className="space-y-1.5 text-slate-300 font-medium">
+              <h4 className="font-extrabold text-white text-xs uppercase tracking-wider">Departments</h4>
+              <ul className="space-y-1.5 font-medium text-slate-400">
                 <li>Road Infrastructure Division</li>
-                <li>Water Supply & Sewerage Board</li>
-                <li>Electricity & Power Grid Division</li>
-                <li>Storm Water Drainage Authority</li>
-                <li>Solid Waste Management Board</li>
+                <li>Water Supply & Sewage Board</li>
+                <li>Electricity & Power Operations</li>
+                <li>Solid Waste & Sanitation Dept</li>
               </ul>
             </div>
 
+            {/* Col 4: Helpdesk Contact */}
             <div className="space-y-2">
-              <h4 className="font-extrabold text-xs text-white uppercase tracking-wider">Command Center Contact</h4>
-              <div className="space-y-1.5 text-slate-300 font-medium">
-                <p className="flex items-center gap-2">
-                  <MapPin className="h-4 w-4 text-[#3B82F6]" /> Municipal Command HQ, Sector 4
-                </p>
-                <p className="flex items-center gap-2">
-                  <Mail className="h-4 w-4 text-[#3B82F6]" /> helpdesk@smartcity.gov.in
-                </p>
-                <p className="flex items-center gap-2">
-                  <Phone className="h-4 w-4 text-[#3B82F6]" /> 1800-425-7000 (Helpline)
-                </p>
-              </div>
+              <h4 className="font-extrabold text-white text-xs uppercase tracking-wider">Command Helpline</h4>
+              <ul className="space-y-1.5 font-medium text-slate-400">
+                <li className="flex items-center gap-2">📍 Municipal Command HQ, Sector 4</li>
+                <li className="flex items-center gap-2">📞 Toll-Free: 1800-425-7000</li>
+                <li className="flex items-center gap-2">✉️ support@smartcity.gov.in</li>
+                <li className="text-[10px] text-emerald-400 font-bold">● 24/7 Emergency Dispatch Active</li>
+              </ul>
             </div>
           </div>
 
-          <div className="pt-6 border-t border-slate-800 flex flex-col md:flex-row items-center justify-between gap-3 text-[11px] text-slate-400">
-            <p>© 2026 {t.appName} · All Rights Reserved.</p>
-            <p className="text-slate-300 font-semibold">
-              Developed as an AI-Powered Smart City Infrastructure OS
-            </p>
+          {/* Bottom Bar */}
+          <div className="pt-6 border-t border-slate-800 flex flex-col sm:flex-row items-center justify-between gap-3 text-slate-500 text-[11px] font-medium">
+            <p>© 2026 URBAN PULSE · Smart City AI Governance Platform. All Rights Reserved.</p>
+            <div className="flex items-center gap-4 text-slate-400">
+              <span className="hover:text-white cursor-pointer transition">Privacy Policy</span>
+              <span>•</span>
+              <span className="hover:text-white cursor-pointer transition">Terms of Service</span>
+            </div>
           </div>
         </div>
       </footer>

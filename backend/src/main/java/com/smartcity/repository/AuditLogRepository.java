@@ -13,10 +13,6 @@ public interface AuditLogRepository extends JpaRepository<AuditLog, Long> {
 
     List<AuditLog> findAllByOrderByTimestampDesc();
 
-    @Query("SELECT a FROM AuditLog a WHERE " +
-           "LOWER(a.userEmail) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
-           "LOWER(a.action) LIKE LOWER(CONCAT('%', :query, '%')) OR " +
-           "LOWER(a.role) LIKE LOWER(CONCAT('%', :query, '%')) " +
-           "ORDER BY a.timestamp DESC")
+    @Query("SELECT a FROM AuditLog a WHERE (:query IS NULL OR LOWER(a.userEmail) LIKE LOWER(CONCAT('%', :query, '%')) OR LOWER(a.action) LIKE LOWER(CONCAT('%', :query, '%')) OR LOWER(a.details) LIKE LOWER(CONCAT('%', :query, '%'))) ORDER BY a.timestamp DESC")
     List<AuditLog> searchLogs(@Param("query") String query);
 }

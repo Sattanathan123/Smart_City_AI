@@ -46,6 +46,7 @@ import {
 } from "lucide-react";
 import { useEffect, useState } from "react";
 import { DashboardShell, StatCard } from "@/components/DashboardShell";
+import { ShapExplanationCard } from "@/components/ShapExplanationCard";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -393,6 +394,10 @@ export function AdminAnalytics() {
             </div>
           ))}
         </CardContent>
+
+        <div className="p-4 pt-0">
+          <ShapExplanationCard modelType="conflict" />
+        </div>
       </Card>
 
       {/* 5. DEPARTMENT PERFORMANCE CARDS */}
