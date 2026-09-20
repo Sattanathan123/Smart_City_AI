@@ -69,13 +69,21 @@ function LoginPage() {
   const [regPhone, setRegPhone] = useState("");
   const [regDepartment, setRegDepartment] = useState("Road");
 
+  const getRolePath = (role: string) => {
+    const r = (role || "").toUpperCase();
+    if (r === "ADMIN") return "/admin";
+    if (r.includes("OFFICER") || r === "DEPARTMENT_OFFICER") return "/officer";
+    return "/citizen";
+  };
+
   const handleLogin = async () => {
     setLoading(true);
     try {
       const user = await authApi.login({ email, password });
       sessionStorage.setItem("user", JSON.stringify(user));
-      toast.success(`Welcome, ${user.name}!`);
-      navigate({ to: currentRole.to });
+      toast.success(`Welcome, ${user.name}! Signed in as ${user.role}.`);
+      const targetPath = getRolePath(user.role);
+      navigate({ to: targetPath });
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : "Login failed");
     } finally {
@@ -102,18 +110,20 @@ function LoginPage() {
     }
     setLoading(true);
     try {
+      const backendRole = roleId === "officer" ? "DEPARTMENT_OFFICER" : roleId.toUpperCase();
       const user = await authApi.register({
         name: regName,
         email: regEmail,
         password: regPassword,
-        role: roleId.toUpperCase(),
+        role: backendRole,
         department: roleId === "citizen" ? "PUBLIC" : regDepartment,
         employeeId: regEmployeeId,
         phone: regPhone,
       });
       sessionStorage.setItem("user", JSON.stringify(user));
-      toast.success("Account created successfully!");
-      navigate({ to: currentRole.to });
+      toast.success(`Account created successfully as ${user.role}!`);
+      const targetPath = getRolePath(user.role);
+      navigate({ to: targetPath });
     } catch (err: unknown) {
       toast.error(err instanceof Error ? err.message : "Registration failed");
     } finally {

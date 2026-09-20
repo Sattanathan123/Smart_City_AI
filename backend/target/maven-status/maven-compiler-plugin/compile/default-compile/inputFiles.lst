@@ -11,6 +11,7 @@ C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\s
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\service\EmailService.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\controller\ProjectController.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\repository\ProjectDependencyRepository.java
+C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\controller\WeatherRiskController.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\dto\ComplaintRequest.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\config\DataInitializer.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\controller\AnalyticsController.java
@@ -23,6 +24,7 @@ C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\e
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\repository\AlertRepository.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\dto\PredictionResponse.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\controller\PredictionController.java
+C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\repository\ProjectWeatherRiskRepository.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\entity\Prediction.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\exception\ErrorResponse.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\repository\NotificationRepository.java
@@ -50,6 +52,7 @@ C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\e
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\service\DashboardService.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\service\PredictionService.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\dto\ComplaintResponse.java
+C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\service\WeatherService.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\entity\AiPrediction.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\security\UserDetailsServiceImpl.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\SmartCityApplication.java
@@ -58,6 +61,7 @@ C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\d
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\controller\ComplaintController.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\service\PdfReportService.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\controller\AuthController.java
+C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\entity\ProjectWeatherRisk.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\entity\User.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\config\WebSocketConfig.java
 C:\Users\Sattanathan\Desktop\smart_city_ai\backend\src\main\java\com\smartcity\dto\DashboardResponse.java

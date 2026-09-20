@@ -87,12 +87,24 @@ const [imageFile, setImageFile] = useState<File | null>(null);
   const [trackedComplaint, setTrackedComplaint] = useState<ComplaintData | null>(null);
   const [trackError, setTrackError] = useState(false);
 
+  // Complaints Table Search, Filter, Sort & Pagination State
+  const [reportsSearch, setReportsSearch] = useState("");
+  const [reportsCategory, setReportsCategory] = useState("ALL");
+  const [reportsStatus, setReportsStatus] = useState("ALL");
+  const [reportsSort, setReportsSort] = useState("newest");
+  const [reportsPage, setReportsPage] = useState(1);
+  const [reportsPageSize, setReportsPageSize] = useState(5);
+
   useEffect(() => {
     try {
       const savedUser = JSON.parse(sessionStorage.getItem("user") ?? "{}");
       setUser(savedUser);
     } catch {}
   }, []);
+
+  useEffect(() => {
+    setReportsPage(1);
+  }, [reportsSearch, reportsCategory, reportsStatus, reportsSort, reportsPageSize]);
 
   const loadComplaints = useCallback(() => {
     if (user.id) {
@@ -371,81 +383,219 @@ const [imageFile, setImageFile] = useState<File | null>(null);
         {/* TAB 2: My Complaints */}
         {activeTab === "myreports" && (
           <div className="rounded-lg border border-[#E2E8F0] bg-[#FFFFFF] p-6 shadow-sm space-y-4">
-            <div>
-              <h2 className="text-base font-black text-[#0F172A]">My Registered Complaints</h2>
-              <p className="text-xs text-slate-500 font-medium">Viewing civic issues submitted by your account ({user.name ?? "Citizen"})</p>
+            <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
+              <div>
+                <h2 className="text-base font-black text-[#0F172A]">My Registered Complaints</h2>
+                <p className="text-xs text-slate-500 font-medium">Viewing civic issues submitted by your account ({user.name ?? "Citizen"})</p>
+              </div>
             </div>
-            <div className="overflow-x-auto">
-              <table className="w-full text-xs text-left text-[#0F172A]">
-                <thead className="bg-[#F8FAFC] uppercase text-[10px] text-slate-500 font-bold border-b border-[#E2E8F0]">
-                  <tr>
-                    <th className="px-4 py-3">Tracking ID</th>
-                    <th className="px-4 py-3">Category & Zone</th>
-                    <th className="px-4 py-3">Description</th>
-                    <th className="px-4 py-3">Assigned Officer</th>
-                    <th className="px-4 py-3">Evidence Media</th>
-                    <th className="px-4 py-3">AI Verification</th>
-                    <th className="px-4 py-3">Status</th>
-                    <th className="px-4 py-3">Submitted Date</th>
-                  </tr>
-                </thead>
-                <tbody className="divide-y divide-[#E2E8F0]">
-                  {complaints.length === 0 ? (
-                    <tr>
-                      <td colSpan={8} className="px-4 py-8 text-center text-slate-500 font-medium">
-                        No complaints submitted by {user.name ?? "you"} yet. Submit a new issue using the 'Lodge Complaint' tab!
-                      </td>
-                    </tr>
-                  ) : (
-                    complaints.map((c) => {
-                      const isVideo = c.mediaType === "VIDEO" || (c.imageUrl && (c.imageUrl.toLowerCase().endsWith(".mp4") || c.imageUrl.toLowerCase().endsWith(".webm") || c.imageUrl.toLowerCase().endsWith(".mov")));
-                      return (
-                        <tr key={c.id} className="hover:bg-[#F8FAFC] transition">
-                          <td className="px-4 py-3 font-mono font-bold text-[#1E3A8A]">#{c.id}</td>
-                          <td className="px-4 py-3 font-bold">{c.category} ({c.zone})</td>
-                          <td className="px-4 py-3 font-medium text-slate-600 max-w-xs truncate">{c.description}</td>
-                          <td className="px-4 py-3 font-bold text-[#1E3A8A] max-w-xs">
-                            {c.assignedOfficer ?? "Department Officer Assigned"}
-                          </td>
-                          <td className="px-4 py-3">
-                            {c.imageUrl ? (
-                              isVideo ? (
-                                <video src={`http://localhost:8082/${c.imageUrl}`} controls className="h-12 w-20 object-cover rounded bg-black" />
-                              ) : (
-                                <a href={`http://localhost:8082/${c.imageUrl}`} target="_blank" rel="noreferrer" title="Click to view full high-res image">
-                                  <img src={`http://localhost:8082/${c.imageUrl}`} alt="Complaint Evidence" className="h-12 w-12 object-cover rounded border hover:opacity-80 hover:scale-105 transition cursor-pointer" />
-                                </a>
-                              )
-                            ) : "-"}
-                          </td>
-                          <td className="px-4 py-3">
-                            {c.imageUrl ? (
-                              c.verificationStatus === "SUSPICIOUS" ? (
-                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200" title={c.detectionReason ?? ""}>
-                                  ⚠️ Suspicious ({c.authenticityScore ?? 35}%)
-                                </span>
-                              ) : (
-                                <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200" title={c.detectionReason ?? ""}>
-                                  🛡️ Authentic ({c.authenticityScore ?? 95}%)
-                                </span>
-                              )
-                            ) : (
-                              <span className="text-slate-400 font-mono">-</span>
-                            )}
-                          </td>
-                          <td className="px-4 py-3">
-                            <span className={cn("px-2.5 py-1 rounded text-[10px]", statusColor[c.status] ?? "bg-slate-100 text-slate-700 font-bold")}>
-                              {statusLabel[c.status] ?? c.status}
-                            </span>
-                          </td>
-                          <td className="px-4 py-3 font-mono text-slate-500">{new Date(c.createdAt).toLocaleDateString()}</td>
+
+            {/* Filter, Search, Sort Toolbar */}
+            <div className="p-3 rounded-lg border border-[#E2E8F0] bg-[#F8FAFC] space-y-3">
+              <div className="flex flex-wrap items-center justify-between gap-3">
+                <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
+                  <div className="relative w-full sm:w-56">
+                    <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-slate-400" />
+                    <input
+                      placeholder="Search ID, category, details..."
+                      value={reportsSearch}
+                      onChange={(e) => setReportsSearch(e.target.value)}
+                      className="pl-8 h-8 w-full text-xs rounded border border-[#E2E8F0] bg-white text-[#0F172A] px-2 outline-none"
+                    />
+                  </div>
+
+                  <div className="flex items-center gap-1 text-xs text-slate-600">
+                    <span>Category:</span>
+                    <select
+                      value={reportsCategory}
+                      onChange={(e) => setReportsCategory(e.target.value)}
+                      className="h-8 text-xs rounded border border-[#E2E8F0] bg-white px-2 font-semibold text-[#0F172A]"
+                    >
+                      <option value="ALL">All Categories</option>
+                      {CATEGORIES.map((cat) => (
+                        <option key={cat} value={cat}>{cat}</option>
+                      ))}
+                    </select>
+                  </div>
+
+                  <div className="flex items-center gap-1 text-xs text-slate-600">
+                    <span>Status:</span>
+                    <select
+                      value={reportsStatus}
+                      onChange={(e) => setReportsStatus(e.target.value)}
+                      className="h-8 text-xs rounded border border-[#E2E8F0] bg-white px-2 font-semibold text-[#0F172A]"
+                    >
+                      <option value="ALL">All Statuses</option>
+                      <option value="SUBMITTED">Submitted</option>
+                      <option value="UNDER_REVIEW">Under Review</option>
+                      <option value="ASSIGNED">Assigned</option>
+                      <option value="IN_PROGRESS">In Progress</option>
+                      <option value="RESOLVED">Resolved</option>
+                    </select>
+                  </div>
+
+                  <div className="flex items-center gap-1 text-xs text-slate-600">
+                    <span>Sort:</span>
+                    <select
+                      value={reportsSort}
+                      onChange={(e) => setReportsSort(e.target.value)}
+                      className="h-8 text-xs rounded border border-[#E2E8F0] bg-white px-2 font-semibold text-[#0F172A]"
+                    >
+                      <option value="newest">Newest First</option>
+                      <option value="oldest">Oldest First</option>
+                    </select>
+                  </div>
+                </div>
+
+                <div className="flex items-center gap-2 text-xs text-slate-500 font-medium">
+                  <span>Per Page:</span>
+                  <select
+                    value={reportsPageSize}
+                    onChange={(e) => setReportsPageSize(Number(e.target.value))}
+                    className="h-8 text-xs rounded border border-[#E2E8F0] bg-white px-2 font-bold text-[#0F172A]"
+                  >
+                    <option value={5}>5</option>
+                    <option value={10}>10</option>
+                    <option value={20}>20</option>
+                  </select>
+                </div>
+              </div>
+            </div>
+
+            {/* Filtered & Paginated Complaint Calculations */}
+            {(() => {
+              const filteredComp = complaints.filter((c) => {
+                if (reportsCategory !== "ALL" && c.category !== reportsCategory) return false;
+                if (reportsStatus !== "ALL" && c.status !== reportsStatus) return false;
+                if (!reportsSearch.trim()) return true;
+                const q = reportsSearch.toLowerCase().trim();
+                return (
+                  String(c.id).includes(q) ||
+                  c.category.toLowerCase().includes(q) ||
+                  c.zone.toLowerCase().includes(q) ||
+                  c.description.toLowerCase().includes(q)
+                );
+              });
+
+              const sortedComp = [...filteredComp].sort((a, b) => {
+                if (reportsSort === "newest") return b.id - a.id;
+                if (reportsSort === "oldest") return a.id - b.id;
+                return 0;
+              });
+
+              const totalPages = Math.ceil(sortedComp.length / reportsPageSize) || 1;
+              const startIndex = (reportsPage - 1) * reportsPageSize;
+              const paginatedComp = sortedComp.slice(startIndex, startIndex + reportsPageSize);
+
+              return (
+                <div className="space-y-3">
+                  <div className="overflow-x-auto rounded-lg border border-[#E2E8F0]">
+                    <table className="w-full text-xs text-left text-[#0F172A]">
+                      <thead className="bg-[#F8FAFC] uppercase text-[10px] text-slate-500 font-bold border-b border-[#E2E8F0]">
+                        <tr>
+                          <th className="px-4 py-3">Tracking ID</th>
+                          <th className="px-4 py-3">Category & Zone</th>
+                          <th className="px-4 py-3">Description</th>
+                          <th className="px-4 py-3">Assigned Officer</th>
+                          <th className="px-4 py-3">Evidence Media</th>
+                          <th className="px-4 py-3">AI Verification</th>
+                          <th className="px-4 py-3">Status</th>
+                          <th className="px-4 py-3">Submitted Date</th>
                         </tr>
-                      );
-                    })
-                  )}
-                </tbody>
-              </table>
-            </div>
+                      </thead>
+                      <tbody className="divide-y divide-[#E2E8F0]">
+                        {paginatedComp.length === 0 ? (
+                          <tr>
+                            <td colSpan={8} className="px-4 py-8 text-center text-slate-500 font-medium">
+                              No complaints match your search or filter criteria.
+                            </td>
+                          </tr>
+                        ) : (
+                          paginatedComp.map((c) => {
+                            const isVideo = c.mediaType === "VIDEO" || (c.imageUrl && (c.imageUrl.toLowerCase().endsWith(".mp4") || c.imageUrl.toLowerCase().endsWith(".webm") || c.imageUrl.toLowerCase().endsWith(".mov")));
+                            return (
+                              <tr key={c.id} className="hover:bg-[#F8FAFC] transition">
+                                <td className="px-4 py-3 font-mono font-bold text-[#1E3A8A]">#{c.id}</td>
+                                <td className="px-4 py-3 font-bold">{c.category} ({c.zone})</td>
+                                <td className="px-4 py-3 font-medium text-slate-600 max-w-xs truncate">{c.description}</td>
+                                <td className="px-4 py-3 font-bold text-[#1E3A8A] max-w-xs">
+                                  {c.assignedOfficer ?? "Department Officer Assigned"}
+                                </td>
+                                <td className="px-4 py-3">
+                                  {c.imageUrl ? (
+                                    isVideo ? (
+                                      <video src={`http://localhost:8082/${c.imageUrl}`} controls className="h-12 w-20 object-cover rounded bg-black" />
+                                    ) : (
+                                      <a href={`http://localhost:8082/${c.imageUrl}`} target="_blank" rel="noreferrer" title="Click to view full high-res image">
+                                        <img src={`http://localhost:8082/${c.imageUrl}`} alt="Complaint Evidence" className="h-12 w-12 object-cover rounded border hover:opacity-80 hover:scale-105 transition cursor-pointer" />
+                                      </a>
+                                    )
+                                  ) : "-"}
+                                </td>
+                                <td className="px-4 py-3">
+                                  {c.imageUrl ? (
+                                    c.verificationStatus === "SUSPICIOUS" ? (
+                                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-amber-50 text-amber-700 border border-amber-200" title={c.detectionReason ?? ""}>
+                                        ⚠️ Suspicious ({c.authenticityScore ?? 35}%)
+                                      </span>
+                                    ) : (
+                                      <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded text-[10px] font-bold bg-emerald-50 text-emerald-700 border border-emerald-200" title={c.detectionReason ?? ""}>
+                                        🛡️ Authentic ({c.authenticityScore ?? 95}%)
+                                      </span>
+                                    )
+                                  ) : (
+                                    <span className="text-slate-400 font-mono">-</span>
+                                  )}
+                                </td>
+                                <td className="px-4 py-3">
+                                  <span className={cn("px-2.5 py-1 rounded text-[10px]", statusColor[c.status] ?? "bg-slate-100 text-slate-700 font-bold")}>
+                                    {statusLabel[c.status] ?? c.status}
+                                  </span>
+                                </td>
+                                <td className="px-4 py-3 font-mono text-slate-500">{new Date(c.createdAt).toLocaleDateString()}</td>
+                              </tr>
+                            );
+                          })
+                        )}
+                      </tbody>
+                    </table>
+                  </div>
+
+                  {/* Pagination Controls */}
+                  <div className="p-3 bg-[#F8FAFC] rounded-lg border border-[#E2E8F0] flex flex-col sm:flex-row items-center justify-between gap-2 text-xs">
+                    <span className="text-slate-500 font-medium">
+                      Showing <b>{sortedComp.length === 0 ? 0 : startIndex + 1}</b> to <b>{Math.min(startIndex + reportsPageSize, sortedComp.length)}</b> of <b>{sortedComp.length}</b> Complaints
+                    </span>
+
+                    <div className="flex items-center gap-1.5">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        disabled={reportsPage === 1}
+                        onClick={() => setReportsPage((p) => Math.max(1, p - 1))}
+                        className="h-7 px-2.5 text-xs font-bold border-[#E2E8F0]"
+                      >
+                        &larr; Prev
+                      </Button>
+
+                      <span className="px-2 font-bold text-[#1E3A8A]">
+                        Page {reportsPage} of {totalPages}
+                      </span>
+
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        disabled={reportsPage >= totalPages}
+                        onClick={() => setReportsPage((p) => Math.min(totalPages, p + 1))}
+                        className="h-7 px-2.5 text-xs font-bold border-[#E2E8F0]"
+                      >
+                        Next &rarr;
+                      </Button>
+                    </div>
+                  </div>
+                </div>
+              );
+            })()}
           </div>
         )}
 

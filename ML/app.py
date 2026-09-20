@@ -17,6 +17,23 @@ from flask import Flask, request, jsonify
 
 app = Flask(__name__)
 
+try:
+    from flask_cors import CORS
+    CORS(app, resources={r"/*": {"origins": "*"}})
+except Exception:
+    pass
+
+@app.after_request
+def add_cors_headers(response):
+    response.headers['Access-Control-Allow-Origin'] = '*'
+    response.headers['Access-Control-Allow-Headers'] = 'Content-Type, Authorization, X-Requested-With'
+    response.headers['Access-Control-Allow-Methods'] = 'GET, POST, PUT, DELETE, OPTIONS'
+    return response
+
+@app.route('/<path:dummy>', methods=['OPTIONS'])
+def handle_options_preflight(dummy):
+    return '', 200
+
 BASE = os.path.dirname(os.path.abspath(__file__))
 MODEL_DIR_CANDIDATES = [
     r"C:\Users\Sattanathan\Desktop\smart_city_models\ML_Model_Comparison",
@@ -472,7 +489,10 @@ try:
     import cv2
 except ImportError:
     cv2 = None
-from PIL import Image
+try:
+    from PIL import Image
+except ImportError:
+    Image = None
 
 def _analyze_image_deep_features(image_path_or_bytes):
     """
@@ -666,6 +686,141 @@ def predict_media_verification():
         "authenticityScore": score,
         "verificationStatus": status,
         "detectionReason": reasons
+    })
+
+
+# ── /predict/weather-risk (Weather-Aware Project Risk & Workability Engine) ──
+@app.route("/predict/weather-risk", methods=["POST"])
+def predict_weather_risk():
+    data = request.get_json(force=True) if request.is_json else request.form.to_dict()
+    if not data:
+        data = {}
+
+    project_type = str(data.get("projectType", "ROAD")).upper()
+    zone = str(data.get("zone", "Zone 1"))
+    forecast = data.get("forecast", {})
+    if not isinstance(forecast, dict):
+        forecast = {}
+
+    temp = float(forecast.get("temperature", 30))
+    rain_mm = float(forecast.get("rainfallMm", 0))
+    rain_prob = float(forecast.get("rainProb", 20))
+    wind_km = float(forecast.get("windSpeed", forecast.get("windKm", 15)))
+    humidity = float(forecast.get("humidity", 65))
+    condition = str(forecast.get("condition", "Clear"))
+
+    reasons = []
+
+    # Calculate 0-100 Weighted Workability Score
+    # Weights: Rain (40%), Wind (20%), Temp (20%), Humidity (20%)
+    rain_score = max(0.0, 100.0 - (rain_mm * 4.0) - (rain_prob * 0.4))
+    wind_score = max(0.0, 100.0 - max(0.0, wind_km - 15.0) * 2.5)
+    temp_score = 100.0 - (max(0.0, temp - 38.0) * 5.0) - (max(0.0, 15.0 - temp) * 4.0)
+    humidity_score = max(0.0, 100.0 - max(0.0, humidity - 75.0) * 2.0)
+
+    workability_score = int(round(
+        0.40 * rain_score +
+        0.20 * wind_score +
+        0.20 * temp_score +
+        0.20 * humidity_score
+    ))
+    workability_score = max(0, min(100, workability_score))
+
+    # Project Type Specific Operational Rules
+    recommended_action = "CONTINUE"
+    delay_hours = 0
+    risk_level = "LOW"
+
+    if "ROAD" in project_type or "PAVING" in project_type:
+        if rain_mm > 10.0 or rain_prob > 70.0:
+            recommended_action = "DELAY"
+            delay_hours = 72
+            risk_level = "HIGH"
+            reasons.append(f"Rainfall ({rain_mm}mm, {rain_prob}% prob) exceeds 10mm limit; asphalt laying & road compaction severely impaired.")
+        elif rain_mm > 5.0:
+            recommended_action = "CAUTION"
+            delay_hours = 24
+            risk_level = "MEDIUM"
+            reasons.append("Moderate rainfall detected; road sub-base moisture inspection required before paving.")
+        else:
+            reasons.append("Road construction weather window optimal.")
+
+    elif "CONCRETE" in project_type or "STRUCTURE" in project_type or "BRIDGE" in project_type:
+        if rain_mm > 5.0:
+            recommended_action = "DELAY"
+            delay_hours = 48
+            risk_level = "HIGH"
+            reasons.append(f"Rainfall ({rain_mm}mm) exceeds 5mm concrete safety threshold; high risk of cement washout & structural weakening.")
+        elif temp > 40.0:
+            recommended_action = "CAUTION"
+            delay_hours = 12
+            risk_level = "MEDIUM"
+            reasons.append(f"Extreme heat ({temp}°C); high risk of rapid concrete evaporation cracking.")
+        else:
+            reasons.append("Concrete curing & pouring environmental conditions favorable.")
+
+    elif "ELEC" in project_type or "POWER" in project_type or "LIGHT" in project_type:
+        if rain_mm > 2.0 or wind_km > 40.0:
+            recommended_action = "STOP"
+            delay_hours = 24
+            risk_level = "CRITICAL"
+            reasons.append(f"High wind ({wind_km}km/h > 40km/h limit) or precipitation poses severe high-voltage electrocution hazard!")
+        elif wind_km > 25.0:
+            recommended_action = "CAUTION"
+            delay_hours = 0
+            risk_level = "MEDIUM"
+            reasons.append(f"Elevated wind speed ({wind_km}km/h); aerial bucket truck safety caution required.")
+        else:
+            reasons.append("Electrical & overhead line work conditions safe.")
+
+    elif "DRAIN" in project_type or "SEWER" in project_type or "STORM" in project_type:
+        if rain_mm > 15.0 or "Heavy" in condition:
+            recommended_action = "PRIORITIZE"
+            delay_hours = 0
+            risk_level = "HIGH"
+            reasons.append(f"Heavy rain forecast ({rain_mm}mm); stormwater drainage dredging & channel clearance PRIORITIZED to prevent urban flooding!")
+        elif rain_mm > 5.0:
+            recommended_action = "REVIEW"
+            delay_hours = 0
+            risk_level = "MEDIUM"
+            reasons.append("Moderate rain forecast; prioritize culvert desilting.")
+        else:
+            reasons.append("Drainage maintenance on normal schedule.")
+
+    elif "WATER" in project_type or "PIPE" in project_type:
+        if rain_mm > 20.0:
+            recommended_action = "DELAY"
+            delay_hours = 36
+            risk_level = "HIGH"
+            reasons.append(f"Heavy rainfall ({rain_mm}mm); pipeline trench flooding risk.")
+        else:
+            recommended_action = "CONTINUE"
+            delay_hours = 0
+            reasons.append("Underground water pipeline work manageable under current forecast.")
+
+    else:
+        if workability_score < 40:
+            recommended_action = "DELAY"
+            delay_hours = 48
+            risk_level = "HIGH"
+            reasons.append(f"Low overall workability score ({workability_score}/100); field execution delayed.")
+        elif workability_score < 60:
+            recommended_action = "REVIEW"
+            risk_level = "MEDIUM"
+            reasons.append(f"Moderate workability score ({workability_score}/100); field supervisor review advised.")
+
+    if workability_score < 30 and risk_level != "CRITICAL":
+        risk_level = "HIGH"
+
+    return jsonify({
+        "projectType": project_type,
+        "zone": zone,
+        "workabilityScore": workability_score,
+        "riskLevel": risk_level,
+        "recommendedAction": recommended_action,
+        "delayHours": delay_hours,
+        "reason": reasons,
+        "weatherSummary": f"{condition}, {temp}°C, Rain: {rain_mm}mm ({rain_prob}%), Wind: {wind_km}km/h"
     })
 
 

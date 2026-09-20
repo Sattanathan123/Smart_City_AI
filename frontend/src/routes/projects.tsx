@@ -65,6 +65,10 @@ function ProjectsPage() {
   const [search, setSearch] = useState("");
   const [deptFilter, setDeptFilter] = useState("ALL");
   const [statusFilter, setStatusFilter] = useState("ALL");
+  const [zoneFilter, setZoneFilter] = useState("ALL");
+  const [sortBy, setSortBy] = useState("newest");
+  const [currentPage, setCurrentPage] = useState(1);
+  const [pageSize, setPageSize] = useState(5);
 
   const [user, setUser] = useState<{ id?: number; name?: string; email?: string; role?: string }>({});
 
@@ -87,6 +91,10 @@ function ProjectsPage() {
   useEffect(() => {
     loadProjects();
   }, []);
+
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [search, deptFilter, statusFilter, zoneFilter, sortBy, pageSize]);
 
   const set = (key: keyof ProjectPayload, val: unknown) =>
     setForm((f) => ({ ...f, [key]: val }));
@@ -136,10 +144,28 @@ function ProjectsPage() {
   const filteredProjects = projects.filter((p) => {
     if (deptFilter !== "ALL" && p.department !== deptFilter) return false;
     if (statusFilter !== "ALL" && p.status !== statusFilter) return false;
-    if (!search) return true;
-    const q = search.toLowerCase();
-    return p.projectName.toLowerCase().includes(q) || p.zone.toLowerCase().includes(q) || p.department.toLowerCase().includes(q);
+    if (zoneFilter !== "ALL" && p.zone !== zoneFilter) return false;
+    if (!search.trim()) return true;
+    const q = search.toLowerCase().trim();
+    return (
+      p.projectName.toLowerCase().includes(q) ||
+      p.zone.toLowerCase().includes(q) ||
+      p.department.toLowerCase().includes(q)
+    );
   });
+
+  const sortedProjects = [...filteredProjects].sort((a, b) => {
+    if (sortBy === "newest") return b.id - a.id;
+    if (sortBy === "oldest") return a.id - b.id;
+    if (sortBy === "name") return a.projectName.localeCompare(b.projectName);
+    if (sortBy === "budget_desc") return b.budgetLakhs - a.budgetLakhs;
+    if (sortBy === "budget_asc") return a.budgetLakhs - b.budgetLakhs;
+    return 0;
+  });
+
+  const totalPages = Math.ceil(sortedProjects.length / pageSize) || 1;
+  const startIndex = (currentPage - 1) * pageSize;
+  const paginatedProjects = sortedProjects.slice(startIndex, startIndex + pageSize);
 
   const exportCSV = () => {
     const headers = "ID,Project Name,Department,Zone,Budget Lakhs,Duration Days,Status\n";
@@ -182,56 +208,92 @@ function ProjectsPage() {
         </div>
       </div>
 
-      {/* Filter & Search Bar */}
+      {/* Filter, Search, Sort & Pagination Control Toolbar */}
       <Card className="border border-[#E5E7EB] bg-[#F8FAFC] shadow-sm">
-        <CardContent className="p-3 flex flex-wrap items-center justify-between gap-3">
-          <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
-            <div className="relative w-full sm:w-64">
-              <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-slate-400" />
-              <Input
-                placeholder="Search project, zone, department..."
-                value={search}
-                onChange={(e) => setSearch(e.target.value)}
-                className="pl-8 h-8 text-xs bg-white border-[#E5E7EB] text-[#111827]"
-              />
+        <CardContent className="p-3 space-y-3">
+          <div className="flex flex-wrap items-center justify-between gap-3">
+            <div className="flex flex-wrap items-center gap-2.5 w-full sm:w-auto">
+              <div className="relative w-full sm:w-56">
+                <Search className="absolute left-3 top-2.5 h-3.5 w-3.5 text-slate-400" />
+                <Input
+                  placeholder="Search name, zone, dept..."
+                  value={search}
+                  onChange={(e) => setSearch(e.target.value)}
+                  className="pl-8 h-8 text-xs bg-white border-[#E5E7EB] text-[#111827]"
+                />
+              </div>
+
+              <div className="flex items-center gap-1 text-xs text-slate-600">
+                <Filter className="h-3.5 w-3.5 text-[#1E3A8A]" />
+                <select
+                  value={deptFilter}
+                  onChange={(e) => setDeptFilter(e.target.value)}
+                  className="h-8 text-xs rounded border border-[#E5E7EB] bg-white px-2 font-semibold text-[#111827]"
+                >
+                  <option value="ALL">All Depts</option>
+                  {DEPARTMENTS.map((d) => (
+                    <option key={d} value={d}>{d}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="flex items-center gap-1 text-xs text-slate-600">
+                <select
+                  value={statusFilter}
+                  onChange={(e) => setStatusFilter(e.target.value)}
+                  className="h-8 text-xs rounded border border-[#E5E7EB] bg-white px-2 font-semibold text-[#111827]"
+                >
+                  <option value="ALL">All Statuses</option>
+                  <option value="ACTIVE">ACTIVE</option>
+                  <option value="PENDING_APPROVAL">PENDING APPROVAL</option>
+                  <option value="COMPLETED">COMPLETED</option>
+                  <option value="DRAFT">DRAFT</option>
+                </select>
+              </div>
+
+              <div className="flex items-center gap-1 text-xs text-slate-600">
+                <select
+                  value={zoneFilter}
+                  onChange={(e) => setZoneFilter(e.target.value)}
+                  className="h-8 text-xs rounded border border-[#E5E7EB] bg-white px-2 font-semibold text-[#111827]"
+                >
+                  <option value="ALL">All Zones</option>
+                  {["Zone 1", "Zone 2", "Zone 3", "Zone 4", "Zone 5", "Zone 6", "Zone 7"].map((z) => (
+                    <option key={z} value={z}>{z}</option>
+                  ))}
+                </select>
+              </div>
+
+              <div className="flex items-center gap-1 text-xs text-slate-600">
+                <span className="font-medium text-slate-500">Sort:</span>
+                <select
+                  value={sortBy}
+                  onChange={(e) => setSortBy(e.target.value)}
+                  className="h-8 text-xs rounded border border-[#E5E7EB] bg-white px-2 font-semibold text-[#111827]"
+                >
+                  <option value="newest">Newest First</option>
+                  <option value="oldest">Oldest First</option>
+                  <option value="name">Name (A-Z)</option>
+                  <option value="budget_desc">Highest Budget</option>
+                  <option value="budget_asc">Lowest Budget</option>
+                </select>
+              </div>
             </div>
 
-            <div className="flex items-center gap-1.5 text-xs text-slate-600">
-              <Filter className="h-3.5 w-3.5" />
-              <span>Dept:</span>
+            <div className="flex items-center gap-2 text-xs text-slate-500 font-medium">
+              <span>Per Page:</span>
               <select
-                value={deptFilter}
-                onChange={(e) => setDeptFilter(e.target.value)}
-                className="h-8 text-xs rounded border border-[#E5E7EB] bg-white px-2 text-[#111827]"
+                value={pageSize}
+                onChange={(e) => setPageSize(Number(e.target.value))}
+                className="h-8 text-xs rounded border border-[#E5E7EB] bg-white px-2 font-bold text-[#111827]"
               >
-                <option value="ALL">All Departments</option>
-                {DEPARTMENTS.map((d) => (
-                  <option key={d} value={d}>
-                    {d}
-                  </option>
-                ))}
-              </select>
-            </div>
-
-            <div className="flex items-center gap-1.5 text-xs text-slate-600">
-              <span>Status:</span>
-              <select
-                value={statusFilter}
-                onChange={(e) => setStatusFilter(e.target.value)}
-                className="h-8 text-xs rounded border border-[#E5E7EB] bg-white px-2 text-[#111827]"
-              >
-                <option value="ALL">All Statuses</option>
-                <option value="ACTIVE">ACTIVE</option>
-                <option value="PENDING_APPROVAL">PENDING APPROVAL</option>
-                <option value="COMPLETED">COMPLETED</option>
-                <option value="DRAFT">DRAFT</option>
+                <option value={5}>5</option>
+                <option value={10}>10</option>
+                <option value={25}>25</option>
+                <option value={50}>50</option>
               </select>
             </div>
           </div>
-
-          <span className="text-xs font-semibold text-slate-500">
-            Showing {filteredProjects.length} of {projects.length} Projects
-          </span>
         </CardContent>
       </Card>
 
@@ -344,37 +406,78 @@ function ProjectsPage() {
                 </tr>
               </thead>
               <tbody className="divide-y divide-[#E5E7EB]">
-                {filteredProjects.map((p) => (
-                  <tr
-                    key={p.id}
-                    onClick={() => setSelected(p)}
-                    className={cn(
-                      "cursor-pointer hover:bg-[#F8FAFC] transition",
-                      selected?.id === p.id && "bg-[#3B82F6]/10 font-medium"
-                    )}
-                  >
-                    <td className="px-4 py-3">
-                      <div className="font-bold text-[#111827]">{p.projectName}</div>
-                      <div className="text-[10px] text-slate-500">{p.zone}</div>
-                    </td>
-                    <td className="px-4 py-3 font-semibold text-[#1E3A8A]">{p.department}</td>
-                    <td className="px-4 py-3">
-                      ₹{p.budgetLakhs}L · {p.durationDays} Days
-                    </td>
-                    <td className="px-4 py-3">
-                      <StatusBadge status={p.status} />
-                    </td>
-                    <td className="px-4 py-3">
-                      {p.prediction ? (
-                        <PriorityBadge priority={p.prediction.priorityPrediction} />
-                      ) : (
-                        <span className="text-slate-400">—</span>
-                      )}
+                {paginatedProjects.length === 0 ? (
+                  <tr>
+                    <td colSpan={5} className="p-8 text-center text-slate-500 font-medium">
+                      No matching projects found. Try adjusting your search query or filters.
                     </td>
                   </tr>
-                ))}
+                ) : (
+                  paginatedProjects.map((p) => (
+                    <tr
+                      key={p.id}
+                      onClick={() => setSelected(p)}
+                      className={cn(
+                        "cursor-pointer hover:bg-[#F8FAFC] transition",
+                        selected?.id === p.id && "bg-[#3B82F6]/10 font-medium"
+                      )}
+                    >
+                      <td className="px-4 py-3">
+                        <div className="font-bold text-[#111827]">{p.projectName}</div>
+                        <div className="text-[10px] text-slate-500">{p.zone}</div>
+                      </td>
+                      <td className="px-4 py-3 font-semibold text-[#1E3A8A]">{p.department}</td>
+                      <td className="px-4 py-3">
+                        ₹{p.budgetLakhs}L · {p.durationDays} Days
+                      </td>
+                      <td className="px-4 py-3">
+                        <StatusBadge status={p.status} />
+                      </td>
+                      <td className="px-4 py-3">
+                        {p.prediction ? (
+                          <PriorityBadge priority={p.prediction.priorityPrediction} />
+                        ) : (
+                          <span className="text-slate-400">—</span>
+                        )}
+                      </td>
+                    </tr>
+                  ))
+                )}
               </tbody>
             </table>
+          </div>
+
+          {/* Pagination Controls Bar */}
+          <div className="p-3 bg-[#F8FAFC] border-t border-[#E5E7EB] flex flex-col sm:flex-row items-center justify-between gap-2 text-xs">
+            <span className="text-slate-500 font-medium">
+              Showing <b>{sortedProjects.length === 0 ? 0 : startIndex + 1}</b> to <b>{Math.min(startIndex + pageSize, sortedProjects.length)}</b> of <b>{sortedProjects.length}</b> Projects
+            </span>
+
+            <div className="flex items-center gap-1.5">
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={currentPage === 1}
+                onClick={() => setCurrentPage((p) => Math.max(1, p - 1))}
+                className="h-7 px-2.5 text-xs font-bold border-[#E5E7EB]"
+              >
+                &larr; Prev
+              </Button>
+
+              <span className="px-2 font-bold text-[#1E3A8A]">
+                Page {currentPage} of {totalPages}
+              </span>
+
+              <Button
+                variant="outline"
+                size="sm"
+                disabled={currentPage >= totalPages}
+                onClick={() => setCurrentPage((p) => Math.min(totalPages, p + 1))}
+                className="h-7 px-2.5 text-xs font-bold border-[#E5E7EB]"
+              >
+                Next &rarr;
+              </Button>
+            </div>
           </div>
         </div>
 

@@ -19,6 +19,10 @@ import {
   Users,
   Landmark,
   Layers,
+  CheckCircle2,
+  Plus,
+  ListChecks,
+  Network,
 } from "lucide-react";
 import { type ReactNode, useState, useEffect } from "react";
 import { cn } from "@/lib/utils";
@@ -41,40 +45,67 @@ export function DashboardShell({
   const [mobileOpen, setMobileOpen] = useState(false);
   const [collapsed, setCollapsed] = useState(false);
   const [user, setUser] = useState<{ name?: string; department?: string; role?: string }>({});
-  const { t } = useLanguage();
+  const { t, tText } = useLanguage();
 
-  const navGroups = [
+  const isAdmin = user.role?.toUpperCase() === "ADMIN";
+
+  const adminNavGroups = [
     {
-      category: t.officerWorkspace,
+      category: tText("ADMIN COMMAND CENTER"),
       items: [
-        { title: t.departmentDashboard, url: "/officer", icon: LayoutDashboard },
-        { title: t.projectProposals, url: "/projects", icon: FolderKanban },
-        { title: t.aiDecisionSupport, url: "/ai-conflict", icon: TriangleAlert },
-      ],
-    },
-    {
-      category: t.commandAndControl,
-      items: [
-        { title: t.municipalCommandCenter, url: "/admin", icon: Landmark },
-        { title: "Executive Analytics", url: "/analytics", icon: FileBarChart },
+        { title: tText("City Dashboard"), url: "/admin", icon: Landmark },
+        { title: tText("Project Approvals"), url: "/admin?tab=overview", icon: CheckCircle2 },
+        { title: tText("All Projects"), url: "/projects", icon: FolderKanban },
         { title: t.gisSpatialMap, url: "/gis-map", icon: Map },
         { title: t.conflictHeatmap, url: "/conflict-heatmap", icon: Flame },
-      ],
-    },
-    {
-      category: t.executionAndResources,
-      items: [
+        { title: tText("Weather Risk"), url: "/weather-risk", icon: Flame },
         { title: t.resourceOptimization, url: "/resource-optimization", icon: Cpu },
+        { title: tText("AI Decision Center"), url: "/ai-conflict", icon: TriangleAlert },
+        { title: tText("Executive Analytics"), url: "/analytics", icon: FileBarChart },
       ],
     },
     {
-      category: t.securityAndAudit,
+      category: tText("GOVERNANCE"),
       items: [
-        { title: "Notification Feed", url: "/notifications", icon: Users },
+        { title: tText("Complaints Governance"), url: "/admin?tab=complaints", icon: Users },
+        { title: tText("Users & Roles"), url: "/admin?tab=users_roles", icon: UserCheck },
+        { title: tText("Notifications"), url: "/notifications", icon: Users },
         { title: t.systemAuditLogs, url: "/audit-logs", icon: ShieldCheck },
       ],
     },
   ];
+
+  const officerNavGroups = [
+    {
+      category: tText("OFFICER WORKSPACE"),
+      items: [
+        { title: tText("Department Dashboard"), url: "/officer", icon: LayoutDashboard },
+        { title: tText("My Projects"), url: "/projects", icon: FolderKanban },
+        { title: tText("Project Proposals"), url: "/projects", icon: Plus },
+        { title: tText("AI Decision Support"), url: "/ai-conflict", icon: TriangleAlert },
+        { title: tText("Department GIS Map"), url: "/gis-map", icon: Map },
+        { title: tText("Conflict Analysis"), url: "/conflict-heatmap", icon: Flame },
+      ],
+    },
+    {
+      category: tText("OPERATIONS"),
+      items: [
+        { title: tText("Weather Risk"), url: "/weather-risk", icon: Flame },
+        { title: tText("Resource Optimization"), url: "/resource-optimization", icon: Cpu },
+        { title: tText("Assigned Complaints"), url: "/officer?tab=complaints", icon: ListChecks },
+        { title: tText("Coordination Requests"), url: "/officer?tab=coordination", icon: Network },
+      ],
+    },
+    {
+      category: tText("MONITORING"),
+      items: [
+        { title: tText("Notifications"), url: "/notifications", icon: Users },
+        { title: tText("Department Analytics"), url: "/analytics", icon: FileBarChart },
+      ],
+    },
+  ];
+
+  const navGroups = isAdmin ? adminNavGroups : officerNavGroups;
 
   useEffect(() => {
     try {
@@ -201,8 +232,8 @@ export function DashboardShell({
               <Menu className="h-5 w-5" />
             </button>
             <div>
-              <h1 className="text-base font-black text-[#111827] tracking-tight">{title}</h1>
-              {subtitle && <p className="text-xs text-slate-500 font-medium">{subtitle}</p>}
+              <h1 className="text-base font-black text-[#111827] tracking-tight">{tText(title)}</h1>
+              {subtitle && <p className="text-xs text-slate-500 font-medium">{tText(subtitle)}</p>}
             </div>
           </div>
 
@@ -210,11 +241,10 @@ export function DashboardShell({
             <div className="relative hidden lg:block w-56">
               <Search className="absolute left-2.5 top-2.5 h-3.5 w-3.5 text-slate-400" />
               <Input
-                placeholder="Search projects, zones..."
+                placeholder={tText("Search projects, zones...")}
                 className="h-8 pl-8 text-xs bg-[#F8FAFC] border-[#E5E7EB] text-[#111827]"
               />
             </div>
-            <NotificationsPopover />
             <NotificationBell role={user.role ?? "ADMIN"} />
           </div>
         </header>

@@ -15,14 +15,15 @@ com\smartcity\entity\Notification.class
 com\smartcity\entity\User.class
 com\smartcity\service\DashboardService.class
 com\smartcity\entity\ProjectDependency.class
+com\smartcity\service\WeatherService$CacheEntry.class
 com\smartcity\entity\Project.class
 com\smartcity\controller\DashboardController.class
 com\smartcity\ml\MlServiceClient.class
 com\smartcity\ml\MlServiceClient$PriorityResult.class
 com\smartcity\controller\PredictionController.class
+com\smartcity\service\WeatherService.class
 com\smartcity\controller\ReportController.class
 com\smartcity\service\EmailService.class
-com\smartcity\service\ProjectService.class
 com\smartcity\entity\Role.class
 com\smartcity\exception\GlobalExceptionHandler.class
 com\smartcity\repository\ComplaintRepository.class

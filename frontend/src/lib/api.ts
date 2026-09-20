@@ -346,3 +346,42 @@ export const exportApi = {
   getProjectsExcelUrl: () => `${BASE}/export/projects`,
   getAuditLogsExcelUrl: () => `${BASE}/export/audit-logs`,
 };
+
+// ── Weather Risk API ──────────────────────────────────────────────────────────
+export interface ProjectWeatherRiskData {
+  id: number;
+  projectId: number;
+  workabilityScore: number;
+  riskLevel: "LOW" | "MEDIUM" | "HIGH" | "CRITICAL";
+  recommendedAction: "CONTINUE" | "CAUTION" | "REVIEW" | "DELAY" | "STOP" | "PRIORITIZE";
+  delayHours: number;
+  weatherSummary: string;
+  riskReasons: string;
+  createdAt: string;
+}
+
+export const weatherApi = {
+  getCurrent: (zone = "Zone 1") => request<any>(`/weather/current?zone=${encodeURIComponent(zone)}`),
+  getAllRisks: () => request<ProjectWeatherRiskData[]>("/weather/risk/projects"),
+  getProjectRisk: (id: number) => request<ProjectWeatherRiskData>(`/weather/risk/project/${id}`),
+  evaluateRisk: (id: number) => request<ProjectWeatherRiskData>(`/weather/risk/evaluate/${id}`, { method: "POST" }),
+};
+
+// ── Admin Users & Roles API ──────────────────────────────────────────────────
+export interface UserData {
+  id: number;
+  name: string;
+  email: string;
+  role: string;
+  department: string;
+  employeeId?: string;
+  phone?: string;
+  createdAt?: string;
+}
+
+export const adminApi = {
+  getUsers: () => request<UserData[]>("/admin/users"),
+  createUser: (body: any) => request<UserData>("/admin/users", { method: "POST", body: JSON.stringify(body) }),
+  updateUser: (id: number, body: any) => request<UserData>(`/admin/users/${id}`, { method: "PUT", body: JSON.stringify(body) }),
+  deleteUser: (id: number) => request<void>(`/admin/users/${id}`, { method: "DELETE" }),
+};

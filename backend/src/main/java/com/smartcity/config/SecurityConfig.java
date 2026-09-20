@@ -48,6 +48,7 @@ public class SecurityConfig {
                 .requestMatchers("/api/notifications/**").permitAll()
                 .requestMatchers("/api/reports/**").permitAll()
                 .requestMatchers("/api/export/**").permitAll()
+                .requestMatchers("/api/weather/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/dashboard/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/analytics/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/alerts/**").permitAll()

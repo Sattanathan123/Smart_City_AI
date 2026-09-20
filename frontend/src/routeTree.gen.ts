@@ -9,6 +9,7 @@
 // Additionally, you should also exclude this file from your linter and/or formatter to prevent it from being checked or modified.
 
 import { Route as rootRouteImport } from './routes/__root'
+import { Route as WeatherRiskRouteImport } from './routes/weather-risk'
 import { Route as SitemapDotxmlRouteImport } from './routes/sitemap[.]xml'
 import { Route as ResourceOptimizationRouteImport } from './routes/resource-optimization'
 import { Route as ProjectsRouteImport } from './routes/projects'
@@ -27,6 +28,11 @@ import { Route as IndexRouteImport } from './routes/index'
 import { Route as OfficerGisMapRouteImport } from './routes/officer/gis-map'
 import { Route as AdminGisMapRouteImport } from './routes/admin/gis-map'
 
+const WeatherRiskRoute = WeatherRiskRouteImport.update({
+  id: '/weather-risk',
+  path: '/weather-risk',
+  getParentRoute: () => rootRouteImport,
+} as any)
 const SitemapDotxmlRoute = SitemapDotxmlRouteImport.update({
   id: '/sitemap.xml',
   path: '/sitemap.xml',
@@ -129,6 +135,7 @@ export interface FileRoutesByFullPath {
   '/projects': typeof ProjectsRoute
   '/resource-optimization': typeof ResourceOptimizationRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/weather-risk': typeof WeatherRiskRoute
   '/admin/gis-map': typeof AdminGisMapRoute
   '/officer/gis-map': typeof OfficerGisMapRoute
 }
@@ -148,6 +155,7 @@ export interface FileRoutesByTo {
   '/projects': typeof ProjectsRoute
   '/resource-optimization': typeof ResourceOptimizationRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/weather-risk': typeof WeatherRiskRoute
   '/admin/gis-map': typeof AdminGisMapRoute
   '/officer/gis-map': typeof OfficerGisMapRoute
 }
@@ -168,6 +176,7 @@ export interface FileRoutesById {
   '/projects': typeof ProjectsRoute
   '/resource-optimization': typeof ResourceOptimizationRoute
   '/sitemap.xml': typeof SitemapDotxmlRoute
+  '/weather-risk': typeof WeatherRiskRoute
   '/admin/gis-map': typeof AdminGisMapRoute
   '/officer/gis-map': typeof OfficerGisMapRoute
 }
@@ -189,6 +198,7 @@ export interface FileRouteTypes {
     | '/projects'
     | '/resource-optimization'
     | '/sitemap.xml'
+    | '/weather-risk'
     | '/admin/gis-map'
     | '/officer/gis-map'
   fileRoutesByTo: FileRoutesByTo
@@ -208,6 +218,7 @@ export interface FileRouteTypes {
     | '/projects'
     | '/resource-optimization'
     | '/sitemap.xml'
+    | '/weather-risk'
     | '/admin/gis-map'
     | '/officer/gis-map'
   id:
@@ -227,6 +238,7 @@ export interface FileRouteTypes {
     | '/projects'
     | '/resource-optimization'
     | '/sitemap.xml'
+    | '/weather-risk'
     | '/admin/gis-map'
     | '/officer/gis-map'
   fileRoutesById: FileRoutesById
@@ -247,10 +259,18 @@ export interface RootRouteChildren {
   ProjectsRoute: typeof ProjectsRoute
   ResourceOptimizationRoute: typeof ResourceOptimizationRoute
   SitemapDotxmlRoute: typeof SitemapDotxmlRoute
+  WeatherRiskRoute: typeof WeatherRiskRoute
 }
 
 declare module '@tanstack/react-router' {
   interface FileRoutesByPath {
+    '/weather-risk': {
+      id: '/weather-risk'
+      path: '/weather-risk'
+      fullPath: '/weather-risk'
+      preLoaderRoute: typeof WeatherRiskRouteImport
+      parentRoute: typeof rootRouteImport
+    }
     '/sitemap.xml': {
       id: '/sitemap.xml'
       path: '/sitemap.xml'
@@ -410,6 +430,7 @@ const rootRouteChildren: RootRouteChildren = {
   ProjectsRoute: ProjectsRoute,
   ResourceOptimizationRoute: ResourceOptimizationRoute,
   SitemapDotxmlRoute: SitemapDotxmlRoute,
+  WeatherRiskRoute: WeatherRiskRoute,
 }
 export const routeTree = rootRouteImport
   ._addFileChildren(rootRouteChildren)

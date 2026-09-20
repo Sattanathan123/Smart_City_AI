@@ -24,10 +24,10 @@ def test_ml_endpoint(path, payload=None, method="POST"):
     except Exception as e:
         print(f"ERROR calling {url}: {e}")
         return False, None
-
+        
 def get_auth_token():
     url = f"{BACKEND_BASE}/auth/login"
-    payload = {"email": "road.officer@smartcity.gov.in", "password": "password123"}
+    payload = {"email": "road.officer@smartcity.gov.in", "password": "Officer@123"}
     req = urllib.request.Request(url, method="POST", data=json.dumps(payload).encode("utf-8"))
     req.add_header("Content-Type", "application/json")
     try:
@@ -42,6 +42,8 @@ def get_auth_token():
             "email": "verify.officer@smartcity.gov.in",
             "password": "password123",
             "department": "Road",
+            "employeeId": "EMP-VERIFY-01",
+            "phone": "9876543210",
             "role": "DEPARTMENT_OFFICER"
         }
         reg_req = urllib.request.Request(reg_url, method="POST", data=json.dumps(reg_payload).encode("utf-8"))

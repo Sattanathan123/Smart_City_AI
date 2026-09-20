@@ -17,6 +17,12 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Map;
+
+import com.smartcity.entity.ProjectWeatherRisk;
+import com.smartcity.repository.ProjectWeatherRiskRepository;
+import com.smartcity.service.NotificationService;
+import com.smartcity.service.WeatherService;
 
 @Service
 public class ProjectService {
@@ -25,24 +31,67 @@ public class ProjectService {
     private final MlServiceClient mlServiceClient;
     private final AlertRepository alertRepository;
     private final EmailService emailService;
+    private final WeatherService weatherService;
+    private final ProjectWeatherRiskRepository weatherRiskRepository;
+    private final NotificationService notificationService;
+    private final AuditLogService auditLogService;
 
     public ProjectService(ProjectRepository projectRepository,
                           MlServiceClient mlServiceClient,
                           AlertRepository alertRepository,
-                          EmailService emailService) {
+                          EmailService emailService,
+                          WeatherService weatherService,
+                          ProjectWeatherRiskRepository weatherRiskRepository,
+                          NotificationService notificationService,
+                          AuditLogService auditLogService) {
         this.projectRepository = projectRepository;
         this.mlServiceClient = mlServiceClient;
         this.alertRepository = alertRepository;
         this.emailService = emailService;
+        this.weatherService = weatherService;
+        this.weatherRiskRepository = weatherRiskRepository;
+        this.notificationService = notificationService;
+        this.auditLogService = auditLogService;
+    }
+
+    private void evaluateAndSaveWeatherRisk(Project p) {
+        try {
+            Map<String, Object> forecast = weatherService.getWeatherForZone(p.getZone());
+            Map<String, Object> mlResult = mlServiceClient.predictWeatherRisk(p.getProjectType(), p.getZone(), forecast);
+
+            ProjectWeatherRisk risk = new ProjectWeatherRisk();
+            risk.setProjectId(p.getId());
+            risk.setWorkabilityScore((Integer) mlResult.getOrDefault("workabilityScore", 75));
+            risk.setRiskLevel((String) mlResult.getOrDefault("riskLevel", "LOW"));
+            risk.setRecommendedAction((String) mlResult.getOrDefault("recommendedAction", "CONTINUE"));
+            risk.setDelayHours((Integer) mlResult.getOrDefault("delayHours", 0));
+            risk.setWeatherSummary((String) mlResult.getOrDefault("weatherSummary", "Clear"));
+
+            Object reasonsObj = mlResult.get("reason");
+            if (reasonsObj instanceof List) {
+                risk.setRiskReasons(String.join("; ", (List<String>) reasonsObj));
+            } else {
+                risk.setRiskReasons(String.valueOf(reasonsObj));
+            }
+
+            weatherRiskRepository.save(risk);
+
+            // Send real-time WebSocket alert if weather risk is high or project requires delay/stop/prioritization
+            if ("HIGH".equals(risk.getRiskLevel()) || "CRITICAL".equals(risk.getRiskLevel()) || !"CONTINUE".equals(risk.getRecommendedAction())) {
+                String title = "Weather Risk Alert: " + p.getProjectName();
+                String msg = "Weather risk level " + risk.getRiskLevel() + " in " + p.getZone() + ". Recommendation: " + risk.getRecommendedAction() + " (" + risk.getDelayHours() + "h delay). Reasons: " + risk.getRiskReasons();
+                notificationService.sendNotification("ALL", null, title, msg, "WEATHER_ALERT");
+            }
+        } catch (Exception ignored) {}
     }
 
     @Transactional
     public ProjectResponse create(ProjectRequest req, User currentUser) {
         Project p = ProjectMapper.toEntity(req);
         p.setStatus("DRAFT");
-        p.setCreatedBy(currentUser.getEmail());
+        p.setCreatedBy(currentUser != null ? currentUser.getEmail() : "SYSTEM");
         // Officer can only create for their own department
-        if (currentUser.getRole() == Role.DEPARTMENT_OFFICER) {
+        if (currentUser != null && currentUser.getRole() == Role.DEPARTMENT_OFFICER && currentUser.getDepartment() != null) {
             p.setDepartment(currentUser.getDepartment());
         }
 
@@ -57,12 +106,11 @@ public class ProjectService {
     }
 
     public List<ProjectResponse> getAll(User currentUser) {
-        if (currentUser.getRole() == Role.ADMIN) {
-            return projectRepository.findAll().stream().map(ProjectMapper::toResponse).toList();
+        if (currentUser != null && currentUser.getRole() == Role.DEPARTMENT_OFFICER && currentUser.getDepartment() != null) {
+            return projectRepository.findByDepartmentOrderByCreatedAtDesc(currentUser.getDepartment())
+                    .stream().map(ProjectMapper::toResponse).toList();
         }
-        // Officer sees only their department
-        return projectRepository.findByDepartmentOrderByCreatedAtDesc(currentUser.getDepartment())
-                .stream().map(ProjectMapper::toResponse).toList();
+        return projectRepository.findAll().stream().map(ProjectMapper::toResponse).toList();
     }
 
     public ProjectResponse getById(Long id) {
@@ -73,7 +121,8 @@ public class ProjectService {
     public ProjectResponse update(Long id, ProjectRequest req, User currentUser) {
         Project existing = findOrThrow(id);
         // Officer can only update their own department projects
-        if (currentUser.getRole() == Role.DEPARTMENT_OFFICER
+        if (currentUser != null && currentUser.getRole() == Role.DEPARTMENT_OFFICER
+                && currentUser.getDepartment() != null
                 && !existing.getDepartment().equals(currentUser.getDepartment())) {
             throw new BadRequestException("You can only update projects in your department");
         }
@@ -114,6 +163,7 @@ public class ProjectService {
         prediction.setPriorityPrediction(priority.getPriorityPrediction());
 
         checkAndTriggerAlert(project, conflict, priority);
+        evaluateAndSaveWeatherRisk(project);
 
         return prediction;
     }
@@ -164,17 +214,69 @@ public class ProjectService {
 
     public ProjectResponse sanction(Long id, String action, String sanctionedBy, String remark) {
         Project p = findOrThrow(id);
-        String newStatus = "APPROVE".equalsIgnoreCase(action) ? "ACTIVE" : "REJECTED";
+        String actUpper = action != null ? action.toUpperCase() : "APPROVE";
+        String newStatus;
+        switch (actUpper) {
+            case "APPROVE":
+            case "APPROVED":
+                newStatus = "APPROVED";
+                break;
+            case "REJECT":
+            case "REJECTED":
+                newStatus = "REJECTED";
+                break;
+            case "REQUEST_MODIFICATION":
+            case "MODIFICATION":
+            case "MODIFICATION_REQUESTED":
+                newStatus = "MODIFICATION_REQUESTED";
+                break;
+            case "HOLD":
+            case "ON_HOLD":
+                newStatus = "ON_HOLD";
+                break;
+            case "RESUME":
+            case "ACTIVE":
+                newStatus = "ACTIVE";
+                break;
+            case "CANCEL":
+            case "CANCELLED":
+                newStatus = "CANCELLED";
+                break;
+            case "COMPLETED":
+                newStatus = "COMPLETED";
+                break;
+            default:
+                newStatus = actUpper;
+                break;
+        }
         p.setStatus(newStatus);
         p.setSanctionedBy(sanctionedBy);
         p.setSanctionRemark(remark);
         Project saved = projectRepository.save(p);
+
+        try {
+            auditLogService.logAction(
+                sanctionedBy != null ? sanctionedBy : "admin@smartcity.gov.in",
+                "ADMIN",
+                "PROJECT_GOVERNANCE_ACTION",
+                "Project #" + saved.getId() + " ('" + saved.getProjectName() + "') transitioned to " + newStatus + ". Action: " + actUpper + ". Remark: " + (remark != null ? remark : "N/A"),
+                "127.0.0.1"
+            );
+        } catch (Exception ignored) {}
 
         emailService.sendAlertNotification(
             "vbsattanathan@gmail.com",
             "Project Decision Update: " + saved.getProjectName(),
             "Project Status Changed to " + newStatus,
             "Project '" + saved.getProjectName() + "' (" + saved.getZone() + ") has been " + newStatus + " by " + sanctionedBy + ". Remark: " + (remark != null ? remark : "N/A")
+        );
+
+        notificationService.sendNotification(
+            "OFFICER",
+            null,
+            "Project " + newStatus + ": " + saved.getProjectName(),
+            "Project '" + saved.getProjectName() + "' in " + saved.getZone() + " status updated to " + newStatus + " by Admin (" + (sanctionedBy != null ? sanctionedBy : "Admin") + "). Remark: " + (remark != null ? remark : "None"),
+            "PROJECT"
         );
 
         return ProjectMapper.toResponse(saved);

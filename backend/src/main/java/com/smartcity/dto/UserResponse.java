@@ -11,6 +11,8 @@ public class UserResponse {
     private String email;
     private String department;
     private Role role;
+    private String employeeId;
+    private String phone;
     private LocalDateTime createdAt;
 
     public Long getId() { return id; }
@@ -23,6 +25,10 @@ public class UserResponse {
     public void setDepartment(String department) { this.department = department; }
     public Role getRole() { return role; }
     public void setRole(Role role) { this.role = role; }
+    public String getEmployeeId() { return employeeId; }
+    public void setEmployeeId(String employeeId) { this.employeeId = employeeId; }
+    public String getPhone() { return phone; }
+    public void setPhone(String phone) { this.phone = phone; }
     public LocalDateTime getCreatedAt() { return createdAt; }
     public void setCreatedAt(LocalDateTime createdAt) { this.createdAt = createdAt; }
 
@@ -33,6 +39,8 @@ public class UserResponse {
         r.email = u.getEmail();
         r.department = u.getDepartment();
         r.role = u.getRole();
+        r.employeeId = u.getEmployeeId();
+        r.phone = u.getPhone();
         r.createdAt = u.getCreatedAt();
         return r;
     }

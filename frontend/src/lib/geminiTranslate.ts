@@ -3,26 +3,26 @@
  * Uses Google Gemini API to contextually translate municipal infrastructure terms,
  * officer sanction remarks, and citizen complaints into Tamil, Hindi, etc.
  */
-const DEFAULT_GEMINI_KEY = "AQ.Ab8RN6LCemwka96bC-EsdtWPyGxP6GmYDBcCXnx3P5Mf9AjvLQ";
+const DEFAULT_GEMINI_KEY = (import.meta as any).env?.VITE_GEMINI_API_KEY || "";
+
 export async function translateWithGemini(
   text: string,
   targetLang: "ta" | "hi" | "en",
   apiKey?: string
 ): Promise<string> {
   if (!text || text.trim() === "" || targetLang === "en") return text;
+  const key = apiKey || DEFAULT_GEMINI_KEY;
+  if (!key) {
+    return text;
+  }
   const langNames = {
     ta: "Tamil (தமிழ்)",
     hi: "Hindi (हिंदी)",
     en: "English",
   };
-  const prompt = `You are an official Indian Government Smart City e-Governance translator. Translate the following municipal infrastructure text accurately into natural ${langNames[targetLang]}. Preserve official government terminology (e.g. Sanction Order, Zone, Trenching, Grievance). Return ONLY the translated text without explanation or quotation marks. Text: "${text}"`;
-  const key = apiKey || (import.meta as any).env?.VITE_GEMINI_API_KEY || DEFAULT_GEMINI_KEY;
-  if (!key) {
-    console.info("Gemini API key not provided; fallback to standard translation.");
-    return text;
-  }
+  const prompt = `You are an official Indian Government Smart City e-Governance translator. Translate the following municipal infrastructure text accurately into natural ${langNames[targetLang]}. Return ONLY the translated text without quotes. Text: "${text}"`;
   try {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${key}`;
     const response = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -70,7 +70,7 @@ export async function processCitizenComplaintTranslation(
       return { isTamil: true, finalDescription: description, englishTranslation: description };
     }
 
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${key}`;
     const response = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },

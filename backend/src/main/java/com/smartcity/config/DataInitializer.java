@@ -41,52 +41,64 @@ public class DataInitializer implements CommandLineRunner {
     }
 
     private void seedUsers() {
-        if (userRepository.count() > 0) return;
+        if (!userRepository.existsByEmail("admin@smartcity.gov.in")) {
+            User admin = new User();
+            admin.setName("Admin Officer");
+            admin.setEmail("admin@smartcity.gov.in");
+            admin.setPassword(passwordEncoder.encode("Admin@123"));
+            admin.setDepartment("Municipal Administration");
+            admin.setEmployeeId("ADM-001");
+            admin.setPhone("9876543210");
+            admin.setRole(Role.ADMIN);
+            userRepository.save(admin);
+        }
 
-        User admin = new User();
-        admin.setName("Admin Officer");
-        admin.setEmail("admin@smartcity.gov.in");
-        admin.setPassword(passwordEncoder.encode("Admin@123"));
-        admin.setDepartment("Municipal Administration");
-        admin.setPhone("9876543210");
-        admin.setRole(Role.ADMIN);
-        userRepository.save(admin);
+        if (!userRepository.existsByEmail("road.officer@smartcity.gov.in")) {
+            User roadOfficer = new User();
+            roadOfficer.setName("Rajesh Kumar (Road Dept)");
+            roadOfficer.setEmail("road.officer@smartcity.gov.in");
+            roadOfficer.setPassword(passwordEncoder.encode("Officer@123"));
+            roadOfficer.setDepartment("Road");
+            roadOfficer.setEmployeeId("EMP-ROAD-01");
+            roadOfficer.setPhone("9876543211");
+            roadOfficer.setRole(Role.DEPARTMENT_OFFICER);
+            userRepository.save(roadOfficer);
+        }
 
-        User roadOfficer = new User();
-        roadOfficer.setName("Rajesh Kumar (Road Dept)");
-        roadOfficer.setEmail("road.officer@smartcity.gov.in");
-        roadOfficer.setPassword(passwordEncoder.encode("Officer@123"));
-        roadOfficer.setDepartment("Road");
-        roadOfficer.setPhone("9876543211");
-        roadOfficer.setRole(Role.DEPARTMENT_OFFICER);
-        userRepository.save(roadOfficer);
+        if (!userRepository.existsByEmail("water.officer@smartcity.gov.in")) {
+            User waterOfficer = new User();
+            waterOfficer.setName("Priya Sharma (Water Dept)");
+            waterOfficer.setEmail("water.officer@smartcity.gov.in");
+            waterOfficer.setPassword(passwordEncoder.encode("Officer@123"));
+            waterOfficer.setDepartment("Water");
+            waterOfficer.setEmployeeId("EMP-WATER-01");
+            waterOfficer.setPhone("9876543212");
+            waterOfficer.setRole(Role.DEPARTMENT_OFFICER);
+            userRepository.save(waterOfficer);
+        }
 
-        User waterOfficer = new User();
-        waterOfficer.setName("Priya Sharma (Water Dept)");
-        waterOfficer.setEmail("water.officer@smartcity.gov.in");
-        waterOfficer.setPassword(passwordEncoder.encode("Officer@123"));
-        waterOfficer.setDepartment("Water");
-        waterOfficer.setPhone("9876543212");
-        waterOfficer.setRole(Role.DEPARTMENT_OFFICER);
-        userRepository.save(waterOfficer);
+        if (!userRepository.existsByEmail("electricity.officer@smartcity.gov.in")) {
+            User elecOfficer = new User();
+            elecOfficer.setName("Suresh Patel (Electricity Dept)");
+            elecOfficer.setEmail("electricity.officer@smartcity.gov.in");
+            elecOfficer.setPassword(passwordEncoder.encode("Officer@123"));
+            elecOfficer.setDepartment("Electricity");
+            elecOfficer.setEmployeeId("EMP-ELEC-01");
+            elecOfficer.setPhone("9876543213");
+            elecOfficer.setRole(Role.DEPARTMENT_OFFICER);
+            userRepository.save(elecOfficer);
+        }
 
-        User elecOfficer = new User();
-        elecOfficer.setName("Suresh Patel (Electricity Dept)");
-        elecOfficer.setEmail("electricity.officer@smartcity.gov.in");
-        elecOfficer.setPassword(passwordEncoder.encode("Officer@123"));
-        elecOfficer.setDepartment("Electricity");
-        elecOfficer.setPhone("9876543213");
-        elecOfficer.setRole(Role.DEPARTMENT_OFFICER);
-        userRepository.save(elecOfficer);
-
-        User citizen = new User();
-        citizen.setName("Anita Desai");
-        citizen.setEmail("citizen@gmail.com");
-        citizen.setPassword(passwordEncoder.encode("Citizen@123"));
-        citizen.setDepartment("Citizen");
-        citizen.setPhone("9876543214");
-        citizen.setRole(Role.CITIZEN);
-        userRepository.save(citizen);
+        if (!userRepository.existsByEmail("citizen@gmail.com")) {
+            User citizen = new User();
+            citizen.setName("Anita Desai");
+            citizen.setEmail("citizen@gmail.com");
+            citizen.setPassword(passwordEncoder.encode("Citizen@123"));
+            citizen.setDepartment("Citizen");
+            citizen.setPhone("9876543214");
+            citizen.setRole(Role.CITIZEN);
+            userRepository.save(citizen);
+        }
     }
 
     private void seedProjectsAndPredictions() {

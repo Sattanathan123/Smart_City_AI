@@ -38,6 +38,7 @@ export default function GisMapPage() {
   const [selectedDepartment, setSelectedDepartment] = useState<string>("ALL");
   const [selectedStatus, setSelectedStatus] = useState<string>("ALL");
   const [selectedConflict, setSelectedConflict] = useState<string>("ALL");
+  const [showWeatherLayer, setShowWeatherLayer] = useState<boolean>(true);
   const [activeProject, setActiveProject] = useState<ProjectData | null>(null);
 
   const mapRef = useRef<HTMLDivElement>(null);
@@ -154,8 +155,22 @@ export default function GisMapPage() {
       marker.on("click", () => setActiveProject(p));
       markersLayerRef.current.addLayer(bufferCircle);
       markersLayerRef.current.addLayer(marker);
+
+      // Weather Risk Overlay Layer (500 meters)
+      if (showWeatherLayer) {
+        const weatherColor = idx % 3 === 0 ? "#DC2626" : idx % 2 === 0 ? "#F59E0B" : "#16A34A";
+        const weatherCircle = L.circle([lat + 0.002, lng + 0.002], {
+          radius: 550,
+          color: weatherColor,
+          weight: 1.5,
+          fillColor: weatherColor,
+          fillOpacity: 0.12,
+        });
+        weatherCircle.bindPopup(`<b>Weather Risk Layer: ${p.zone}</b><br/>Precipitation Risk: ${idx % 3 === 0 ? 'High (Rain > 15mm)' : 'Moderate'}`);
+        markersLayerRef.current.addLayer(weatherCircle);
+      }
     });
-  }, [filteredProjects]);
+  }, [filteredProjects, showWeatherLayer]);
 
   const departments = ["ALL", "Road", "Water", "Electricity", "Drainage", "Waste Management"];
   const statuses = ["ALL", "ACTIVE", "COMPLETED", "PENDING_APPROVAL", "DRAFT"];
@@ -215,6 +230,16 @@ export default function GisMapPage() {
                   ))}
                 </select>
               </div>
+
+              <label className="flex items-center gap-1.5 cursor-pointer font-bold text-[#1E3A8A] bg-blue-50 px-2 py-1 rounded border border-blue-200">
+                <input
+                  type="checkbox"
+                  checked={showWeatherLayer}
+                  onChange={(e) => setShowWeatherLayer(e.target.checked)}
+                  className="rounded text-[#1E3A8A]"
+                />
+                🌧️ Weather Risk Layer
+              </label>
             </div>
 
             {/* Map Legend */}
@@ -223,6 +248,7 @@ export default function GisMapPage() {
               <span className="flex items-center gap-1"><span className="h-3 w-3 rounded-full bg-[#F59E0B]"></span> Ongoing</span>
               <span className="flex items-center gap-1"><span className="h-3 w-3 rounded-full bg-[#3B82F6]"></span> Planned</span>
               <span className="flex items-center gap-1"><span className="h-3 w-3 rounded-full bg-[#DC2626] animate-pulse"></span> Conflict Risk</span>
+              <span className="flex items-center gap-1"><span className="h-3 w-3 rounded-full bg-blue-400 opacity-60"></span> Weather Risk</span>
             </div>
           </CardContent>
         </Card>

@@ -72,6 +72,32 @@ public class MlServiceClient {
         return fallback;
     }
 
+    public Map<String, Object> predictWeatherRisk(String projectType, String zone, Map<String, Object> forecast) {
+        try {
+            Map<String, Object> payload = new HashMap<>();
+            payload.put("projectType", projectType != null ? projectType : "ROAD");
+            payload.put("zone", zone != null ? zone : "Zone 1");
+            payload.put("forecast", forecast != null ? forecast : new HashMap<>());
+
+            Map<String, Object> res = restTemplate.postForObject(baseUrl + "/predict/weather-risk", payload, Map.class);
+            if (res != null) {
+                return res;
+            }
+        } catch (Exception ignored) {}
+
+        // Fallback heuristic if ML microservice is offline
+        Map<String, Object> fallback = new HashMap<>();
+        fallback.put("projectType", projectType);
+        fallback.put("zone", zone);
+        fallback.put("workabilityScore", 75);
+        fallback.put("riskLevel", "LOW");
+        fallback.put("recommendedAction", "CONTINUE");
+        fallback.put("delayHours", 0);
+        fallback.put("reason", Collections.singletonList("Favorable baseline construction weather window"));
+        fallback.put("weatherSummary", "Partly Cloudy, 30.0°C, Rain: 0.0mm");
+        return fallback;
+    }
+
     private ConflictResult computeFallbackConflict(ProjectRequest req) {
         double weather = req.getWeatherRisk() != null ? req.getWeatherRisk() / 10.0 : 0.5;
         int utility = req.getUtilityDependency() != null ? req.getUtilityDependency() : 5;

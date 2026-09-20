@@ -142,6 +142,37 @@ const DICTIONARY: Record<string, { ta: string; hi: string }> = {
   "Submit for Sanction Approval": { ta: "அனுமதி ஒப்புதலுக்கு சமர்ப்பிக்கவும்", hi: "स्वीकृति के लिए जमा करें" },
   "Awaiting Admin Approval": { ta: "நிர்வாகி ஒப்புதலுக்கு காத்திருக்கிறது", hi: "प्रशासक की स्वीकृति की प्रतीक्षा है" },
   "Sanctioned": { ta: "ஒப்புதல் அளிக்கப்பட்டது", hi: "स्वीकृत" },
+  "Smart Infrastructure OS": { ta: "ஸ்மார்ட் உள்கட்டமைப்பு இயங்குதளம்", hi: "स्मार्ट अवसंरचना ओएस" },
+  "Next-Gen Urban Governance Platform": { ta: "அடுத்த தலைமுறை நகர்ப்புற ஆளுமை தளம்", hi: "अगली पीढ़ी का शहरी शासन मंच" },
+  "AI-Driven Infrastructure Coordination & Citizen Services": { ta: "செயற்கை நுண்ணறிவு அடிப்படையிலான உள்கட்டமைப்பு ஒருங்கிணைப்பு & குடிமக்கள் சேவைகள்", hi: "एआई-संचालित अवसंरचना समन्वय और नागरिक सेवाएं" },
+  "Streamlining inter-departmental workflows, predicting spatial conflicts, scoring project priorities, and verifying civic grievance media with deep learning.": { ta: "துறைகளுக்கு இடையிலான பணிப்பாய்வுகளை ஒழுங்குபடுத்துதல், இடஞ்சார்ந்த மோதல்களை கணித்தல், திட்ட முன்னுரிமைகளை மதிப்பிடுதல் மற்றும் ஆழமான கற்றல் மூலம் குடிமக்கள் புகார் ஊடகங்களை சரிபார்த்தல்.", hi: "अंतर-विभागीय कार्यप्रवाहों को सुव्यवस्थित करना, स्थानिक टकरावों का अनुमान लगाना, परियोजना प्राथमिकताओं का मूल्यांकन करना और डीप लर्निंग के साथ नागरिक शिकायतों का सत्यापन करना।" },
+  "Access Municipal Portal": { ta: "நகராட்சி போர்ட்டலை அணுகவும்", hi: "नगर निगम पोर्टल तक पहुंचें" },
+  "Active Interoperability Engine": { ta: "செயலில் உள்ள பரஸ்பர இயக்க இயந்திரம்", hi: "सक्रिय इंटरऑपरेबिलिटी इंजन" },
+  "Core Platform Modules": { ta: "முதன்மை பிளாட்ஃபார்ம் தொகுதிகள்", hi: "मुख्य प्लेटफॉर्म मॉड्यूल" },
+  "Integrated infrastructure coordination for citizens, officers, and municipal leadership.": { ta: "குடிமக்கள், அதிகாரிகள் மற்றும் நகராட்சி தலைவர்களுக்கான ஒருங்கிணைந்த உள்கட்டமைப்பு ஒருங்கிணைப்பு.", hi: "नागरिकों, अधिकारियों और नगर निगम नेतृत्व के लिए एकीकृत अवसंरचना समन्वय।" },
+  "Citizen Grievance Portal": { ta: "குடிமக்கள் குறைதீர்ப்பு போர்ட்டல்", hi: "नागरिक शिकायत पोर्टल" },
+  "Report issues with AI media forgery detection & track real-time resolution.": { ta: "AI ஊடக போலியறிதல் கண்டறிதலுடன் சிக்கல்களைப் புகாரளித்து நிகழ்நேர தீர்வைக் கண்காணிக்கவும்.", hi: "एआई मीडिया जालसाजी पहचान के साथ मुद्दों की रिपोर्ट करें और वास्तविक समय समाधान को ट्रैक करें।" },
+  "AI Conflict Interceptor": { ta: "AI மோதல் தடுப்பான்", hi: "एआई टकराव अवरोधक" },
+  "XGBoost models predict overlapping road, water, and power construction projects.": { ta: "XGBoost மாதிரிகள் மேலெழுந்த சாலை, குடிநீர் மற்றும் மின் கட்டுமான திட்டங்களை கணிக்கின்றன.", hi: "एक्सजीबूस्ट मॉडल ओवरलैपिंग सड़क, पानी और बिजली निर्माण परियोजनाओं का अनुमान लगाते हैं।" },
+  "GIS Spatial Analytics": { ta: "GIS இடஞ்சார்ந்த பகுப்பாய்வு", hi: "जीआईएस स्थानिक विश्लेषण" },
+  "Interactive OpenStreetMap spatial layers, conflict zones, and heatmaps.": { ta: "ஊடாடும் OpenStreetMap இடஞ்சார்ந்த அடுக்குகள், மோதல் மண்டலங்கள் மற்றும் வெப்ப வரைபடங்கள்.", hi: "इंटरएक्टिव ओपनस्ट्रीटमैप स्थानिक परतें, टकराव क्षेत्र और हीटमैप्स।" },
+  "Executive Intelligence": { ta: "நிர்வாக நுண்ணறிவு", hi: "कार्यकारी इंटेलिजेंस" },
+  "Recharts analytics, SHAP feature importance, and downloadable PDF/Excel reports.": { ta: "Recharts பகுப்பாய்வு, SHAP அம்ச முக்கியத்துவம் மற்றும் பதிவிறக்கக்கூடிய PDF/Excel அறிக்கைகள்.", hi: "रीचार्ट्स एनालिटिक्स, SHAP विशेषता महत्व, और डाउनलोड करने योग्य पीडीएफ/एक्सेल रिपोर्ट।" },
+  "Unified Municipal Infrastructure Platform powered by AI Predictive Analytics, Deep Learning Media Verification & GIS Spatial Mapping.": { ta: "AI கணிப்பு பகுப்பாய்வு, ஆழமான கற்றல் ஊடக சரிபார்ப்பு & GIS இடஞ்சார்ந்த வரைபடத்தால் இயங்கும் ஒருங்கிணைந்த நகராட்சி உள்கட்டமைப்பு தளம்.", hi: "एआई पूर्वानुमान विश्लेषण, डीप लर्निंग मीडिया सत्यापन और जीआईएस स्थानिक मैपिंग द्वारा संचालित एकीकृत नगर निगम अवसंरचना मंच।" },
+  "Quick Access": { ta: "விரைவு அணுகல்", hi: "त्वरित पहुँच" },
+  "GIS Spatial Conflict Map": { ta: "GIS இடஞ்சார்ந்த மோதல் வரைபடம்", hi: "जीआईएस स्थानिक टकराव मानचित्र" },
+  "Executive Analytics & Reports": { ta: "நிர்வாக பகுப்பாய்வு & அறிக்கைகள்", hi: "कार्यकारी विश्लेषण और रिपोर्ट" },
+  "Sign In to Command Center →": { ta: "கட்டளை மையத்திற்கு உள்நுழைக →", hi: "कमांड सेंटर में साइन इन करें →" },
+  "Road Infrastructure Division": { ta: "சாலை உள்கட்டமைப்பு பிரிவு", hi: "सड़क अवसंरचना प्रभाग" },
+  "Water Supply & Sewage Board": { ta: "குடிநீர் வழங்கல் & கழிவுநீர் வாரியம்", hi: "जल आपूर्ति एवं सीवरेज बोर्ड" },
+  "Electricity & Power Operations": { ta: "மின்சாரம் & மின் இயக்கங்கள்", hi: "बिजली और बिजली संचालन" },
+  "Solid Waste & Sanitation Dept": { ta: "திடக்கழிவு & சுகாதாரத் துறை", hi: "ठोस अपशिष्ट एवं स्वच्छता विभाग" },
+  "Command Helpline": { ta: "கட்டளை உதவி மையம்", hi: "कमांड हेल्पलाइन" },
+  "Municipal Command HQ, Sector 4": { ta: "நகராட்சி கட்டளை தலைமையகம், செக்டார் 4", hi: "नगर निगम कमान मुख्यालय, सेक्टर 4" },
+  "24/7 Emergency Dispatch Active": { ta: "24/7 அவசர அனுப்புதல் செயலில் உள்ளது", hi: "24/7 आपातकालीन प्रेषण सक्रिय" },
+  "Smart City AI Governance Platform. All Rights Reserved.": { ta: "ஸ்மார்ட் சிட்டி AI ஆளுமை தளம். அனைத்து உரிமைகளும் பாதுகாக்கப்பட்டவை.", hi: "स्मार्ट सिटी एआई गवर्नेंस प्लेटफॉर्म। सर्वाधिकार सुरक्षित।" },
+  "Privacy Policy": { ta: "தனியுரிமைக் கொள்கை", hi: "गोपनीयता नीति" },
+  "Terms of Service": { ta: "சேவை விதிமுறைகள்", hi: "सेवा की शर्तें" },
 };
 
 const translations: Record<Language, Translations> = {
@@ -386,18 +417,14 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
 
     const cacheKey = `${language}:${text}`;
 
-    // 1. Static Dictionary Check
-    const staticMatch = DICTIONARY[text]?.[language];
-    if (staticMatch) return staticMatch;
-
-    // 2. Gemini AI Cached Result Check
+    // 1. Real-Time Gemini AI Cached Result Check
     if (asyncTranslations[cacheKey]) {
       return asyncTranslations[cacheKey];
     }
 
-    // 3. Trigger Gemini AI Translation in Background
+    // 2. Trigger Real-Time Gemini AI Translation in Background
     if (!geminiCache[cacheKey]) {
-      geminiCache[cacheKey] = text; // mark pending
+      geminiCache[cacheKey] = text;
       translateWithGemini(text, language).then((translated) => {
         if (translated && translated !== text) {
           setAsyncTranslations((prev) => ({
@@ -407,6 +434,58 @@ export function LanguageProvider({ children }: { children: ReactNode }) {
         }
       });
     }
+
+    // 3. Static Dictionary Check
+    const staticMatch = DICTIONARY[text]?.[language];
+    if (staticMatch) return staticMatch;
+
+    // 2. Token-level Substring Fallback
+    const tokenMap: Record<string, { ta: string; hi: string }> = {
+      "Water": { ta: "குடிநீர்", hi: "जल" },
+      "Road": { ta: "சாலை", hi: "सड़क" },
+      "Electricity": { ta: "மின்சாரம்", hi: "बिजली" },
+      "Drainage": { ta: "கழிவுநீர்", hi: "जल निकासी" },
+      "Waste Management": { ta: "கழிவு மேலாண்மை", hi: "अपशिष्ट प्रबंधन" },
+      "Storm Water": { ta: "மழைநீர் வடிகால்", hi: "तूफान जल" },
+      "Telecom": { ta: "தொலைத்தொடர்பு", hi: "दूरसंचार" },
+      "Zone 1": { ta: "மண்டலம் 1", hi: "जोन 1" },
+      "Zone 2": { ta: "மண்டலம் 2", hi: "जोन 2" },
+      "Zone 3": { ta: "மண்டலம் 3", hi: "जोन 3" },
+      "Zone 4": { ta: "மண்டலம் 4", hi: "जोन 4" },
+      "Zone 5": { ta: "மண்டலம் 5", hi: "जोन 5" },
+      "Zone 6": { ta: "மண்டலம் 6", hi: "जोन 6" },
+      "Zone 7": { ta: "மண்டலம் 7", hi: "जोन 7" },
+      "IN_PROGRESS": { ta: "செயல்பாட்டில்", hi: "प्रगति में" },
+      "APPROVED": { ta: "ஒப்புதல் அளிக்கப்பட்டது", hi: "स्वीकृत" },
+      "PENDING": { ta: "நிலுவையில்", hi: "लंबित" },
+      "COMPLETED": { ta: "நிறைவடைந்தது", hi: "पूर्ण" },
+      "REJECTED": { ta: "நிராகரிக்கப்பட்டது", hi: "अस्वीकृत" },
+      "SUBMITTED": { ta: "சமர்ப்பிக்கப்பட்டது", hi: "जमा किया गया" },
+      "RESOLVED": { ta: "தீர்க்கப்பட்டது", hi: "हल किया गया" },
+      "UNDER_REVIEW": { ta: "மதிப்பாய்வில்", hi: "समीक्षा के तहत" },
+      "Conflict": { ta: "மோதல் அபாயம்", hi: "टकराव जोखिम" },
+      "No Conflict": { ta: "மோதல் இல்லை", hi: "कोई टकराव नहीं" },
+      "High": { ta: "உயர்", hi: "उच्च" },
+      "Medium": { ta: "நடுத்தர", hi: "मध्यम" },
+      "Low": { ta: "குறைந்த", hi: "कम" },
+      "CRITICAL": { ta: "அவசர", hi: "गंभीर" },
+      "Construction": { ta: "கட்டுமானம்", hi: "निर्माण" },
+      "Maintenance": { ta: "பராமரிப்பு", hi: "रखरखाव" },
+      "Infrastructure": { ta: "உள்கட்டமைப்பு", hi: "अवसंरचना" },
+      "Executive Analytics": { ta: "நிர்வாக பகுப்பாய்வு", hi: "कार्यकारी विश्लेषण" },
+      "Weather Risk Engine": { ta: "வானிலை அபாய இயந்திரம்", hi: "मौसम जोखिम इंजन" },
+      "Notification Feed": { ta: "அறிவிப்பு ஓடை", hi: "अधिसूचना फ़ीड" },
+    };
+
+    let subMatch = text;
+    let replaced = false;
+    for (const [key, map] of Object.entries(tokenMap)) {
+      if (subMatch.includes(key)) {
+        subMatch = subMatch.split(key).join(map[language]);
+        replaced = true;
+      }
+    }
+    if (replaced) return subMatch;
 
     return text;
   };

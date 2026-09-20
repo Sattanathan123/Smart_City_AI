@@ -8,8 +8,6 @@ import {
   ResponsiveContainer,
   BarChart,
   Bar,
-  LineChart,
-  Line,
   PieChart,
   Pie,
   Cell,
@@ -17,23 +15,18 @@ import {
   YAxis,
   CartesianGrid,
   Tooltip,
-  Legend,
   AreaChart,
   Area,
 } from "recharts";
 import {
   BarChart3,
-  Download,
   FileSpreadsheet,
   Printer,
-  Calendar,
-  Activity,
-  ShieldCheck,
-  Building2,
   TrendingUp,
-  MapPin,
+  PieChart as PieIcon,
+  FolderKanban,
 } from "lucide-react";
-import { analyticsApi, reportsApi, exportApi, fetchProjects, ProjectData } from "@/lib/api";
+import { analyticsApi, reportsApi, exportApi } from "@/lib/api";
 
 export const Route = createFileRoute("/analytics")({
   head: () => ({
@@ -53,6 +46,7 @@ export default function AnalyticsPage() {
   const [deptData, setDeptData] = useState<any[]>([]);
   const [priorityDist, setPriorityDist] = useState<any[]>([]);
   const [statusDist, setStatusDist] = useState<any[]>([]);
+  const [activeTab, setActiveTab] = useState<"grievances" | "projects_resources">("grievances");
 
   useEffect(() => {
     analyticsApi.monthly().then(setMonthlyData).catch(() => {});
@@ -90,206 +84,200 @@ export default function AnalyticsPage() {
           </div>
 
           <div className="flex flex-wrap items-center gap-3">
-            <div className="flex items-center gap-1 bg-[#F8FAFC] border border-[#E2E8F0] rounded-lg p-1 text-xs">
-              <Calendar className="h-3.5 w-3.5 text-[#1E3A8A] ml-2" />
-              {["7d", "30d", "6m", "all"].map((range) => (
+            {/* Time Range Selector */}
+            <div className="flex items-center rounded-lg border border-[#E2E8F0] bg-white p-1">
+              {["7d", "30d", "6m", "all"].map((r) => (
                 <button
-                  key={range}
-                  onClick={() => setTimeRange(range)}
-                  className={`px-2.5 py-1 rounded text-xs font-bold transition-colors ${
-                    timeRange === range ? "bg-[#1E3A8A] text-white" : "text-[#64748B] hover:text-[#0F172A]"
+                  key={r}
+                  onClick={() => setTimeRange(r)}
+                  className={`px-2.5 py-1 text-xs font-bold rounded transition-colors uppercase ${
+                    timeRange === r ? "bg-[#1E3A8A] text-white" : "text-[#64748B] hover:text-[#0F172A]"
                   }`}
                 >
-                  {range === "7d" ? "Last 7 Days" : range === "30d" ? "Last 30 Days" : range === "6m" ? "Last 6 Months" : "All Time"}
+                  {r}
                 </button>
               ))}
             </div>
 
-            <a
-              href={exportApi.getComplaintsExcelUrl()}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg border border-[#E2E8F0] bg-white hover:bg-slate-50 text-xs font-bold text-[#0F172A] shadow-xs"
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => window.open(reportsApi.getAnalyticsPdfUrl(timeRange), "_blank")}
+              className="gap-2 text-xs border-[#E2E8F0]"
             >
-              <FileSpreadsheet className="h-4 w-4 text-[#16A34A]" /> Export Excel
-            </a>
-
-            <a
-              href={reportsApi.getAnalyticsPdfUrl(timeRange)}
-              target="_blank"
-              rel="noreferrer"
-              className="inline-flex items-center gap-1.5 px-3 py-1.5 rounded-lg bg-[#1E3A8A] hover:bg-[#1E3A8A]/90 text-xs font-bold text-white shadow-xs"
+              <Printer className="h-4 w-4" /> PDF Report
+            </Button>
+            <Button
+              variant="outline"
+              size="sm"
+              onClick={() => window.open(exportApi.getComplaintsExcelUrl(), "_blank")}
+              className="gap-2 text-xs border-[#E2E8F0]"
             >
-              <Printer className="h-4 w-4" /> Download PDF Report
-            </a>
+              <FileSpreadsheet className="h-4 w-4 text-emerald-600" /> Excel Data
+            </Button>
           </div>
         </div>
 
-        {/* Executive KPI Cards */}
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
-          <Card className="border border-[#E2E8F0] bg-[#FFFFFF] shadow-xs">
-            <CardContent className="p-4 flex items-center justify-between">
-              <div>
-                <p className="text-xs font-bold text-[#64748B]">Total Grievances Submitted</p>
-                <h3 className="text-2xl font-black text-[#0F172A] mt-1">158</h3>
-                <span className="text-[10px] font-bold text-emerald-600 flex items-center gap-0.5 mt-1">
-                  <TrendingUp className="h-3 w-3" /> +14.2% from last month
-                </span>
-              </div>
-              <div className="grid h-10 w-10 place-items-center rounded-lg bg-blue-50 text-[#1E3A8A]">
-                <Activity className="h-5 w-5" />
-              </div>
-            </CardContent>
-          </Card>
+        {/* Spacious Tab Controls */}
+        <div className="flex items-center gap-2 border-b border-[#E2E8F0] pb-3">
+          <button
+            onClick={() => setActiveTab("grievances")}
+            className={`px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-2 ${
+              activeTab === "grievances"
+                ? "bg-[#1E3A8A] text-white shadow-xs"
+                : "bg-[#F8FAFC] text-[#64748B] hover:text-[#0F172A] border border-[#E2E8F0]"
+            }`}
+          >
+            <PieIcon className="h-4 w-4" /> Grievances & Resolution Analytics
+          </button>
 
-          <Card className="border border-[#E2E8F0] bg-[#FFFFFF] shadow-xs">
-            <CardContent className="p-4 flex items-center justify-between">
-              <div>
-                <p className="text-xs font-bold text-[#64748B]">AI Media Authenticity Score</p>
-                <h3 className="text-2xl font-black text-[#16A34A] mt-1">96.4%</h3>
-                <span className="text-[10px] font-bold text-emerald-600 flex items-center gap-0.5 mt-1">
-                  <ShieldCheck className="h-3 w-3" /> Deep ConvNet & ELA Verified
-                </span>
-              </div>
-              <div className="grid h-10 w-10 place-items-center rounded-lg bg-emerald-50 text-[#16A34A]">
-                <ShieldCheck className="h-5 w-5" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border border-[#E2E8F0] bg-[#FFFFFF] shadow-xs">
-            <CardContent className="p-4 flex items-center justify-between">
-              <div>
-                <p className="text-xs font-bold text-[#64748B]">Average Resolution Time</p>
-                <h3 className="text-2xl font-black text-[#0F172A] mt-1">2.4 Days</h3>
-                <span className="text-[10px] font-bold text-emerald-600 flex items-center gap-0.5 mt-1">
-                  <TrendingUp className="h-3 w-3" /> 18% faster than SLA target
-                </span>
-              </div>
-              <div className="grid h-10 w-10 place-items-center rounded-lg bg-amber-50 text-[#F59E0B]">
-                <Building2 className="h-5 w-5" />
-              </div>
-            </CardContent>
-          </Card>
-
-          <Card className="border border-[#E2E8F0] bg-[#FFFFFF] shadow-xs">
-            <CardContent className="p-4 flex items-center justify-between">
-              <div>
-                <p className="text-xs font-bold text-[#64748B]">High-Risk GIS Hotspots</p>
-                <h3 className="text-2xl font-black text-[#DC2626] mt-1">6 Corridors</h3>
-                <span className="text-[10px] font-bold text-amber-600 flex items-center gap-0.5 mt-1">
-                  <MapPin className="h-3 w-3" /> Inter-dept overlap detected
-                </span>
-              </div>
-              <div className="grid h-10 w-10 place-items-center rounded-lg bg-red-50 text-[#DC2626]">
-                <MapPin className="h-5 w-5" />
-              </div>
-            </CardContent>
-          </Card>
+          <button
+            onClick={() => setActiveTab("projects_resources")}
+            className={`px-4 py-2 rounded-lg text-xs font-bold transition-all flex items-center gap-2 ${
+              activeTab === "projects_resources"
+                ? "bg-[#1E3A8A] text-white shadow-xs"
+                : "bg-[#F8FAFC] text-[#64748B] hover:text-[#0F172A] border border-[#E2E8F0]"
+            }`}
+          >
+            <FolderKanban className="h-4 w-4" /> Infrastructure Projects & Media Verifications
+          </button>
         </div>
 
-        {/* Charts Grid Row 1 */}
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Card className="border border-[#E2E8F0] bg-[#FFFFFF] shadow-xs">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-bold text-[#0F172A]">Grievances & Resolutions Over Time</CardTitle>
-              <CardDescription className="text-xs text-[#64748B]">Monthly tracking of incoming citizen issues vs resolved tasks.</CardDescription>
-            </CardHeader>
-            <CardContent className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <AreaChart data={monthlyData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
-                  <XAxis dataKey="month" stroke="#64748B" fontSize={11} />
-                  <YAxis stroke="#64748B" fontSize={11} />
-                  <Tooltip />
-                  <Legend wrapperStyle={{ fontSize: "11px" }} />
-                  <Area type="monotone" dataKey="started" name="Submitted" stroke="#1E3A8A" fill="#1E3A8A" fillOpacity={0.15} />
-                  <Area type="monotone" dataKey="completed" name="Resolved" stroke="#16A34A" fill="#16A34A" fillOpacity={0.2} />
-                </AreaChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
+        {/* TAB 1: GRIEVANCES & RESOLUTION ANALYTICS */}
+        {activeTab === "grievances" && (
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Complaints by Status Pie Chart */}
+              <Card className="border border-[#E2E8F0] bg-white shadow-xs">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-bold text-[#0F172A]">Complaints Breakdown by Status</CardTitle>
+                  <CardDescription className="text-xs text-slate-500 font-medium">Submitted, In-Progress, Assigned, and Resolved.</CardDescription>
+                </CardHeader>
+                <CardContent className="p-4 h-72">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={statusDist.length > 0 ? statusDist : [{ name: "Resolved", value: 65 }, { name: "In Progress", value: 25 }, { name: "Submitted", value: 10 }]}
+                        cx="50%"
+                        cy="50%"
+                        outerRadius={95}
+                        dataKey="value"
+                        nameKey="name"
+                        label={({ name, percent }) => `${name} ${(percent * 100).toFixed(0)}%`}
+                      >
+                        {COLORS.map((color, index) => (
+                          <Cell key={`cell-${index}`} fill={color} />
+                        ))}
+                      </Pie>
+                      <Tooltip />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </CardContent>
+              </Card>
 
-          <Card className="border border-[#E2E8F0] bg-[#FFFFFF] shadow-xs">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-bold text-[#0F172A]">Complaints & Conflict Hotspots by Zone</CardTitle>
-              <CardDescription className="text-xs text-[#64748B]">Spatial density breakdown across all 6 municipal zones.</CardDescription>
-            </CardHeader>
-            <CardContent className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={zoneData}>
-                  <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" />
-                  <XAxis dataKey="zone" stroke="#64748B" fontSize={11} />
-                  <YAxis stroke="#64748B" fontSize={11} />
-                  <Tooltip />
-                  <Legend wrapperStyle={{ fontSize: "11px" }} />
-                  <Bar dataKey="complaints" name="Complaints" fill="#1E3A8A" radius={[4, 4, 0, 0]} />
-                  <Bar dataKey="conflicts" name="Spatial Conflicts" fill="#DC2626" radius={[4, 4, 0, 0]} />
-                </BarChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-        </div>
+              {/* Priority & Risk Distribution */}
+              <Card className="border border-[#E2E8F0] bg-white shadow-xs">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-bold text-[#0F172A]">Urgency & Priority Classification</CardTitle>
+                  <CardDescription className="text-xs text-slate-500 font-medium">AI evaluated priority distribution across grievances.</CardDescription>
+                </CardHeader>
+                <CardContent className="p-4 h-72">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={priorityDist.length > 0 ? priorityDist : [{ name: "High", value: 15 }, { name: "Medium", value: 35 }, { name: "Low", value: 50 }]}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" vertical={false} />
+                      <XAxis dataKey="name" stroke="#64748B" fontSize={11} tickLine={false} axisLine={false} />
+                      <YAxis stroke="#64748B" fontSize={11} tickLine={false} axisLine={false} />
+                      <Tooltip />
+                      <Bar dataKey="value" fill="#1E3A8A" radius={[4, 4, 0, 0]} name="Grievances" />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </CardContent>
+              </Card>
+            </div>
 
-        {/* Charts Grid Row 2 */}
-        <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
-          <Card className="border border-[#E2E8F0] bg-[#FFFFFF] shadow-xs">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-bold text-[#0F172A]">Complaints by Status</CardTitle>
-              <CardDescription className="text-xs text-[#64748B]">Distribution of active, under review, and completed complaints.</CardDescription>
-            </CardHeader>
-            <CardContent className="h-56">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie data={statusDist.length > 0 ? statusDist : [{ name: "Resolved", value: 65 }, { name: "In Progress", value: 25 }, { name: "Submitted", value: 10 }]} dataKey="value" nameKey="name" cx="50%" cy="50%" outerRadius={70} label>
-                    {COLORS.map((c, i) => (
-                      <Cell key={i} fill={c} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                </PieChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
+            {/* Resolution Time Trend */}
+            <Card className="border border-[#E2E8F0] bg-white shadow-xs">
+              <CardHeader className="pb-2">
+                <CardTitle className="text-sm font-bold text-[#0F172A]">Resolution Timeline & Progress Trend</CardTitle>
+                <CardDescription className="text-xs text-slate-500 font-medium">Monthly grievance resolution velocity.</CardDescription>
+              </CardHeader>
+              <CardContent className="p-4 h-72">
+                <ResponsiveContainer width="100%" height="100%">
+                  <AreaChart data={monthlyData}>
+                    <defs>
+                      <linearGradient id="areaGrievance" x1="0" y1="0" x2="0" y2="1">
+                        <stop offset="0%" stopColor="#16A34A" stopOpacity={0.3} />
+                        <stop offset="100%" stopColor="#16A34A" stopOpacity={0} />
+                      </linearGradient>
+                    </defs>
+                    <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" vertical={false} />
+                    <XAxis dataKey="month" stroke="#64748B" fontSize={11} tickLine={false} axisLine={false} />
+                    <YAxis stroke="#64748B" fontSize={11} tickLine={false} axisLine={false} />
+                    <Tooltip />
+                    <Area type="monotone" dataKey="completed" stroke="#16A34A" strokeWidth={2} fill="url(#areaGrievance)" name="Resolved Grievances" />
+                  </AreaChart>
+                </ResponsiveContainer>
+              </CardContent>
+            </Card>
+          </div>
+        )}
 
-          <Card className="border border-[#E2E8F0] bg-[#FFFFFF] shadow-xs">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-bold text-[#0F172A]">AI Media Forgery Analysis</CardTitle>
-              <CardDescription className="text-xs text-[#64748B]">Authentic vs AI-generated or edited citizen evidence media.</CardDescription>
-            </CardHeader>
-            <CardContent className="h-56">
-              <ResponsiveContainer width="100%" height="100%">
-                <PieChart>
-                  <Pie data={mediaAuthenticityData} dataKey="value" nameKey="name" cx="50%" cy="50%" innerRadius={40} outerRadius={70} paddingAngle={4}>
-                    {mediaAuthenticityData.map((d, i) => (
-                      <Cell key={i} fill={d.color} />
-                    ))}
-                  </Pie>
-                  <Tooltip />
-                  <Legend wrapperStyle={{ fontSize: "11px" }} />
-                </PieChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
+        {/* TAB 2: PROJECTS & MEDIA VERIFICATIONS */}
+        {activeTab === "projects_resources" && (
+          <div className="space-y-6">
+            <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
+              {/* Complaints & Conflicts by Zone */}
+              <Card className="border border-[#E2E8F0] bg-white shadow-xs">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-bold text-[#0F172A]">Zone-Wise Activity & Conflict Hotspots</CardTitle>
+                  <CardDescription className="text-xs text-slate-500 font-medium">Comparison of grievances and spatial conflict risks by zone.</CardDescription>
+                </CardHeader>
+                <CardContent className="p-4 h-72">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <BarChart data={zoneData}>
+                      <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" vertical={false} />
+                      <XAxis dataKey="zone" stroke="#64748B" fontSize={11} tickLine={false} axisLine={false} />
+                      <YAxis stroke="#64748B" fontSize={11} tickLine={false} axisLine={false} />
+                      <Tooltip />
+                      <Bar dataKey="complaints" fill="#3B82F6" name="Total Complaints" radius={[4, 4, 0, 0]} />
+                      <Bar dataKey="conflicts" fill="#DC2626" name="Conflict Hotspots" radius={[4, 4, 0, 0]} />
+                    </BarChart>
+                  </ResponsiveContainer>
+                </CardContent>
+              </Card>
 
-          <Card className="border border-[#E2E8F0] bg-[#FFFFFF] shadow-xs">
-            <CardHeader className="pb-2">
-              <CardTitle className="text-sm font-bold text-[#0F172A]">Department Resolution Scores</CardTitle>
-              <CardDescription className="text-xs text-[#64748B]">Execution score % by municipal department.</CardDescription>
-            </CardHeader>
-            <CardContent className="h-56">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={deptData} layout="vertical">
-                  <CartesianGrid strokeDasharray="3 3" stroke="#E2E8F0" horizontal={false} />
-                  <XAxis type="number" domain={[0, 100]} stroke="#64748B" fontSize={11} />
-                  <YAxis type="category" dataKey="dept" stroke="#64748B" fontSize={10} width={80} />
-                  <Tooltip />
-                  <Bar dataKey="score" fill="#16A34A" radius={[0, 4, 4, 0]} name="Score %" />
-                </BarChart>
-              </ResponsiveContainer>
-            </CardContent>
-          </Card>
-        </div>
+              {/* Authentic vs Suspicious Media Uploads */}
+              <Card className="border border-[#E2E8F0] bg-white shadow-xs">
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-bold text-[#0F172A]">Media Forensic Authenticity Rate</CardTitle>
+                  <CardDescription className="text-xs text-slate-500 font-medium">Deep Learning 2D-FFT & spectral forensic verification results.</CardDescription>
+                </CardHeader>
+                <CardContent className="p-4 h-72">
+                  <ResponsiveContainer width="100%" height="100%">
+                    <PieChart>
+                      <Pie
+                        data={mediaAuthenticityData}
+                        cx="50%"
+                        cy="50%"
+                        innerRadius={60}
+                        outerRadius={90}
+                        paddingAngle={4}
+                        dataKey="value"
+                        nameKey="name"
+                        label={({ name, value }) => `${name}: ${value}%`}
+                      >
+                        {mediaAuthenticityData.map((entry, index) => (
+                          <Cell key={`cell-${index}`} fill={entry.color} />
+                        ))}
+                      </Pie>
+                      <Tooltip />
+                    </PieChart>
+                  </ResponsiveContainer>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        )}
       </div>
     </DashboardShell>
   );
