@@ -45,33 +45,35 @@ public class SecurityConfig {
             .authorizeHttpRequests(auth -> auth
                 .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
                 .requestMatchers("/api/auth/**", "/auth/**").permitAll()
-                .requestMatchers("/ws-notifications/**").permitAll()
-                .requestMatchers("/api/notifications/**").permitAll()
-                .requestMatchers("/api/reports/**").permitAll()
-                .requestMatchers("/api/export/**").permitAll()
-                .requestMatchers("/api/weather/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/dashboard/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/analytics/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/alerts/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/complaints", "/api/complaints/**").permitAll()
+                .requestMatchers("/ws-notifications/**", "/api/ws-notifications/**").permitAll()
+                .requestMatchers("/api/notifications/**", "/notifications/**").permitAll()
+                .requestMatchers("/api/reports/**", "/reports/**").permitAll()
+                .requestMatchers("/api/export/**", "/export/**").permitAll()
+                .requestMatchers("/api/weather/**", "/weather/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/dashboard/**", "/dashboard/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/analytics/**", "/analytics/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/alerts", "/api/alerts/**", "/alerts", "/alerts/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/complaints", "/api/complaints/**", "/complaints", "/complaints/**").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/projects", "/api/projects/**", "/projects", "/projects/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/**").permitAll()
-                .requestMatchers(HttpMethod.GET, "/api/projects/**").permitAll()
 
                 // Admin only
-                .requestMatchers("/api/admin/**").hasRole("ADMIN")
+                .requestMatchers("/api/admin/**", "/admin/**").hasRole("ADMIN")
 
                 // Officer & Admin creation / modification endpoints
-                .requestMatchers(HttpMethod.POST, "/api/projects").hasAnyRole("ADMIN", "DEPARTMENT_OFFICER")
-                .requestMatchers(HttpMethod.PUT, "/api/projects/**").hasAnyRole("ADMIN", "DEPARTMENT_OFFICER")
-                .requestMatchers(HttpMethod.DELETE, "/api/projects/**").hasRole("ADMIN")
-                .requestMatchers(HttpMethod.PATCH, "/api/projects/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.POST, "/api/projects", "/api/projects/**", "/projects", "/projects/**").hasAnyRole("ADMIN", "DEPARTMENT_OFFICER")
+                .requestMatchers(HttpMethod.PUT, "/api/projects/**", "/projects/**").hasAnyRole("ADMIN", "DEPARTMENT_OFFICER")
+                .requestMatchers(HttpMethod.DELETE, "/api/projects/**", "/projects/**").hasRole("ADMIN")
+                .requestMatchers(HttpMethod.PATCH, "/api/projects/**", "/projects/**").hasRole("ADMIN")
 
                 // Predict — officer & admin
-                .requestMatchers("/api/predict/**").hasAnyRole("ADMIN", "DEPARTMENT_OFFICER")
+                .requestMatchers("/api/predict/**", "/predict/**").hasAnyRole("ADMIN", "DEPARTMENT_OFFICER")
 
                 // Complaints submission — authenticated or public
-                .requestMatchers(HttpMethod.OPTIONS, "/api/complaints", "/api/complaints/**").permitAll()
-                .requestMatchers(HttpMethod.POST, "/api/complaints", "/api/complaints/**").permitAll()
+                .requestMatchers(HttpMethod.OPTIONS, "/**").permitAll()
+                .requestMatchers(HttpMethod.POST, "/api/complaints", "/api/complaints/**", "/complaints", "/complaints/**").permitAll()
+                .requestMatchers(HttpMethod.PATCH, "/api/complaints/**", "/complaints/**").permitAll()
+                .requestMatchers(HttpMethod.PUT, "/api/complaints/**", "/complaints/**").permitAll()
 
                 .anyRequest().authenticated()
             )

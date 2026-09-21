@@ -8,7 +8,7 @@ import java.util.UUID;
 @Table(name = "media_verification")
 public class MediaVerification {
     @Id
-    @GeneratedValue
+    @GeneratedValue(strategy = GenerationType.UUID)
     private UUID verificationId;
 
     private Long complaintId;
