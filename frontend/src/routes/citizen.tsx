@@ -66,6 +66,14 @@ const statusLabel: Record<string, string> = {
   RESOLVED: "Resolved",
 };
 
+const getBackendHost = () => {
+  const envUrl = (import.meta as any).env?.VITE_API_BASE_URL;
+  if (envUrl) {
+    return envUrl.replace(/\/api\/?$/, "");
+  }
+  return "http://localhost:8082";
+};
+
 type Tab = "report" | "myreports" | "track" | "alerts";
 
 function CitizenDashboard() {
@@ -524,10 +532,10 @@ const [imageFile, setImageFile] = useState<File | null>(null);
                                 <td className="px-4 py-3">
                                   {c.imageUrl ? (
                                     isVideo ? (
-                                      <video src={`http://localhost:8082/${c.imageUrl}`} controls className="h-12 w-20 object-cover rounded bg-black" />
+                                      <video src={`${getBackendHost()}/${c.imageUrl}`} controls className="h-12 w-20 object-cover rounded bg-black" />
                                     ) : (
-                                      <a href={`http://localhost:8082/${c.imageUrl}`} target="_blank" rel="noreferrer" title="Click to view full high-res image">
-                                        <img src={`http://localhost:8082/${c.imageUrl}`} alt="Complaint Evidence" className="h-12 w-12 object-cover rounded border hover:opacity-80 hover:scale-105 transition cursor-pointer" />
+                                      <a href={`${getBackendHost()}/${c.imageUrl}`} target="_blank" rel="noreferrer" title="Click to view full high-res image">
+                                        <img src={`${getBackendHost()}/${c.imageUrl}`} alt="Complaint Evidence" className="h-12 w-12 object-cover rounded border hover:opacity-80 hover:scale-105 transition cursor-pointer" />
                                       </a>
                                     )
                                   ) : "-"}
@@ -621,7 +629,7 @@ const [imageFile, setImageFile] = useState<File | null>(null);
                   <span className="font-extrabold text-sm text-[#1E3A8A]">Complaint #{trackedComplaint.id}</span>
                   <div className="flex items-center gap-2">
                     <a
-                      href={`http://localhost:8082/api/reports/complaint/${trackedComplaint.id}/pdf`}
+                      href={`${getBackendHost()}/api/reports/complaint/${trackedComplaint.id}/pdf`}
                       target="_blank"
                       rel="noreferrer"
                       className="px-2.5 py-1 rounded bg-[#1E3A8A] text-white text-[10px] font-bold hover:bg-[#1E3A8A]/90 transition"
@@ -644,9 +652,9 @@ const [imageFile, setImageFile] = useState<File | null>(null);
                     {trackedComplaint.imageUrl ? (
                       <div className="mt-2 space-y-2">
                         {trackedComplaint.mediaType === "VIDEO" || trackedComplaint.imageUrl.toLowerCase().endsWith(".mp4") || trackedComplaint.imageUrl.toLowerCase().endsWith(".webm") ? (
-                          <video src={`http://localhost:8082/${trackedComplaint.imageUrl}`} controls className="h-36 w-64 object-cover rounded bg-black border" />
+                          <video src={`${getBackendHost()}/${trackedComplaint.imageUrl}`} controls className="h-36 w-64 object-cover rounded bg-black border" />
                         ) : (
-                          <img src={`http://localhost:8082/${trackedComplaint.imageUrl}`} alt="Complaint" className="h-32 w-48 object-cover rounded border" />
+                          <img src={`${getBackendHost()}/${trackedComplaint.imageUrl}`} alt="Complaint" className="h-32 w-48 object-cover rounded border" />
                         )}
                         <div>
                           {trackedComplaint.verificationStatus === "SUSPICIOUS" ? (

@@ -1,4 +1,5 @@
-const BASE = "http://localhost:8082/api";
+const BASE = (import.meta as any).env?.VITE_API_BASE_URL || "http://localhost:8082/api";
+const ML_BASE = (import.meta as any).env?.VITE_ML_API_BASE_URL || "http://localhost:8000";
 
 // Helper for multipart/form-data requests (no JSON headers)
 export async function requestMultipart<T>(path: string, formData: FormData): Promise<T> {
@@ -318,7 +319,7 @@ export interface GisAnalysisResponse {
 
 export const shapApi = {
   getExplanation: (payload: Record<string, any>) =>
-    fetch("http://localhost:8000/predict/shap-explanation", {
+    fetch(`${ML_BASE}/predict/shap-explanation`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(payload),
@@ -327,7 +328,7 @@ export const shapApi = {
 
 export const gisApi = {
   getConflictAnalysis: (projects: any[]) =>
-    fetch("http://localhost:8000/predict/gis-conflict-analyzer", {
+    fetch(`${ML_BASE}/predict/gis-conflict-analyzer`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify({ projects }),

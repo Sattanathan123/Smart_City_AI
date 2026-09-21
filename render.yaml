@@ -1,0 +1,41 @@
+services:
+  # 1. Spring Boot Java Backend Service
+  - type: web
+    name: smart-city-backend
+    env: docker
+    dockercontext: ./backend
+    dockerfilePath: ./backend/Dockerfile
+    plan: free
+    region: singapore
+    envVars:
+      - key: PORT
+        value: 8082
+      - key: SPRING_DATASOURCE_URL
+        sync: false
+      - key: SPRING_DATASOURCE_USERNAME
+        sync: false
+      - key: SPRING_DATASOURCE_PASSWORD
+        sync: false
+      - key: ML_SERVICE_BASE_URL
+        fromService:
+          type: web
+          name: smart-city-ml
+          property: host
+      - key: JWT_SECRET
+        generateValue: true
+      - key: SPRING_MAIL_USERNAME
+        sync: false
+      - key: SPRING_MAIL_PASSWORD
+        sync: false
+
+  # 2. Python ML Microservice
+  - type: web
+    name: smart-city-ml
+    env: python
+    buildCommand: pip install -r ML/requirements.txt
+    startCommand: cd ML && gunicorn --bind 0.0.0.0:$PORT --workers 2 --timeout 120 app:app
+    plan: free
+    region: singapore
+    envVars:
+      - key: PORT
+        value: 8000
