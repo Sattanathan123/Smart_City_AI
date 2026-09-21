@@ -2,8 +2,8 @@ services:
   # 1. Spring Boot Java Backend Service
   - type: web
     name: smart-city-backend
-    env: docker
-    dockercontext: ./backend
+    runtime: docker
+    dockerContext: ./backend
     dockerfilePath: ./backend/Dockerfile
     plan: free
     region: singapore
@@ -31,7 +31,7 @@ services:
   # 2. Python ML Microservice
   - type: web
     name: smart-city-ml
-    env: python
+    runtime: python
     buildCommand: pip install -r ML/requirements.txt
     startCommand: cd ML && gunicorn --bind 0.0.0.0:$PORT --workers 2 --timeout 120 app:app
     plan: free
