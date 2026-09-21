@@ -22,7 +22,7 @@ export async function translateWithGemini(
   };
   const prompt = `You are an official Indian Government Smart City e-Governance translator. Translate the following municipal infrastructure text accurately into natural ${langNames[targetLang]}. Return ONLY the translated text without quotes. Text: "${text}"`;
   try {
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${key}`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`;
     const response = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
@@ -70,7 +70,7 @@ export async function processCitizenComplaintTranslation(
       return { isTamil: true, finalDescription: description, englishTranslation: description };
     }
 
-    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-3.6-flash:generateContent?key=${key}`;
+    const url = `https://generativelanguage.googleapis.com/v1beta/models/gemini-1.5-flash:generateContent?key=${key}`;
     const response = await fetch(url, {
       method: "POST",
       headers: { "Content-Type": "application/json" },
