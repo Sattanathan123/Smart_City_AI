@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/complaints")
+@RequestMapping({"/api/complaints", "/complaints"})
 public class ComplaintController {
 
     private final ComplaintService service;

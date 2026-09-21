@@ -14,7 +14,7 @@ import java.util.List;
 import java.util.Map;
 
 @RestController
-@RequestMapping("/api/projects")
+@RequestMapping({"/api/projects", "/projects"})
 public class ProjectController {
 
     private final ProjectService projectService;

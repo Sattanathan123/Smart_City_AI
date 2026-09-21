@@ -8,7 +8,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
 @RestController
-@RequestMapping("/api/analytics")
+@RequestMapping({"/api/analytics", "/analytics"})
 public class AnalyticsController {
 
     private final ProjectRepository projectRepository;

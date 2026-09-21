@@ -13,7 +13,7 @@ import org.springframework.web.bind.annotation.*;
 import java.util.*;
 
 @RestController
-@RequestMapping("/api/weather")
+@RequestMapping({"/api/weather", "/weather"})
 public class WeatherRiskController {
 
     private final WeatherService weatherService;
