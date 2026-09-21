@@ -1,5 +1,11 @@
-const BASE = (import.meta as any).env?.VITE_API_BASE_URL || "http://localhost:8082/api";
-const ML_BASE = (import.meta as any).env?.VITE_ML_API_BASE_URL || "http://localhost:8000";
+const getNormalizedBase = () => {
+  const raw = (import.meta as any).env?.VITE_API_BASE_URL || "http://localhost:8082/api";
+  const trimmed = raw.replace(/\/+$/, "");
+  return trimmed.endsWith("/api") ? trimmed : `${trimmed}/api`;
+};
+
+const BASE = getNormalizedBase();
+const ML_BASE = ((import.meta as any).env?.VITE_ML_API_BASE_URL || "http://localhost:8000").replace(/\/+$/, "");
 
 // Helper for multipart/form-data requests (no JSON headers)
 export async function requestMultipart<T>(path: string, formData: FormData): Promise<T> {
