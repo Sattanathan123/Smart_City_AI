@@ -83,10 +83,12 @@ function CitizenDashboard() {
   // Form State
   const [category, setCategory] = useState(CATEGORIES[0]);
   const [zone, setZone] = useState(ZONES[0]);
+  const [address, setAddress] = useState("");
+  const [phone, setPhone] = useState("");
   const [description, setDescription] = useState("");
   const [submitting, setSubmitting] = useState(false);
   const [submittedId, setSubmittedId] = useState<number | null>(null);
-const [imageFile, setImageFile] = useState<File | null>(null);
+  const [imageFile, setImageFile] = useState<File | null>(null);
 
   // Data State
   const [complaints, setComplaints] = useState<ComplaintData[]>([]);
@@ -107,6 +109,7 @@ const [imageFile, setImageFile] = useState<File | null>(null);
     try {
       const savedUser = JSON.parse(sessionStorage.getItem("user") ?? "{}");
       setUser(savedUser);
+      if (savedUser.phone) setPhone(savedUser.phone);
     } catch {}
   }, []);
 
@@ -165,6 +168,8 @@ const [imageFile, setImageFile] = useState<File | null>(null);
         category,
         description: finalDescription,
         zone,
+        address,
+        phone,
         image: imageFile ?? undefined,
       });
       setSubmittedId(created.id);
@@ -174,6 +179,7 @@ const [imageFile, setImageFile] = useState<File | null>(null);
         toast.success("Complaint submitted successfully!");
       }
       setDescription("");
+      setAddress("");
       setImageFile(null);
       loadComplaints();
     } catch {
@@ -335,6 +341,32 @@ const [imageFile, setImageFile] = useState<File | null>(null);
                           <option key={z} value={z} className="bg-white text-[#0F172A]">{z}</option>
                         ))}
                       </select>
+                    </div>
+                  </div>
+
+                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                    <div>
+                      <label className="text-xs font-bold text-[#0F172A]">Contact Phone Number *</label>
+                      <input
+                        type="tel"
+                        value={phone}
+                        onChange={(e) => setPhone(e.target.value)}
+                        placeholder="e.g. +91 9876543210"
+                        className={fieldClass}
+                        required
+                      />
+                    </div>
+
+                    <div>
+                      <label className="text-xs font-bold text-[#0F172A]">Specific Address / Street Landmark *</label>
+                      <input
+                        type="text"
+                        value={address}
+                        onChange={(e) => setAddress(e.target.value)}
+                        placeholder="e.g. Door No. 42, 2nd Main Road, Near Bus Stand"
+                        className={fieldClass}
+                        required
+                      />
                     </div>
                   </div>
 
@@ -644,6 +676,8 @@ const [imageFile, setImageFile] = useState<File | null>(null);
                 <div className="text-xs space-y-2 font-medium text-[#0F172A]">
                   <p><b>Category:</b> {trackedComplaint.category}</p>
                   <p><b>Zone:</b> {trackedComplaint.zone}</p>
+                  {trackedComplaint.address && <p><b>Address / Landmark:</b> {trackedComplaint.address}</p>}
+                  {trackedComplaint.phone && <p><b>Contact Phone:</b> {trackedComplaint.phone}</p>}
                   <p><b>Assigned Officer:</b> <span className="font-extrabold text-[#1E3A8A]">{trackedComplaint.assignedOfficer ?? "Department Executive Officer"}</span></p>
                   <p><b>Officer Action:</b> Field inspection & resolution action scheduled within 48 hours.</p>
                   <p><b>Description:</b> {trackedComplaint.description}</p>

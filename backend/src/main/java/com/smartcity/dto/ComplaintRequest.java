@@ -16,6 +16,9 @@ public class ComplaintRequest {
     @NotBlank
     private String zone;
 
+    private String address;
+    private String phone;
+
     // Existing field for stored image URL/path
     private String imageUrl;
 
@@ -37,6 +40,10 @@ public class ComplaintRequest {
     public void setDescription(String description) { this.description = description; }
     public String getZone() { return zone; }
     public void setZone(String zone) { this.zone = zone; }
+    public String getAddress() { return address; }
+    public void setAddress(String address) { this.address = address; }
+    public String getPhone() { return phone; }
+    public void setPhone(String phone) { this.phone = phone; }
     public String getImageUrl() { return imageUrl; }
     public void setImageUrl(String imageUrl) { this.imageUrl = imageUrl; }
     public MultipartFile getImage() { 

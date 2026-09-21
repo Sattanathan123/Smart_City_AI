@@ -23,6 +23,8 @@ public class Complaint {
     private String description;
 
     private String zone;
+    private String address;
+    private String phone;
     private String imageUrl;
 
     @Column(nullable = false)
@@ -34,6 +36,11 @@ public class Complaint {
 
     @CreationTimestamp
     private LocalDateTime createdAt;
+
+    public String getAddress() { return address; }
+    public void setAddress(String address) { this.address = address; }
+    public String getPhone() { return phone; }
+    public void setPhone(String phone) { this.phone = phone; }
 
     public String getAssignedOfficer() { return assignedOfficer; }
     public void setAssignedOfficer(String assignedOfficer) { this.assignedOfficer = assignedOfficer; }

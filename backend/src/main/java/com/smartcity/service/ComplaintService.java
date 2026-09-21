@@ -94,6 +94,8 @@ public class ComplaintService {
         c.setCategory(req.getCategory());
         c.setDescription(req.getDescription());
         c.setZone(req.getZone());
+        c.setAddress(req.getAddress());
+        c.setPhone(req.getPhone());
         c.setAssignedOfficer(assignedOfficerName);
 
         String uploadedFilename = null;
@@ -258,6 +260,6 @@ public class ComplaintService {
         return new ComplaintResponse(c.getId(), c.getUserId(), c.getUserName(),
                 c.getCategory(), c.getDescription(), c.getZone(),
                 c.getImageUrl(), c.getStatus(), c.getProgress(), c.getCreatedAt(),
-                mediaType, score, status, reason, officer);
+                mediaType, score, status, reason, officer, c.getAddress(), c.getPhone());
     }
 }

@@ -166,6 +166,8 @@ export interface ComplaintData {
   category: string;
   description: string;
   zone: string;
+  address?: string | null;
+  phone?: string | null;
   imageUrl: string | null;
   status: string;
   progress: number;
@@ -185,6 +187,8 @@ export const complaintsApi = {
     category: string;
     description: string;
     zone: string;
+    address?: string;
+    phone?: string;
     image?: File;
   }) => {
     const formData = new FormData();
@@ -193,6 +197,8 @@ export const complaintsApi = {
     formData.append('category', data.category);
     formData.append('description', data.description);
     formData.append('zone', data.zone);
+    if (data.address) formData.append('address', data.address);
+    if (data.phone) formData.append('phone', data.phone);
     if (data.image) {
       formData.append('image', data.image);
     }

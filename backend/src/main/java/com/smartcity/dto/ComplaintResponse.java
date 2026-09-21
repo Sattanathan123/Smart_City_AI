@@ -9,6 +9,8 @@ public class ComplaintResponse {
     public String category;
     public String description;
     public String zone;
+    public String address;
+    public String phone;
     public String imageUrl;
     public String status;
     public Integer progress;
@@ -22,14 +24,14 @@ public class ComplaintResponse {
     public ComplaintResponse(Long id, Long userId, String userName, String category,
                               String description, String zone, String imageUrl,
                               String status, Integer progress, LocalDateTime createdAt) {
-        this(id, userId, userName, category, description, zone, imageUrl, status, progress, createdAt, null, null, null, null, null);
+        this(id, userId, userName, category, description, zone, imageUrl, status, progress, createdAt, null, null, null, null, null, null, null);
     }
 
     public ComplaintResponse(Long id, Long userId, String userName, String category,
                               String description, String zone, String imageUrl,
                               String status, Integer progress, LocalDateTime createdAt,
                               String mediaType, Integer authenticityScore, String verificationStatus, String detectionReason,
-                              String assignedOfficer) {
+                              String assignedOfficer, String address, String phone) {
         this.id = id;
         this.userId = userId;
         this.userName = userName;
@@ -45,5 +47,7 @@ public class ComplaintResponse {
         this.verificationStatus = verificationStatus;
         this.detectionReason = detectionReason;
         this.assignedOfficer = assignedOfficer;
+        this.address = address;
+        this.phone = phone;
     }
 }
